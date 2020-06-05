@@ -620,7 +620,7 @@ cystart(struct tty *tp)
 		SET(tp->t_state, TS_BUSY);
 		cy_enable_transmitter(cy);
 	}
-out:
+ out:
 
 	splx(s);
 }
@@ -952,8 +952,7 @@ cy_poll(void *arg)
 			line_stat = cy->cy_ibuf_rd_ptr[0];
 			chr = cy->cy_ibuf_rd_ptr[1];
 
-			if (line_stat &
-			    (CD1400_RDSR_BREAK|CD1400_RDSR_FE))
+			if (line_stat & (CD1400_RDSR_BREAK|CD1400_RDSR_FE))
 				chr |= TTY_FE;
 			if (line_stat & CD1400_RDSR_PE)
 				chr |= TTY_PE;
@@ -971,8 +970,7 @@ cy_poll(void *arg)
 			(*linesw[tp->t_line].l_rint)(chr, tp);
 
 			s = spltty(); /* really necessary? */
-			if ((cy->cy_ibuf_rd_ptr += 2) ==
-			    cy->cy_ibuf_end)
+			if ((cy->cy_ibuf_rd_ptr += 2) == cy->cy_ibuf_end)
 				cy->cy_ibuf_rd_ptr = cy->cy_ibuf;
 			splx(s);
 
@@ -1068,7 +1066,7 @@ cy_poll(void *arg)
 
 	counter = 0;
 
-out:
+ out:
 	timeout_add(&sc->sc_poll_to, 1);
 }
 
@@ -1166,9 +1164,7 @@ cy_intr(void *arg)
 #if 1
 				while (n_chars--) {
 					*buf_p++ = 0; /* status: OK */
-//					*buf_p++ = cd_read_reg(cy,
-//					    CD1400_RDSR); /* data byte */
-					*buf_p++ = buf[i++];
+					*buf_p++ = buf[i++]; /* data byte */
 					if (buf_p == cy->cy_ibuf_end)
 						buf_p = cy->cy_ibuf;
 					if (buf_p == cy->cy_ibuf_rd_ptr) {
@@ -1199,7 +1195,7 @@ cy_intr(void *arg)
 			}
 #endif /* CY_HW_RTS */
 
-		end_rx_serv:
+ end_rx_serv:
 			/* terminate service context */
 			cd_write_reg(cy, CD1400_RIR, save_rir & 0x3f);
 			cd_write_reg(cy, CD1400_CAR, save_car);
@@ -1315,7 +1311,7 @@ cy_intr(void *arg)
 			}
 
 			if (tp->t_outq.c_cc == 0) {
-txdone:
+ txdone:
 				/*
 				 * No data to send or requested to stop.
 				 * Disable transmit interrupt
