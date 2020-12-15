@@ -64,7 +64,7 @@ RCDAEMONS=amd apmd bgpd bgplgd bootparamd cron dhcpd dhcpleased dhcrelay \
 	ldpd lockd lpd mopd mountd mrouted nfsd npppd nsd ntpd ospf6d ospfd \
 	pflogd portmap rad radiusd rarpd rbootd relayd resolvd ripd route6d \
 	sasyncd sensorsd slowcgi slaacd smtpd sndiod snmpd spamd \
-	spamlogd sshd statd syslogd tftpd tftpproxy unbound \
+	spamlogd sshd statd syslogd tcpbench tftpd tftpproxy unbound \
 	unwind vmd watchdogd wsmoused xenodm ypbind ypldap ypserv
 
 MISETS=	base${OSrev}.tgz comp${OSrev}.tgz man${OSrev}.tgz game${OSrev}.tgz
