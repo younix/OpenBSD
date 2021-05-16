@@ -1115,7 +1115,7 @@ get_line(char *s, int n)
 			case WILL:
 			case WONT:
 				c = getc(stdin);
-				printf("%c%c%c", IAC, DONT, 0377&c);
+				ftpd_sendf("%c%c%c", IAC, DONT, 0377&c);
 				(void) fflush(stdout);
 				continue;
 			case DO:
@@ -1462,22 +1462,21 @@ help(struct tab *ctab, char *s)
 			columns = 1;
 		lines = (NCMDS + columns - 1) / columns;
 		for (i = 0; i < lines; i++) {
-			printf("   ");
+			ftpd_send("   ");
 			for (j = 0; j < columns; j++) {
 				c = ctab + j * lines + i;
-				printf("%s%c", c->name,
+				ftpd_sendf("%s%c", c->name,
 					c->implemented ? ' ' : '*');
 				if (c + lines >= &ctab[NCMDS])
 					break;
 				w = strlen(c->name) + 1;
 				while (w < width) {
-					putchar(' ');
+					ftpd_send(" ");
 					w++;
 				}
 			}
-			printf("\r\n");
+			ftpd_send("\r\n");
 		}
-		(void) fflush(stdout);
 		reply(214, "Direct comments to ftp-bugs@%s.", hostname);
 		return;
 	}
