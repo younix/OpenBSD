@@ -1116,13 +1116,11 @@ get_line(char *s, int n)
 			case WONT:
 				c = getc(stdin);
 				ftpd_sendf("%c%c%c", IAC, DONT, 0377&c);
-				(void) fflush(stdout);
 				continue;
 			case DO:
 			case DONT:
 				c = getc(stdin);
-				printf("%c%c%c", IAC, WONT, 0377&c);
-				(void) fflush(stdout);
+				ftpd_sendf("%c%c%c", IAC, WONT, 0377&c);
 				continue;
 			case IAC:
 				break;
