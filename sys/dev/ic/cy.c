@@ -1050,7 +1050,7 @@ cy_poll(void *arg)
 			    "(port %d, carrier %d)\n",
 			    sc->sc_dev.dv_xname, port, carrier);
 #endif
-			if (DEVCUA(tp->t_dev) &&
+			if (!DEVCUA(tp->t_dev) &&
 			    !(*linesw[tp->t_line].l_modem)(tp, carrier))
 				cy_modem_control(cy, TIOCM_DTR, DMBIC);
 
