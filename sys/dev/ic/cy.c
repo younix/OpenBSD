@@ -360,6 +360,7 @@ printf("%s %s:%d %d, %d, %d, %d\n", sc->sc_dev.dv_xname, __func__, __LINE__,
 		cd_write_reg(cy, CD1400_SRER,
 		    CD1400_SRER_MDMCH | CD1400_SRER_RXDATA);
 
+#if 0
 		if (DEVCUA(dev) ||
 		    ISSET(cy->cy_openflags, TIOCFLAG_SOFTCAR) ||
 		    ISSET(tp->t_cflag, MDMBUF) ||
@@ -370,6 +371,9 @@ printf("%s %s:%d set carrier on\n", sc->sc_dev.dv_xname, __func__, __LINE__);
 printf("%s %s:%d clear carrier\n", sc->sc_dev.dv_xname, __func__, __LINE__);
 			CLR(tp->t_state, TS_CARR_ON);
 		}
+#else
+		SET(tp->t_state, TS_CARR_ON);
+#endif
 	} else if (ISSET(tp->t_state, TS_XCLUDE) && suser(p) != 0) {
 printf("%s %s:%d return EBUSY\n", sc->sc_dev.dv_xname, __func__, __LINE__);
 		return (EBUSY);
@@ -407,15 +411,16 @@ printf("%s %s:%d return EBUSY\n", sc->sc_dev.dv_xname, __func__, __LINE__);
 				return EBUSY;
 			}
 		} else {
-/*
+//*
+		int error;
 			while (cy->cy_cua ||
 			    (!ISSET(tp->t_cflag, CLOCAL) &&
 			    !ISSET(tp->t_state, TS_CARR_ON))) {
 				SET(tp->t_state, TS_WOPEN);
 
 printf("%s %s:%d enter ttysleep\n", sc->sc_dev.dv_xname, __func__, __LINE__);
-				error = ttysleep(tp, &tp->t_rawq, TTIPRI | PCATCH,
-				    "cydcd");
+				error = ttysleep(tp, &tp->t_rawq,
+				    TTIPRI | PCATCH, ttopen);
 printf("%s %s:%d exit ttysleep\n", sc->sc_dev.dv_xname, __func__, __LINE__);
 				if (error != 0 && ISSET(tp->t_state, TS_WOPEN)) {
 					CLR(tp->t_state, TS_WOPEN);
@@ -424,7 +429,7 @@ printf("%s %s:%d return EBUSY\n", sc->sc_dev.dv_xname, __func__, __LINE__);
 					return (error);
 				}
 			}
-*/
+//*/
 		}
 	}
 	splx(s);
@@ -446,10 +451,10 @@ cyclose(dev_t dev, int flag, int mode, struct proc *p)
 	struct tty *tp = cy->cy_tty;
 	int s;
 
-#ifdef CY_DEBUG
+//#ifdef CY_DEBUG
 	printf("%s close port %d, flag 0x%x, mode 0x%x\n", sc->sc_dev.dv_xname,
 	    port, flag, mode);
-#endif
+//#endif
 
 	(*linesw[tp->t_line].l_close)(tp, flag, p);
 	s = spltty();
