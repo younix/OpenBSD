@@ -826,8 +826,8 @@ struct ixl_tx_desc {
 #define IXL_TX_DESC_BSIZE_MAX		0x3fffULL
 #define IXL_TX_DESC_BSIZE_MASK		\
 	(IXL_TX_DESC_BSIZE_MAX << IXL_TX_DESC_BSIZE_SHIFT)
-
 #define IXL_TX_DESC_L2TAG1_SHIFT	48
+#define IXL_TX_DESC_L2TAG1_MASK		(0xffffULL << IXL_TX_DESC_L2TAG1_SHIFT)
 } __packed __aligned(16);
 
 struct ixl_rx_rd_desc_16 {
@@ -1951,7 +1951,10 @@ ixl_attach(struct device *parent, struct device *self, void *aux)
 	strlcpy(ifp->if_xname, DEVNAME(sc), IFNAMSIZ);
 	ifq_set_maxlen(&ifp->if_snd, sc->sc_tx_ring_ndescs);
 
-	ifp->if_capabilities = IFCAP_VLAN_HWTAGGING;
+	ifp->if_capabilities = IFCAP_VLAN_MTU;
+#if NVLAN > 0
+	ifp->if_capabilities |= IFCAP_VLAN_HWTAGGING;
+#endif
 	ifp->if_capabilities |= IFCAP_CSUM_IPv4 |
 	    IFCAP_CSUM_TCPv4 | IFCAP_CSUM_UDPv4 |
 	    IFCAP_CSUM_TCPv6 | IFCAP_CSUM_UDPv6;
@@ -2899,6 +2902,12 @@ ixl_start(struct ifqueue *ifq)
 			cmd |= IXL_TX_DESC_DTYPE_DATA | IXL_TX_DESC_CMD_ICRC;
 			cmd |= offload;
 
+			if (m->m_flags & M_VLANTAG) {
+				cmd |= IXL_TX_DESC_CMD_IL2TAG1;
+				cmd |= (uint64_t)htole16(m->m_pkthdr.ether_vtag)
+				    << IXL_TX_DESC_L2TAG1_SHIFT;
+			}
+
 			htolem64(&txd->addr, map->dm_segs[i].ds_addr);
 			htolem64(&txd->cmd, cmd);
 
@@ -3243,7 +3252,13 @@ ixl_rxeof(struct ixl_softc *sc, struct ixl_rx_ring *rxr)
 
 		m = rxr->rxr_m_head;
 		m->m_pkthdr.len += len;
-
+#if NVLAN > 0
+		if (ISSET(word, IXL_RX_DESC_L2TAG1P)) {
+			m->m_flags |= M_VLANTAG;
+			m->m_pkthdr.ether_vtag = lemtoh32(&rxd->_reserved1)
+			    & IXL_RX_DESC_L2TAG_MASK;
+		}
+#endif
 		if (ISSET(word, IXL_RX_DESC_EOP)) {
 			if (!ISSET(word,
 			    IXL_RX_DESC_RXE | IXL_RX_DESC_OVERSIZE)) {
