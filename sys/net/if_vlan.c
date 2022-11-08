@@ -982,6 +982,12 @@ vlan_flags_from_parent(struct ifnet *ifp0, int flags)
 					SET(sc->sc_if.if_xflags, flags);
 				else
 					CLR(sc->sc_if.if_xflags, flags);
+
+				if (ISSET(sc->sc_if.if_xflags, IFXF_TSO))
+					sc->sc_if.if_tso_tx_max =
+					    ifp0->if_tso_tx_max;
+				else
+					sc->sc_if.if_tso_tx_max = 0;
 			}
 		}
 	}

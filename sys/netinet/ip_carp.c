@@ -1694,6 +1694,7 @@ carp_set_ifp(struct carp_softc *sc, struct ifnet *ifp0)
 	sc->sc_carpdevidx = ifp0->if_index;
 	sc->sc_if.if_capabilities = ifp0->if_capabilities &
 	    (IFCAP_CSUM_MASK | IFCAP_TSO);
+	sc->sc_if.if_tso_tx_max = ifp0->if_tso_tx_max;
 
 	SRPL_FOREACH_LOCKED(vr, cif, sc_list) {
 		struct carp_vhost_entry *vrhead, *schead;
