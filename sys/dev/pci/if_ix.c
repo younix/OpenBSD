@@ -2869,9 +2869,11 @@ ixgbe_initialize_receive_units(struct ix_softc *sc)
 	}
 	IXGBE_WRITE_REG(hw, IXGBE_FCTRL, fctrl);
 
-	/* Always enable jumbo frame reception */
 	hlreg = IXGBE_READ_REG(hw, IXGBE_HLREG0);
+	/* Always enable jumbo frame reception */
 	hlreg |= IXGBE_HLREG0_JUMBOEN;
+	/* Always enable CRC stripping */
+	hlreg |= IXGBE_HLREG0_RXCRCSTRP;
 	IXGBE_WRITE_REG(hw, IXGBE_HLREG0, hlreg);
 
 	if (ISSET(ifp->if_xflags, IFXF_TSO)) {
