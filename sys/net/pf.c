@@ -6519,7 +6519,8 @@ pf_route(struct pf_pdesc *pd, struct pf_state *st)
 
 	in_proto_cksum_out(m0, ifp);
 
-	if (ntohs(ip->ip_len) <= ifp->if_mtu) {
+	if (ntohs(ip->ip_len) <= ifp->if_mtu || (ISSET(ifp->if_xflags, IFXF_TSO)
+	    && ISSET(m0->m_pkthdr.csum_flags, M_TCP_TSO))) {
 		ip->ip_sum = 0;
 		if (ifp->if_capabilities & IFCAP_CSUM_IPv4)
 			m0->m_pkthdr.csum_flags |= M_IPV4_CSUM_OUT;
@@ -6535,7 +6536,8 @@ pf_route(struct pf_pdesc *pd, struct pf_state *st)
 	 * Too large for interface; fragment if possible.
 	 * Must be able to put at least 8 bytes per fragment.
 	 */
-	if (ip->ip_off & htons(IP_DF)) {
+	if (ip->ip_off & htons(IP_DF) &&
+	    !ISSET(m0->m_pkthdr.csum_flags, M_TCP_TSO)) {
 		ipstat_inc(ips_cantfrag);
 		if (st->rt != PF_DUPTO)
 			pf_send_icmp(m0, ICMP_UNREACH, ICMP_UNREACH_NEEDFRAG,
@@ -6543,7 +6545,10 @@ pf_route(struct pf_pdesc *pd, struct pf_state *st)
 		goto bad;
 	}
 
-	error = ip_fragment(m0, &fml, ifp, ifp->if_mtu);
+	if (ISSET(m0->m_pkthdr.csum_flags, M_TCP_TSO))
+		error = tcp_split_segment(m0, &fml, ifp, ifp->if_mtu);
+	else
+		error = ip_fragment(m0, &fml, ifp, ifp->if_mtu);
 	if (error)
 		goto done;
 
@@ -6663,8 +6668,24 @@ pf_route6(struct pf_pdesc *pd, struct pf_state *st)
 	 */
 	if ((mtag = m_tag_find(m0, PACKET_TAG_PF_REASSEMBLED, NULL))) {
 		(void) pf_refragment6(&m0, mtag, dst, ifp, rt);
-	} else if ((u_long)m0->m_pkthdr.len <= ifp->if_mtu) {
+	} else if ((u_long)m0->m_pkthdr.len <= ifp->if_mtu ||
+	    (ISSET(ifp->if_xflags, IFXF_TSO) &&
+	    ISSET(m0->m_pkthdr.csum_flags, M_TCP_TSO))) {
 		ifp->if_output(ifp, m0, sin6tosa(dst), rt);
+	} else if (ISSET(m0->m_pkthdr.csum_flags, M_TCP_TSO)) {
+		struct mbuf_list fml;
+		int error = 0;
+
+		error = tcp_split_segment(m0, &fml, ifp, ifp->if_mtu);
+		if (error)
+			goto bad;
+		while ((m0 = ml_dequeue(&fml)) != NULL) {
+			error = ifp->if_output(ifp, m0, sin6tosa(dst), rt);
+			if (error)
+				break;
+		}
+		if (error)
+			ml_purge(&fml);
 	} else {
 		ip6stat_inc(ip6s_cantfrag);
 		if (st->rt != PF_DUPTO)
