@@ -1,0 +1,22 @@
+/Makefile/1.10/Fri Jun  3 11:50:25 2022//
+/dotT.in/1.3/Sat Oct 24 22:52:34 2020//
+/dotT.out_ascii/1.3/Sat Oct 24 22:52:34 2020//
+/dotT.out_html/1.5/Sat Oct 24 22:52:34 2020//
+/dotT.out_markdown/1.3/Sat Oct 24 22:52:34 2020//
+/dotT.out_utf8/1.3/Sat Oct 24 22:52:34 2020//
+/escape.in/1.3/Tue Jul  4 14:53:27 2017//
+/escape.out_ascii/1.6/Mon Jun 28 19:59:12 2021//
+/infinite.in/1.3/Tue Jul  4 14:53:27 2017//
+/infinite.out_ascii/1.5/Mon Jun 28 19:59:12 2021//
+/name.in/1.5/Fri Jun  3 11:50:25 2022//
+/name.out_ascii/1.7/Fri Jun  3 11:50:25 2022//
+/name.out_lint/1.10/Sun Jun  5 13:42:50 2022//
+/std.in/1.2/Tue Jul  4 14:53:27 2017//
+/std.out_ascii/1.2/Mon Jun 28 19:59:12 2021//
+/std.out_lint/1.3/Tue Jul  4 14:53:27 2017//
+/undef.in/1.1/Mon Apr  9 02:31:37 2018//
+/undef.out_ascii/1.2/Mon Jun 28 19:59:12 2021//
+/undef.out_lint/1.1/Mon Apr  9 02:31:37 2018//
+/zerolength.in/1.3/Tue Jul  4 14:53:27 2017//
+/zerolength.out_ascii/1.6/Mon Jun 28 19:59:12 2021//
+D

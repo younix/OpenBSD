@@ -1,0 +1,37 @@
+Implement Large Send Offloading part of TSO
+
+This diff enables our stack to send large segments
+via ix(4) NICs with TSO enable.
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Author:    Charlie Root <root@ot37.obsd-lab.genua.de>
+#
+# interactive rebase in progress; onto c2371130ed4
+# Last commands done (7 commands done):
+#    pick 026df68d936 ix(4): Always enable CRC stripping
+#    pick 4d4dbd3c84d Implement Large Send Offloading part of TSO
+# No commands remaining.
+# You are currently rebasing branch 'tso' on 'c2371130ed4'.
+#
+# Changes to be committed:
+#	modified:   sys/dev/pci/if_ix.c
+#	modified:   sys/dev/pci/ixgbe.h
+#	modified:   sys/dev/pci/ixgbe_type.h
+#	modified:   sys/net/if_var.h
+#	modified:   sys/net/if_vlan.c
+#	modified:   sys/netinet/ip_carp.c
+#	modified:   sys/netinet/ip_output.c
+#	modified:   sys/netinet/tcp_input.c
+#	modified:   sys/netinet/tcp_output.c
+#	modified:   sys/netinet/tcp_var.h
+#	modified:   sys/netinet6/ip6_output.c
+#	modified:   sys/sys/mbuf.h
+#
+# Untracked files:
+#	sys/arch/amd64/compile/RAMDISK/ktrace.out
+#	sys/dev/pci/files.pci.orig
+#	sys/dev/pci/if_em.c.orig
+#	sys/dev/pci/if_em.h.orig
+#

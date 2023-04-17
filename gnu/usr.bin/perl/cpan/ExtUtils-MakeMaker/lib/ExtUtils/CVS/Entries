@@ -1,0 +1,28 @@
+/Command.pm/1.4/Wed Feb 15 01:36:17 2023/-ko/
+/Liblist.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_AIX.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_Any.pm/1.13/Wed Feb 15 01:36:17 2023/-ko/
+/MM_BeOS.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_Cygwin.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_DOS.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_Darwin.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_MacOS.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_NW5.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_OS2.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_OS390.pm/1.1.1.1/Wed Feb 15 01:32:34 2023/-ko/
+/MM_QNX.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_UWIN.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_Unix.pm/1.24/Wed Feb 15 01:38:21 2023/-ko/
+/MM_VMS.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_VOS.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_Win32.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MM_Win95.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MY.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/MakeMaker.pm/1.10/Wed Feb 15 01:36:17 2023/-ko/
+/Mkbootstrap.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/Mksymlists.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+/testlib.pm/1.6/Wed Feb 15 01:36:17 2023/-ko/
+D/Command////
+D/Liblist////
+D/MakeMaker////

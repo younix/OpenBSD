@@ -1,0 +1,24 @@
+/AllTUsExecution.h/1.1.1.2/Wed Apr 28 12:28:54 2021/-ko/
+/ArgumentsAdjusters.h/1.1.1.2/Fri Dec 17 12:24:35 2021/-ko/
+/CommonOptionsParser.h/1.1.1.2/Fri Dec 17 12:24:35 2021/-ko/
+/CompilationDatabase.h/1.1.1.2/Fri Dec 17 12:24:35 2021/-ko/
+/CompilationDatabasePluginRegistry.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/DiagnosticsYaml.h/1.1.1.3/Fri Dec 17 12:24:35 2021/-ko/
+/Execution.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/FileMatchTrie.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/FixIt.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/JSONCompilationDatabase.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/NodeIntrospection.h/1.1.1.1/Fri Dec 17 12:24:35 2021/-ko/
+/Refactoring.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/RefactoringCallbacks.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/ReplacementsYaml.h/1.1.1.2/Wed Apr 28 12:28:54 2021/-ko/
+/StandaloneExecution.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/ToolExecutorPluginRegistry.h/1.1.1.1/Mon Aug  3 14:31:32 2020/-ko/
+/Tooling.h/1.1.1.3/Fri Dec 17 12:24:35 2021/-ko/
+D/ASTDiff////
+D/Core////
+D/DependencyScanning////
+D/Inclusions////
+D/Refactoring////
+D/Syntax////
+D/Transformer////

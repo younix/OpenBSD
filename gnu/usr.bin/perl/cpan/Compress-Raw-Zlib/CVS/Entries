@@ -1,0 +1,16 @@
+/Changes/1.3/Wed Feb 15 01:38:21 2023/-ko/
+/MANIFEST/1.1/Wed Feb 15 01:38:21 2023/-ko/
+/META.json/1.1/Wed Feb 15 01:38:21 2023/-ko/
+/Makefile.PL/1.4/Wed Feb 15 01:38:21 2023/-ko/
+/README/1.3/Wed Feb 15 01:38:21 2023/-ko/
+/Zlib.xs/1.5/Wed Feb 15 01:38:21 2023/-ko/
+/config.in/1.6/Wed Feb 15 01:38:21 2023/-ko/
+/ppport.h/1.1/Wed Feb 15 01:38:21 2023/-ko/
+/suppressions.asan/1.1/Wed Feb 15 01:38:21 2023/-ko/
+/typemap/1.1.1.3/Wed Feb 15 01:32:39 2023/-ko/
+D/examples////
+D/fallback////
+D/lib////
+D/private////
+D/t////
+D/zlib-src////
