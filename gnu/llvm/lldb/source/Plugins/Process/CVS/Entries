@@ -1,0 +1,14 @@
+D/FreeBSD////
+D/Linux////
+D/MacOSX-Kernel////
+D/NetBSD////
+D/OpenBSD////
+D/POSIX////
+D/Utility////
+D/Windows////
+D/elf-core////
+D/gdb-remote////
+D/mach-core////
+D/minidump////
+D/scripted////
+/CMakeLists.txt/1.4/Sat Dec  9 15:15:38 2023/-ko/

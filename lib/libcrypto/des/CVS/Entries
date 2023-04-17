@@ -1,0 +1,27 @@
+/COPYRIGHT/1.1.1.1/Mon Oct  5 20:12:42 1998//
+/cbc_enc.c/1.4/Sat Dec  9 15:15:43 2023//
+/des.h/1.21/Sat Dec  9 15:15:43 2023//
+/des_local.h/1.2/Sat Dec  9 15:15:43 2023//
+/fcrypt_b.c/1.12/Sat Dec  9 15:15:43 2023//
+/spr.h/1.8/Sat Dec  9 15:15:43 2023//
+/cbc_cksm.c/1.11/Tue Apr  2 20:14:34 2024//
+/cfb64ede.c/1.13/Tue Apr  2 20:14:34 2024//
+/cfb64enc.c/1.9/Tue Apr  2 20:14:34 2024//
+/cfb_enc.c/1.17/Tue Apr  2 20:14:34 2024//
+/des_enc.c/1.16/Tue Apr  2 20:14:34 2024//
+/ecb3_enc.c/1.10/Tue Apr  2 20:14:34 2024//
+/ecb_enc.c/1.20/Tue Apr  2 20:14:34 2024//
+/ede_cbcm_enc.c/1.10/Tue Apr  2 20:14:34 2024//
+/enc_read.c/1.18/Tue Apr  2 20:14:34 2024//
+/enc_writ.c/1.18/Tue Apr  2 20:14:34 2024//
+/fcrypt.c/1.16/Tue Apr  2 20:14:34 2024//
+/ncbc_enc.c/1.11/Tue Apr  2 20:14:34 2024//
+/ofb64ede.c/1.9/Tue Apr  2 20:14:34 2024//
+/ofb64enc.c/1.9/Tue Apr  2 20:14:34 2024//
+/ofb_enc.c/1.9/Tue Apr  2 20:14:34 2024//
+/pcbc_enc.c/1.10/Tue Apr  2 20:14:34 2024//
+/qud_cksm.c/1.11/Tue Apr  2 20:14:34 2024//
+/set_key.c/1.27/Tue Apr  2 20:14:34 2024//
+/str2key.c/1.14/Tue Apr  2 20:14:34 2024//
+/xcbc_enc.c/1.13/Tue Apr  2 20:14:34 2024//
+D

@@ -1,0 +1,20 @@
+D/altivec_ast////
+D/arch////
+D/copy////
+D/crypto////
+D/ddb////
+D/dev////
+D/ffs////
+D/fifofs////
+D/fileops////
+D/kern////
+D/mfs_noperm////
+D/net////
+D/netinet////
+D/netinet6////
+D/nfs////
+D/ptrace////
+D/sys////
+D/uvm////
+D/btcfi////
+/Makefile/1.28/Fri Mar 22 21:41:56 2024//

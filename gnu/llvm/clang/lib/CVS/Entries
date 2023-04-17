@@ -1,0 +1,27 @@
+D/APINotes////
+D/ARCMigrate////
+D/AST////
+D/ASTMatchers////
+D/Analysis////
+D/Basic////
+D/CodeGen////
+D/CrossTU////
+D/DirectoryWatcher////
+D/Driver////
+D/Edit////
+D/Format////
+D/Frontend////
+D/FrontendTool////
+D/Headers////
+D/Index////
+D/IndexSerialization////
+D/Interpreter////
+D/Lex////
+D/Parse////
+D/Rewrite////
+D/Sema////
+D/Serialization////
+D/StaticAnalyzer////
+D/Testing////
+D/Tooling////
+/CMakeLists.txt/1.1.1.4/Sat Dec  9 15:15:37 2023/-ko/

@@ -1,0 +1,20 @@
+/fdt.h/1.6/Sat Jul 18 09:44:59 2020//
+/files.ofw/1.7/Tue Jul  2 20:12:11 2019//
+/ofw_clock.c/1.11/Sun Aug  5 21:05:17 2018//
+/ofw_clock.h/1.7/Fri Feb  4 22:24:09 2022//
+/ofw_gpio.c/1.3/Mon Aug 26 09:22:27 2019//
+/ofw_gpio.h/1.5/Fri Dec 18 22:14:13 2020//
+/ofw_pci.h/1.4/Thu Jun 26 05:42:17 2008//
+/ofw_pinctrl.c/1.3/Sat Jun  6 16:59:43 2020//
+/ofw_pinctrl.h/1.2/Sun Aug 21 14:41:51 2016//
+/ofw_power.c/1.2/Fri Nov 26 11:44:01 2021//
+/ofw_power.h/1.2/Fri Nov 26 11:44:01 2021//
+/ofw_regulator.c/1.19/Sat Apr 15 03:19:43 2023//
+/ofw_regulator.h/1.8/Sat Apr  1 08:37:23 2023//
+/ofw_thermal.h/1.2/Thu Jan 23 23:10:04 2020//
+/openfirm.h/1.18/Thu May  6 19:45:16 2021//
+/ofw_misc.c/1.43/Sat Dec  9 15:15:44 2023//
+/ofw_misc.h/1.31/Sat Dec  9 15:15:44 2023//
+/ofw_thermal.c/1.8/Thu Jan 11 19:10:34 2024//
+/fdt.c/1.35/Tue Apr  2 20:14:59 2024//
+D

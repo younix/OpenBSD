@@ -1,0 +1,37 @@
+/README.txt/1.1.1.1/Mon Aug  3 14:30:25 2020/-ko/
+/XCore.td/1.1.1.1/Mon Aug  3 14:30:25 2020/-ko/
+/XCoreCallingConv.td/1.1.1.1/Mon Aug  3 14:30:25 2020/-ko/
+/XCoreFrameLowering.h/1.1.1.2/Wed Apr 28 12:28:17 2021/-ko/
+/XCoreInstrFormats.td/1.1.1.1/Mon Aug  3 14:30:25 2020/-ko/
+/XCoreMCInstLower.h/1.1.1.2/Wed Apr 28 12:28:18 2021/-ko/
+/XCoreRegisterInfo.td/1.1.1.2/Wed Apr 28 12:28:18 2021/-ko/
+/XCoreSelectionDAGInfo.cpp/1.1.1.2/Wed Apr 28 12:28:18 2021/-ko/
+/XCoreSelectionDAGInfo.h/1.1.1.2/Wed Apr 28 12:28:18 2021/-ko/
+/XCoreSubtarget.h/1.1.1.2/Fri Dec 17 12:23:39 2021/-ko/
+/XCoreTargetObjectFile.cpp/1.1.1.3/Fri Dec 17 12:23:39 2021/-ko/
+/XCoreTargetObjectFile.h/1.1.1.2/Wed Apr 28 12:28:18 2021/-ko/
+/XCoreTargetTransformInfo.h/1.1.1.1/Mon Aug  3 14:30:25 2020/-ko/
+D/Disassembler////
+D/MCTargetDesc////
+D/TargetInfo////
+/CMakeLists.txt/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCore.h/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreAsmPrinter.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreFrameLowering.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreFrameToArgsOffsetElim.cpp/1.1.1.2/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreISelDAGToDAG.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreISelLowering.cpp/1.1.1.4/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreISelLowering.h/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreInstrInfo.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreInstrInfo.h/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreInstrInfo.td/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreLowerThreadLocal.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreMCInstLower.cpp/1.1.1.2/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreMachineFunctionInfo.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreMachineFunctionInfo.h/1.1.1.2/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreRegisterInfo.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreRegisterInfo.h/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreSubtarget.cpp/1.1.1.3/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreTargetMachine.cpp/1.1.1.4/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreTargetMachine.h/1.1.1.2/Sat Dec  9 15:15:42 2023/-ko/
+/XCoreTargetStreamer.h/1.1.1.2/Sat Dec  9 15:15:42 2023/-ko/

@@ -1,0 +1,14 @@
+/bn_arch.c/1.7/Sat Dec  9 15:15:43 2023//
+/bignum_add.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_cmadd.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_cmul.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_mul.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_mul_4_8_alt.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_mul_8_16_alt.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_sqr.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_sqr_4_8_alt.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_sqr_8_16_alt.S/1.5/Fri Mar 22 20:49:58 2024//
+/bignum_sub.S/1.5/Fri Mar 22 20:49:58 2024//
+/word_clz.S/1.5/Fri Mar 22 20:49:58 2024//
+/bn_arch.h/1.14/Tue Apr  2 20:14:34 2024//
+D

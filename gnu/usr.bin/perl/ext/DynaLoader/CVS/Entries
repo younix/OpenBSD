@@ -1,0 +1,15 @@
+/DynaLoader_pm.PL/1.5/Wed Feb 15 01:36:30 2023/-ko/
+/Makefile.PL/1.25/Wed Feb 15 01:36:30 2023/-ko/
+/README/1.1.1.2/Mon Nov 17 20:53:05 2014/-ko/
+/dl_aix.xs/1.15/Mon Mar  1 23:19:55 2021/-ko/
+/dl_dllload.xs/1.2/Sun Feb  5 00:32:12 2017/-ko/
+/dl_dlopen.xs/1.18/Mon Mar  1 23:19:55 2021/-ko/
+/dl_dyld.xs/1.2/Sun Feb  5 00:32:12 2017/-ko/
+/dl_freemint.xs/1.2/Sun Feb  5 00:32:12 2017/-kb/
+/dl_hpux.xs/1.11/Sun Feb  5 00:32:12 2017/-ko/
+/dl_none.xs/1.2/Sun Feb  5 00:32:12 2017/-ko/
+/dl_vms.xs/1.12/Sun Feb  5 00:32:12 2017/-ko/
+/dl_win32.xs/1.3/Wed Feb 13 21:15:22 2019/-ko/
+/dlutils.c/1.13/Wed Feb 15 01:36:30 2023/-ko/
+D/hints////
+D/t////
