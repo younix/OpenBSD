@@ -28,6 +28,7 @@
 #include <sys/atomic.h>
 #include <sys/intrmap.h>
 #include <sys/kstat.h>
+#include <sys/tracepoint.h>
 
 #include <net/bpf.h>
 #include <net/if.h>
@@ -50,7 +51,7 @@
 
 #define NTXDESC 512 /* tx ring size */
 #define NTXSEGS 8 /* tx descriptors per packet */
-#define NRXDESC 512
+#define NRXDESC 4096
 #define NTXCOMPDESC NTXDESC
 #define NRXCOMPDESC (NRXDESC * 2)	/* ring1 + ring2 */
 
@@ -276,7 +277,26 @@ vmxnet3_attach(struct device *parent, struct device *self, void *aux)
 		printf(": unsupported hardware version 0x%x\n", ver);
 		return;
 	}
-	WRITE_BAR1(sc, VMXNET3_BAR1_VRRS, 1);
+
+#define VMXNET3_REV_1	0x00
+#define VMXNET3_REV_2	0x01
+#define VMXNET3_REV_3	0x02
+#define VMXNET3_REV_4	0x04
+
+	if (ver & VMXNET3_REV_4) {
+		ver = VMXNET3_REV_4;
+	} else if (ver & VMXNET3_REV_3) {
+		ver = VMXNET3_REV_3;
+	} else if (ver & VMXNET3_REV_2) {
+		ver = VMXNET3_REV_2;
+	} else if (ver & VMXNET3_REV_1) {
+		ver = VMXNET3_REV_1;
+	} else {
+		printf(": unsupported hardware version 0x%x\n", ver);
+		return;
+	}
+	WRITE_BAR1(sc, VMXNET3_BAR1_VRRS, ver);
+	printf(", hwver: %x", ver);
 
 	ver = READ_BAR1(sc, VMXNET3_BAR1_UVRS);
 	if ((ver & 0x1) == 0) {
@@ -284,6 +304,7 @@ vmxnet3_attach(struct device *parent, struct device *self, void *aux)
 		return;
 	}
 	WRITE_BAR1(sc, VMXNET3_BAR1_UVRS, 1);
+	printf(", uptver: %x", ver);
 
 	sc->sc_dmat = pa->pa_dmat;
 
@@ -503,7 +524,8 @@ vmxnet3_dma_init(struct vmxnet3_softc *sc)
 #endif
 	ds->vmxnet3_revision = 1;
 	ds->upt_version = 1;
-	ds->upt_features = UPT1_F_CSUM | UPT1_F_VLAN;
+	ds->upt_features = UPT1_F_CSUM | UPT1_F_VLAN | UPT1_F_LRO;
+	ds->nrxsg_max = 16;
 	ds->driver_data = ~0ULL;
 	ds->driver_data_len = 0;
 	ds->queue_shared = qs_pa;
@@ -709,8 +731,10 @@ vmxnet3_rxfill(struct vmxnet3_rxring *ring)
 		KASSERT(ring->m[prod] == NULL);
 
 		m = MCLGETL(NULL, M_DONTWAIT, JUMBO_LEN);
-		if (m == NULL)
+		if (m == NULL) {
+printf("%s:%d MCLGETL() == NULL\n", __func__, __LINE__);
 			break;
+		}
 
 		m->m_pkthdr.len = m->m_len = JUMBO_LEN;
 		m_adj(m, ETHER_ALIGN);
@@ -770,13 +794,15 @@ vmxnet3_rxinit(struct vmxnet3_softc *sc, struct vmxnet3_rxqueue *rq)
 		    VMX_DMA_LEN(&ring->dmamem));
 		bus_dmamap_sync(sc->sc_dmat, VMX_DMA_MAP(&ring->dmamem),
 		    0, VMX_DMA_LEN(&ring->dmamem), BUS_DMASYNC_PREWRITE);
-	}
 
-	/* XXX only fill ring 0 */
-	ring = &rq->cmd_ring[0];
-	mtx_enter(&ring->mtx);
-	vmxnet3_rxfill(ring);
-	mtx_leave(&ring->mtx);
+//		bzero(ring->rxd, NRXDESC * sizeof ring->rxd[0]);
+//		if_rxr_init(&ring->rxr, 2, NRXDESC - 1);
+
+		/* XXX try to fill both rings */
+		mtx_enter(&ring->mtx);
+		vmxnet3_rxfill(ring);
+		mtx_leave(&ring->mtx);
+	}
 
 	comp_ring = &rq->comp_ring;
 	comp_ring->next = 0;
@@ -878,12 +904,11 @@ vmxnet3_enable_all_intrs(struct vmxnet3_softc *sc)
 {
 	int i;
 
-	sc->sc_ds->ictrl &= ~VMXNET3_ICTRL_DISABLE_ALL;
-	vmxnet3_enable_intr(sc, 0);
-	if (sc->sc_intrmap) {
+	if (sc->sc_intrmap)
 		for (i = 0; i < sc->sc_nqueues; i++)
 			vmxnet3_enable_intr(sc, sc->sc_q[i].intr);
-	}
+
+	sc->sc_ds->ictrl &= ~VMXNET3_ICTRL_DISABLE_ALL;
 }
 
 void
@@ -892,11 +917,10 @@ vmxnet3_disable_all_intrs(struct vmxnet3_softc *sc)
 	int i;
 
 	sc->sc_ds->ictrl |= VMXNET3_ICTRL_DISABLE_ALL;
-	vmxnet3_disable_intr(sc, 0);
-	if (sc->sc_intrmap) {
+
+	if (sc->sc_intrmap)
 		for (i = 0; i < sc->sc_nqueues; i++)
 			vmxnet3_disable_intr(sc, sc->sc_q[i].intr);
-	}
 }
 
 int
@@ -1053,6 +1077,36 @@ vmxnet3_txintr(struct vmxnet3_softc *sc, struct vmxnet3_txqueue *tq)
 		ifq_restart(ifq);
 }
 
+struct rxcompdesc {
+	uint32_t	rxd_idx:12;	/* Rx descriptor index */
+	uint32_t	pad1:2;
+	uint32_t	eop:1;		/* End of packet */
+	uint32_t	sop:1;		/* Start of packet */
+	uint32_t	qid:10;
+	uint32_t	rss_type:4;
+	uint32_t	no_csum:1;	/* No checksum calculated */
+	uint32_t	pad2:1;
+
+	uint32_t	rss_hash:32;	/* RSS hash value */
+
+	uint32_t	len:14;
+	uint32_t	error:1;
+	uint32_t	vlan:1;		/* 802.1Q VLAN frame */
+	uint32_t	vtag:16;	/* VLAN tag */
+
+	uint32_t	csum:16;
+	uint32_t	csum_ok:1;	/* TCP/UDP checksum ok */
+	uint32_t	udp:1;
+	uint32_t	tcp:1;
+	uint32_t	ipcsum_ok:1;	/* IP checksum OK */
+	uint32_t	ipv6:1;
+	uint32_t	ipv4:1;
+	uint32_t	fragment:1;	/* IP fragment */
+	uint32_t	fcs:1;		/* Frame CRC correct */
+	uint32_t	type:7;
+	uint32_t	gen:1;
+} __packed;
+
 void
 vmxnet3_rxintr(struct vmxnet3_softc *sc, struct vmxnet3_rxqueue *rq)
 {
@@ -1065,7 +1119,8 @@ vmxnet3_rxintr(struct vmxnet3_softc *sc, struct vmxnet3_rxqueue *rq)
 	bus_dmamap_t map;
 	unsigned int idx, len;
 	unsigned int next, rgen;
-	unsigned int done = 0;
+	unsigned int done[2] = {0, 0};
+	int i = 0;
 
 	next = comp_ring->next;
 	rgen = comp_ring->gen;
@@ -1074,9 +1129,16 @@ vmxnet3_rxintr(struct vmxnet3_softc *sc, struct vmxnet3_rxqueue *rq)
 	    0, VMX_DMA_LEN(&comp_ring->dmamem), BUS_DMASYNC_POSTREAD);
 
 	for (;;) {
+		struct rxcompdesc *RXCD = (struct rxcompdesc *)&comp_ring->rxcd[next];
 		rxcd = &comp_ring->rxcd[next];
 		if ((rxcd->rxc_word3 & VMX_RXC_GEN) != rgen)
 			break;
+
+TRACEPOINT(vmx, vmxnet3_rxintrt, RXCD->qid, sc->sc_nqueues);
+TRACEPOINT(vmx, vmxnet3_rxintr0, rxcd->rxc_word0);
+
+// 0x7f000000
+//    3000000
 
 		if (++next == NRXCOMPDESC) {
 			next = 0;
@@ -1087,9 +1149,12 @@ vmxnet3_rxintr(struct vmxnet3_softc *sc, struct vmxnet3_rxqueue *rq)
 		    VMXNET3_RXC_IDX_M);
 		if (letoh32((rxcd->rxc_word0 >> VMXNET3_RXC_QID_S) &
 		    VMXNET3_RXC_QID_M) < sc->sc_nqueues)
-			ring = &rq->cmd_ring[0];
+			i = 0;
 		else
-			ring = &rq->cmd_ring[1];
+			i = 1;
+
+		ring = &rq->cmd_ring[i];
+TRACEPOINT(vmx, vmxnet3_rxintr, i);
 
 		m = ring->m[idx];
 		KASSERT(m != NULL);
@@ -1100,7 +1165,7 @@ vmxnet3_rxintr(struct vmxnet3_softc *sc, struct vmxnet3_rxqueue *rq)
 		    BUS_DMASYNC_POSTREAD);
 		bus_dmamap_unload(sc->sc_dmat, map);
 
-		done++;
+		done[i]++;
 
 		if (letoh32(rxcd->rxc_word2 & VMXNET3_RXC_ERROR)) {
 			ifp->if_ierrors++;
@@ -1137,19 +1202,21 @@ vmxnet3_rxintr(struct vmxnet3_softc *sc, struct vmxnet3_rxqueue *rq)
 	comp_ring->next = next;
 	comp_ring->gen = rgen;
 
-	if (done == 0)
-		return;
+	for (i = 0; i < 2; i++) {
+		if (done[i] == 0)
+			continue;
 
-	ring = &rq->cmd_ring[0];
+		ring = &rq->cmd_ring[i];
 
-	if (ifiq_input(rq->ifiq, &ml))
-		if_rxr_livelocked(&ring->rxr);
+		if (ifiq_input(rq->ifiq, &ml))
+			if_rxr_livelocked(&ring->rxr);
 
-	/* XXX Should we (try to) allocate buffers for ring 2 too? */
-	mtx_enter(&ring->mtx);
-	if_rxr_put(&ring->rxr, done);
-	vmxnet3_rxfill(ring);
-	mtx_leave(&ring->mtx);
+		/* XXX try to allocate buffers for ring 2 too? */
+		mtx_enter(&ring->mtx);
+		if_rxr_put(&ring->rxr, done[i]);
+		vmxnet3_rxfill(ring);
+		mtx_leave(&ring->mtx);
+	}
 }
 
 void

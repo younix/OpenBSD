@@ -81,6 +81,11 @@ DT_STATIC_PROBE3(vmm, guest_exit, "void *", "void *", "uint64_t");
 DT_STATIC_PROBE4(vmm, inout, "void *", "uint16_t", "uint8_t", "uint32_t");
 #endif /* __amd64__ */
 
+/* VMX */
+DT_STATIC_PROBE1(vmx, vmxnet3_rxintr, "int");
+DT_STATIC_PROBE2(vmx, vmxnet3_rxintrt, "int", "int");
+DT_STATIC_PROBE1(vmx, vmxnet3_rxintr0, "int");
+
 /*
  * SMR
  */
@@ -155,6 +160,10 @@ struct dt_probe *const dtps_static[] = {
 	&_DT_STATIC_P(refcnt, rtentry),
 	&_DT_STATIC_P(refcnt, syncache),
 	&_DT_STATIC_P(refcnt, tdb),
+	/* VMX */
+	&_DT_STATIC_P(vmx, vmxnet3_rxintr),
+	&_DT_STATIC_P(vmx, vmxnet3_rxintrt),
+	&_DT_STATIC_P(vmx, vmxnet3_rxintr0),
 };
 
 struct dt_probe *const *dtps_index_refcnt;
