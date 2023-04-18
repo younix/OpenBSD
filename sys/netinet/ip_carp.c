@@ -1781,8 +1781,17 @@ carp_set_enaddr(struct carp_softc *sc)
 		 * (re)attach a link-local address which matches
 		 * our new MAC address.
 		 */
-		if (sc->sc_naddrs6)
+		if (sc->sc_naddrs6) {
+			struct in6_ifaddr *ia6;
+
+			/* delete linklocal address based on old lladdr */
+			ia6 = in6ifa_ifpforlinklocal(&sc->sc_if, 0);
+			if (ia6 == NULL)
+				in6_purgeaddr(&ia6->ia_ifa);
+
+			/* set new linklocal address based on new lladdr */
 			in6_ifattach_linklocal(&sc->sc_if, NULL);
+		}
 #endif
 		carp_set_state_all(sc, INIT);
 		carp_setrun_all(sc, 0);
