@@ -159,7 +159,7 @@ acpiec_sci_event(struct acpiec_softc *sc)
 	evt = bus_space_read_1(sc->sc_data_bt, sc->sc_data_bh, 0);
 
 	if (evt) {
-		dnprintf(10, "%s: sci_event: 0x%02x\n", DEVNAME(sc), (int)evt);
+		dnprintf(0, "%s: sci_event: 0x%02x\n", DEVNAME(sc), (int)evt);
 		aml_evalnode(sc->sc_acpi, sc->sc_events[evt].event, 0, NULL,
 		    NULL);
 	}
