@@ -55,7 +55,7 @@
 #include "wd.h"
 
 #ifdef ACPI_DEBUG
-int	acpi_debug = 16;
+int	acpi_debug = 0;
 #endif
 
 int	acpi_poll_enabled;
