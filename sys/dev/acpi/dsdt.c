@@ -798,78 +798,79 @@ aml_showvalue(struct aml_value *val)
 		return;
 
 	if (val->node)
-		printf(" [%s]", aml_nodename(val->node));
-	printf(" %p cnt:%.2x stk:%.2x", val, val->refcnt, val->stack);
+		dnprintf(1, " [%s]", aml_nodename(val->node));
+
+	dnprintf(1, " %p cnt:%.2x stk:%.2x", val, val->refcnt, val->stack);
 	switch (val->type) {
 	case AML_OBJTYPE_INTEGER:
-		printf(" integer: %llx\n", val->v_integer);
+		dnprintf(1, " integer: %llx\n", val->v_integer);
 		break;
 	case AML_OBJTYPE_STRING:
-		printf(" string: %s\n", val->v_string);
+		dnprintf(1, " string: %s\n", val->v_string);
 		break;
 	case AML_OBJTYPE_METHOD:
-		printf(" method: %.2x\n", val->v_method.flags);
+		dnprintf(1, " method: %.2x\n", val->v_method.flags);
 		break;
 	case AML_OBJTYPE_PACKAGE:
-		printf(" package: %.2x\n", val->length);
+		dnprintf(1, " package: %.2x\n", val->length);
 		for (idx = 0; idx < val->length; idx++)
 			aml_showvalue(val->v_package[idx]);
 		break;
 	case AML_OBJTYPE_BUFFER:
-		printf(" buffer: %.2x {", val->length);
+		dnprintf(1, " buffer: %.2x {", val->length);
 		for (idx = 0; idx < val->length; idx++)
-			printf("%s%.2x", idx ? ", " : "", val->v_buffer[idx]);
-		printf("}\n");
+			dnprintf(1, "%s%.2x", idx ? ", " : "", val->v_buffer[idx]);
+		dnprintf(1, "}\n");
 		break;
 	case AML_OBJTYPE_FIELDUNIT:
 	case AML_OBJTYPE_BUFFERFIELD:
-		printf(" field: bitpos=%.4x bitlen=%.4x ref1:%p ref2:%p [%s]\n",
+		dnprintf(1, " field: bitpos=%.4x bitlen=%.4x ref1:%p ref2:%p [%s]\n",
 		    val->v_field.bitpos, val->v_field.bitlen,
 		    val->v_field.ref1, val->v_field.ref2,
 		    aml_mnem(val->v_field.type, NULL));
 		if (val->v_field.ref1)
-			printf("  ref1: %s\n", aml_nodename(val->v_field.ref1->node));
+			dnprintf(1, "  ref1: %s\n", aml_nodename(val->v_field.ref1->node));
 		if (val->v_field.ref2)
-			printf("  ref2: %s\n", aml_nodename(val->v_field.ref2->node));
+			dnprintf(1, "  ref2: %s\n", aml_nodename(val->v_field.ref2->node));
 		break;
 	case AML_OBJTYPE_MUTEX:
-		printf(" mutex: %s ref: %d\n",
+		dnprintf(1, " mutex: %s ref: %d\n",
 		    val->v_mutex ?  val->v_mutex->amt_name : "",
 		    val->v_mutex ?  val->v_mutex->amt_ref_count : 0);
 		break;
 	case AML_OBJTYPE_EVENT:
-		printf(" event:\n");
+		dnprintf(1, " event:\n");
 		break;
 	case AML_OBJTYPE_OPREGION:
-		printf(" opregion: %.2x,%.8llx,%x\n",
+		dnprintf(1, " opregion: %.2x,%.8llx,%x\n",
 		    val->v_opregion.iospace, val->v_opregion.iobase,
 		    val->v_opregion.iolen);
 		break;
 	case AML_OBJTYPE_NAMEREF:
-		printf(" nameref: %s\n", aml_getname(val->v_nameref));
+		dnprintf(1, " nameref: %s\n", aml_getname(val->v_nameref));
 		break;
 	case AML_OBJTYPE_DEVICE:
-		printf(" device:\n");
+		dnprintf(1, " device:\n");
 		break;
 	case AML_OBJTYPE_PROCESSOR:
-		printf(" cpu: %.2x,%.4x,%.2x\n",
+		dnprintf(1, " cpu: %.2x,%.4x,%.2x\n",
 		    val->v_processor.proc_id, val->v_processor.proc_addr,
 		    val->v_processor.proc_len);
 		break;
 	case AML_OBJTYPE_THERMZONE:
-		printf(" thermzone:\n");
+		dnprintf(1, " thermzone:\n");
 		break;
 	case AML_OBJTYPE_POWERRSRC:
-		printf(" pwrrsrc: %.2x,%.2x\n",
+		dnprintf(1, " pwrrsrc: %.2x,%.2x\n",
 		    val->v_powerrsrc.pwr_level, val->v_powerrsrc.pwr_order);
 		break;
 	case AML_OBJTYPE_OBJREF:
-		printf(" objref: %p index:%x opcode:%s\n", val->v_objref.ref,
+		dnprintf(1, " objref: %p index:%x opcode:%s\n", val->v_objref.ref,
 		    val->v_objref.index, aml_mnem(val->v_objref.type, 0));
 		aml_showvalue(val->v_objref.ref);
 		break;
 	default:
-		printf(" !!type: %x\n", val->type);
+		dnprintf(1, " !!type: %x\n", val->type);
 	}
 }
 #endif /* SMALL_KERNEL */
