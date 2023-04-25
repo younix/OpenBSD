@@ -22,6 +22,8 @@ option		NTFS		# NTFS support
 option		SUSPEND
 option		HIBERNATE
 
+option		ACPI_DEBUG
+
 config		bsd	swap generic
 
 mainbus0 at root
