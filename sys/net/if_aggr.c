@@ -1355,6 +1355,9 @@ aggr_p_ioctl(struct ifnet *ifp0, u_long cmd, caddr_t data)
 				aggr_unselected(p);
 				aggr_ntt_transmit(p); /* XXX */
 			}
+
+			/* XXX this is a pretty ugly place to update this */
+			aggr_update_capabilities(p->p_aggr);
 		}
 		/* FALLTHROUGH */
 	default:
@@ -2616,7 +2619,14 @@ aggr_update_capabilities(struct aggr_softc *sc)
 	struct aggr_port *p;
 	uint32_t hardmtu = ETHER_MAX_HARDMTU_LEN;
 	uint32_t capabilities = ~0;
+	int xflags = IFXF_TSO;
 	int set = 0;
+
+	/*
+	 * Do not inherit TSO via hardware capabilities.  aggr(4) inherits the
+	 * TSO flag via the xflags from its trunk port interfaces.
+	 */
+	CLR(capabilities, IFCAP_TSO);
 
 	rw_enter_read(&sc->sc_lock);
 	TAILQ_FOREACH(p, &sc->sc_ports, p_entry) {
@@ -2624,6 +2634,7 @@ aggr_update_capabilities(struct aggr_softc *sc)
 
 		set = 1;
 		capabilities &= ifp0->if_capabilities;
+		xflags &= ifp0->if_xflags;
 		if (ifp0->if_hardmtu < hardmtu)
 			hardmtu = ifp0->if_hardmtu;
 	}
@@ -2631,6 +2642,12 @@ aggr_update_capabilities(struct aggr_softc *sc)
 
 	sc->sc_if.if_hardmtu = hardmtu;
 	sc->sc_if.if_capabilities = (set ? capabilities : 0);
+	if (set) {
+		if (xflags)
+			SET(sc->sc_if.if_xflags, IFXF_TSO);
+		else
+			CLR(sc->sc_if.if_xflags, IFXF_TSO);
+	}
 }
 
 static void

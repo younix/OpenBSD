@@ -3134,14 +3134,15 @@ ifsettso(struct ifnet *ifp, int on)
 	int error = 0;
 	int s = splnet();
 
+	if (!ISSET(ifp->if_capabilities, IFCAP_TSO)) {
+		error = ENOTSUP;
+		goto out;
+	}
+
 	NET_ASSERT_LOCKED();	/* for ioctl */
 	KERNEL_ASSERT_LOCKED();	/* for if_flags */
 
 	if (on && !ISSET(ifp->if_xflags, IFXF_TSO)) {
-		if (!ISSET(ifp->if_capabilities, IFCAP_TSO)) {
-			error = ENOTSUP;
-			goto out;
-		}
 		if (ether_brport_isset(ifp)) {
 			error = EBUSY;
 			goto out;
