@@ -252,6 +252,12 @@ trunk_capabilities(struct trunk_softc *tr)
 	struct trunk_port *tp;
 	int cap = ~0, priv;
 
+	/*
+	 * Do not inherit TSO via hardware capabilities.  trunk(4) inherits the
+	 * TSO flag via the xflags from its trunk port interfaces.
+	 */
+	CLR(cap, IFCAP_TSO);
+
 	/* Preserve private capabilities */
 	priv = tr->tr_capabilities & IFCAP_TRUNK_MASK;
 
@@ -265,6 +271,26 @@ trunk_capabilities(struct trunk_softc *tr)
 	}
 
 	return (cap == ~0 ? priv : (cap | priv));
+}
+
+void
+trunk_update_xflags(struct trunk_softc *tr)
+{
+	struct trunk_port *tp;
+	int xflags = IFXF_TSO;
+	int set = 0;
+
+	SLIST_FOREACH(tp, &tr->tr_ports, tp_entries) {
+		set = 1;
+		xflags &= tp->tp_if->if_xflags;
+	}
+
+	if (set) {
+		if (xflags)
+			SET(tr->tr_ac.ac_if.if_xflags, IFXF_TSO);
+		else
+			CLR(tr->tr_ac.ac_if.if_xflags, IFXF_TSO);
+	}
 }
 
 void
@@ -387,6 +413,8 @@ trunk_port_create(struct trunk_softc *tr, struct ifnet *ifp)
 	ac0->ac_trunkport = tp;
 	ifp->if_input = trunk_input;
 
+	trunk_update_xflags(tr);
+
 	return (error);
 }
 
@@ -469,6 +497,8 @@ trunk_port_destroy(struct trunk_port *tp)
 	/* Update trunk capabilities */
 	tr->tr_capabilities = trunk_capabilities(tr);
 
+	trunk_update_xflags(tr);
+
 	return (0);
 }
 
@@ -522,6 +552,9 @@ trunk_port_ioctl(struct ifnet *ifp, u_long cmd, caddr_t data)
  fallback:
 	if (tp != NULL)
 		error = (*tp->tp_ioctl)(ifp, cmd, data);
+
+	if (cmd == SIOCSIFFLAGS)
+		trunk_update_xflags(tr);
 
 	return (error);
 }
