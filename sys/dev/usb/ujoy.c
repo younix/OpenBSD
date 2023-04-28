@@ -79,8 +79,12 @@ ujoy_hid_is_collection(const void *desc, int size, uint8_t id, int32_t usage)
 		    hi.collection == HCOLL_APPLICATION)
 			coll_usage = hi.usage;
 
+printf("%s:%d coll_usage: 0x%08x\n", __func__, __LINE__, coll_usage);
+
 		if (hi.kind == hid_endcollection)
 			coll_usage = ~0;
+
+printf("%s:%d coll_usage: 0x%08x\n", __func__, __LINE__, coll_usage);
 
 		if (hi.kind == hid_input &&
 		    coll_usage == usage &&

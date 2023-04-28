@@ -672,6 +672,8 @@ wskbd_input(struct device *dev, u_int type, int value)
 	int num;
 #endif
 
+printf("%s:%d %s: %d\n", __func__, __LINE__, sc->sc_base.me_dv.dv_xname, value);
+
 #if NWSDISPLAY > 0
 	if (sc->sc_repeating) {
 		sc->sc_repeating = 0;
