@@ -92,6 +92,11 @@ printf("%s:%d coll_usage: 0x%08x\n", __func__, __LINE__, coll_usage);
 			hid_end_parse(hd);
 			return (1);
 		}
+
+		if (coll_usage == 0xffff0001) {
+printf("%s:%d ATTACH!!!\n", __func__, __LINE__);
+			return (1);
+		}
 	}
 	hid_end_parse(hd);
 
