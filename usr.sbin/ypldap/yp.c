@@ -700,7 +700,7 @@ ypproc_maplist_2_svc(domainname *arg, struct svc_req *req)
 void
 yp_make_val(struct ypresp_val *res, char *line, int replacecolon)
 {
-	static char		 buf[LINE_WIDTH];
+	static char		 buf[LONG_WIDTH];
 
 	memset(buf, 0, sizeof(buf));
 

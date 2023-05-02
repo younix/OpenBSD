@@ -23,6 +23,7 @@
 #define YPLDAP_CONF_FILE	"/etc/ypldap.conf"
 #define DEFAULT_INTERVAL	600
 #define LINE_WIDTH		1024
+#define LONG_WIDTH		4096
 #define FILTER_WIDTH		128
 #define ATTR_WIDTH		32
 
@@ -137,7 +138,7 @@ struct idm_req {
 		uid_t			 ik_uid;
 		uid_t			 ik_gid;
 	}				 ir_key;
-	char				 ir_line[LINE_WIDTH];
+	char				 ir_line[LONG_WIDTH];
 };
 
 struct imsgev {
