@@ -454,7 +454,9 @@ sendit:
 	/*
 	 * If small enough for interface, can just send directly.
 	 */
-	if (ntohs(ip->ip_len) <= mtu) {
+	if (ntohs(ip->ip_len) <= mtu ||
+	    (ISSET(m->m_pkthdr.csum_flags, M_TCP_TSO) &&
+	     ISSET(ifp->if_capabilities, IFCAP_TSO))) {
 		ip->ip_sum = 0;
 		if (in_ifcap_cksum(m, ifp, IFCAP_CSUM_IPv4))
 			m->m_pkthdr.csum_flags |= M_IPV4_CSUM_OUT;
