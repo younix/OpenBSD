@@ -1336,6 +1336,7 @@ The currently defined protocols and names are:
 .It tcp Ta syncachelimit Ta integer Ta yes
 .It tcp Ta synhashsize Ta integer Ta yes
 .It tcp Ta synuselimit Ta integer Ta yes
+.It tcp Ta tso Ta integer Ta yes
 .It udp Ta baddynamic Ta array Ta yes
 .It udp Ta checksum Ta integer Ta yes
 .It udp Ta recvspace Ta integer Ta yes
@@ -1742,6 +1743,10 @@ SYN cache becomes empty and both SYN caches are swapped.
 .It Li tcp.synuselimit Pq Va net.inet.tcp.synuselimit
 The minimum number of times the hash function for the TCP SYN cache is used
 before it is reseeded.
+.It Li tcp.tso Pq Va net.inet.tcp.tso
+If set to 0, disable TCP segmentation offload (TSO).
+TSO is enabled by default.
+The default is enabled (1).
 .It Li udp.baddynamic Pq Va net.inet.udp.baddynamic
 Analogous to
 .Li tcp.baddynamic
