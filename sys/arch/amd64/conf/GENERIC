@@ -370,6 +370,9 @@ rtsx*	at pci?			# Realtek SD Card Reader
 sdmmc*	at rtsx?		# SD/MMC bus
 bwfm*	at sdmmc?		# Broadcom FullMAC
 
+# Bluetooth controllers
+ubt*	at uhub?		# USB Bluetooth
+
 isadma0	at isa?
 
 option	WSDISPLAY_COMPAT_USL		# VT handling

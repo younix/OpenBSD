@@ -401,6 +401,11 @@ device	atu: ether, ifnet, ifmedia, wlan, firmload
 attach	atu at uhub
 file	dev/usb/if_atu.c		atu
 
+# Bluetooth
+device	ubt
+attach	ubt at uhub
+file	dev/usb/ubt.c			ubt
+
 # Ralink Technology RT2500USB
 device	ural: ether, ifnet, ifmedia, wlan
 attach	ural at uhub
