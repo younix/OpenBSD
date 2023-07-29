@@ -174,7 +174,7 @@ struct ubt_isoc_xfer {
 };
 
 struct ubt_softc {
-	device_t		 sc_dev;
+	struct device		*sc_dev;
 	struct usbd_device	*sc_udev;
 	int			 sc_refcnt;
 	int			 sc_dying;
@@ -244,20 +244,20 @@ struct ubt_softc {
  * Bluetooth unit/USB callback routines
  *
  */
-static int ubt_enable(device_t);
-static void ubt_disable(device_t);
+static int ubt_enable(struct device *);
+static void ubt_disable(struct device *);
 
-static void ubt_xmit_cmd(device_t, struct mbuf *);
+static void ubt_xmit_cmd(struct device *, struct mbuf *);
 static void ubt_xmit_cmd_start(struct ubt_softc *);
 static void ubt_xmit_cmd_complete(struct usbd_xfer *,
 				void *, usbd_status);
 
-static void ubt_xmit_acl(device_t, struct mbuf *);
+static void ubt_xmit_acl(struct device *, struct mbuf *);
 static void ubt_xmit_acl_start(struct ubt_softc *);
 static void ubt_xmit_acl_complete(struct usbd_xfer *,
 				void *, usbd_status);
 
-static void ubt_xmit_sco(device_t, struct mbuf *);
+static void ubt_xmit_sco(struct device *, struct mbuf *);
 static void ubt_xmit_sco_start(struct ubt_softc *);
 static void ubt_xmit_sco_start1(struct ubt_softc *, struct ubt_isoc_xfer *);
 static void ubt_xmit_sco_complete(struct usbd_xfer *,
@@ -274,7 +274,7 @@ static void ubt_recv_sco_start1(struct ubt_softc *, struct ubt_isoc_xfer *);
 static void ubt_recv_sco_complete(struct usbd_xfer *,
 				void *, usbd_status);
 
-static void ubt_stats(device_t, struct bt_stats *, int);
+static void ubt_stats(struct device *, struct bt_stats *, int);
 
 static const struct hci_if ubt_hci = {
 	.enable = ubt_enable,
@@ -292,10 +292,10 @@ static const struct hci_if ubt_hci = {
  *
  */
 
-static int	ubt_match(device_t, cfdata_t, void *);
-static void	ubt_attach(device_t, device_t, void *);
-static int	ubt_detach(device_t, int);
-static int	ubt_activate(device_t, enum devact);
+static int	ubt_match(struct device *, cfdata_t, void *);
+static void	ubt_attach(struct device *, struct device *, void *);
+static int	ubt_detach(struct device *, int);
+static int	ubt_activate(struct device *, enum devact);
 
 CFATTACH_DECL_NEW(ubt, sizeof(struct ubt_softc), ubt_match, ubt_attach,
     ubt_detach, ubt_activate);
@@ -448,7 +448,7 @@ static const struct ubt_devno {
 };
 
 static int
-ubt_match(device_t parent, cfdata_t match, void *aux)
+ubt_match(struct device *parent, cfdata_t match, void *aux)
 {
 	struct usb_attach_arg *uaa = aux;
 	size_t i;
@@ -479,7 +479,7 @@ ubt_match(device_t parent, cfdata_t match, void *aux)
 }
 
 static void
-ubt_attach(device_t parent, device_t self, void *aux)
+ubt_attach(struct device *parent, struct device *self, void *aux)
 {
 	struct ubt_softc *sc = device_private(self);
 	struct usb_attach_arg *uaa = aux;
@@ -678,7 +678,7 @@ ubt_attach(device_t parent, device_t self, void *aux)
 }
 
 static int
-ubt_detach(device_t self, int flags)
+ubt_detach(struct device *self, int flags)
 {
 	struct ubt_softc *sc = device_private(self);
 	int s;
@@ -725,7 +725,7 @@ ubt_detach(device_t self, int flags)
 }
 
 static int
-ubt_activate(device_t self, enum devact act)
+ubt_activate(struct device *self, enum devact act)
 {
 	struct ubt_softc *sc = device_private(self);
 
@@ -988,7 +988,7 @@ ubt_abortdealloc(struct ubt_softc *sc)
  *
  */
 static int
-ubt_enable(device_t self)
+ubt_enable(struct device *self)
 {
 	struct ubt_softc *sc = device_private(self);
 	usbd_status err;
@@ -1116,7 +1116,7 @@ bad:
 }
 
 static void
-ubt_disable(device_t self)
+ubt_disable(struct device *self)
 {
 	struct ubt_softc *sc = device_private(self);
 	int s;
@@ -1134,7 +1134,7 @@ ubt_disable(device_t self)
 }
 
 static void
-ubt_xmit_cmd(device_t self, struct mbuf *m)
+ubt_xmit_cmd(struct device *self, struct mbuf *m)
 {
 	struct ubt_softc *sc = device_private(self);
 	int s;
@@ -1243,7 +1243,7 @@ ubt_xmit_cmd_complete(struct usbd_xfer *xfer,
 }
 
 static void
-ubt_xmit_acl(device_t self, struct mbuf *m)
+ubt_xmit_acl(struct device *self, struct mbuf *m)
 {
 	struct ubt_softc *sc = device_private(self);
 	int s;
@@ -1351,7 +1351,7 @@ ubt_xmit_acl_complete(struct usbd_xfer *xfer,
 }
 
 static void
-ubt_xmit_sco(device_t self, struct mbuf *m)
+ubt_xmit_sco(struct device *self, struct mbuf *m)
 {
 	struct ubt_softc *sc = device_private(self);
 	int s;
@@ -1845,7 +1845,7 @@ restart: /* and restart */
 }
 
 void
-ubt_stats(device_t self, struct bt_stats *dest, int flush)
+ubt_stats(struct device *self, struct bt_stats *dest, int flush)
 {
 	struct ubt_softc *sc = device_private(self);
 	int s;
