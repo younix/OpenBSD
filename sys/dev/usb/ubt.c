@@ -325,6 +325,7 @@ static const struct ubt_devno {
 	    -1,
 	    UMATCH_NONE
 	},
+#if notyet
 	{   /* Apple Bluetooth Host Controller MacbookPro 7,1 */
 	    USB_VENDOR_APPLE,
 	    USB_PRODUCT_APPLE_BLUETOOTH_HOST_1,
@@ -389,6 +390,7 @@ static const struct ubt_devno {
 	    -1,
 	    UMATCH_VENDOR_PRODUCT
 	},
+#endif
 	{   /* Broadcom chips with PatchRAM support */
 	    USB_VENDOR_BROADCOM,
 	    -1,
