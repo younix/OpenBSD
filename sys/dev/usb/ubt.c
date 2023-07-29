@@ -292,7 +292,7 @@ static const struct hci_if ubt_hci = {
  *
  */
 
-static int	ubt_match(struct device *, cfdata_t, void *);
+static int	ubt_match(struct device *, struct cfdata *, void *);
 static void	ubt_attach(struct device *, struct device *, void *);
 static int	ubt_detach(struct device *, int);
 static int	ubt_activate(struct device *, enum devact);
@@ -450,7 +450,7 @@ static const struct ubt_devno {
 };
 
 static int
-ubt_match(struct device *parent, cfdata_t match, void *aux)
+ubt_match(struct device *parent, struct cfdata *match, void *aux)
 {
 	struct usb_attach_arg *uaa = aux;
 	size_t i;
