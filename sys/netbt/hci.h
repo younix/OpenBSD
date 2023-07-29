@@ -2465,7 +2465,7 @@ struct hci_link {
 	/* SCO link info */
 	struct hci_link		*hl_link;	/* SCO ACL link */
 	struct sco_pcb		*hl_sco;	/* SCO pcb */
-	MBUFQ_HEAD()		 hl_data;	/* SCO outgoing data */
+	struct ifqueue		 hl_data;	/* SCO outgoing data */
 };
 
 /* hci_link state */
@@ -2552,16 +2552,16 @@ struct hci_unit {
 	/* input queues */
 	void			*hci_rxint;	/* receive interrupt cookie */
 	kmutex_t		 hci_devlock;	/* device queue lock */
-	MBUFQ_HEAD()		 hci_eventq;	/* Event queue */
-	MBUFQ_HEAD()		 hci_aclrxq;	/* ACL rx queue */
-	MBUFQ_HEAD()		 hci_scorxq;	/* SCO rx queue */
+	struct ifqueue		 hci_eventq;	/* Event queue */
+	struct ifqueue		 hci_aclrxq;	/* ACL rx queue */
+	struct ifqueue		 hci_scorxq;	/* SCO rx queue */
 	uint16_t		 hci_eventqlen;	/* Event queue length */
 	uint16_t		 hci_aclrxqlen;	/* ACL rx queue length */
 	uint16_t		 hci_scorxqlen;	/* SCO rx queue length */
 
 	/* output queues */
-	MBUFQ_HEAD()		 hci_cmdwait;	/* pending commands */
-	MBUFQ_HEAD()		 hci_scodone;	/* SCO done queue */
+	struct ifqueue		 hci_cmdwait;	/* pending commands */
+	struct ifqueue		 hci_scodone;	/* SCO done queue */
 
 	SIMPLEQ_ENTRY(hci_unit) hci_next;
 };

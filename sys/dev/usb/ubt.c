@@ -187,7 +187,7 @@ struct ubt_softc {
 	struct usbd_xfer	*sc_cmd_xfer;
 	uint8_t			*sc_cmd_buf;
 	int			 sc_cmd_busy;	/* write active */
-	MBUFQ_HEAD()		 sc_cmd_queue;	/* output queue */
+	struct ifqueue		 sc_cmd_queue;	/* output queue */
 
 	/* Events (interrupt) */
 	int			 sc_evt_addr;	/* endpoint address */
@@ -207,7 +207,7 @@ struct ubt_softc {
 	struct usbd_xfer	*sc_aclwr_xfer;	/* write xfer */
 	uint8_t			*sc_aclwr_buf;	/* write buffer */
 	int			 sc_aclwr_busy;	/* write active */
-	MBUFQ_HEAD()		 sc_aclwr_queue;/* output queue */
+	struct ifqueue		 sc_aclwr_queue;/* output queue */
 
 	/* ISOC interface */
 	struct usbd_interface	*sc_iface1;	/* ISOC interface */
@@ -229,7 +229,7 @@ struct ubt_softc {
 	struct ubt_isoc_xfer	 sc_scowr[UBT_NXFERS];
 	struct mbuf		*sc_scowr_mbuf;	/* current packet */
 	int			 sc_scowr_busy;	/* write active */
-	MBUFQ_HEAD()		 sc_scowr_queue;/* output queue */
+	struct ifqueue		 sc_scowr_queue;/* output queue */
 
 	/* Protocol structure */
 	struct hci_unit		*sc_unit;
@@ -497,9 +497,10 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_dev = self;
 	sc->sc_udev = uaa->uaa_device;
 
-	MBUFQ_INIT(&sc->sc_cmd_queue);
-	MBUFQ_INIT(&sc->sc_aclwr_queue);
-	MBUFQ_INIT(&sc->sc_scowr_queue);
+	// TODO: Fix NULLs before flight
+	ifq_init(&sc->sc_cmd_queue, NULL, 0);
+	ifq_init(&sc->sc_aclwr_queue, NULL, 0);
+	ifq_init(&sc->sc_scowr_queue, NULL, 0);
 
 	aprint_naive("\n");
 	aprint_normal("\n");
@@ -979,9 +980,9 @@ ubt_abortdealloc(struct ubt_softc *sc)
 	}
 
 	/* Empty mbuf queues */
-	MBUFQ_DRAIN(&sc->sc_cmd_queue);
-	MBUFQ_DRAIN(&sc->sc_aclwr_queue);
-	MBUFQ_DRAIN(&sc->sc_scowr_queue);
+	ifq_purge(&sc->sc_cmd_queue);
+	ifq_purge(&sc->sc_aclwr_queue);
+	ifq_purge(&sc->sc_scowr_queue);
 }
 
 /*******************************************************************************
@@ -1144,7 +1145,7 @@ ubt_xmit_cmd(struct device *self, struct mbuf *m)
 	KASSERT(sc->sc_enabled);
 
 	s = splusb();
-	MBUFQ_ENQUEUE(&sc->sc_cmd_queue, m);
+	ifq_enqueue(&sc->sc_cmd_queue, m);
 
 	if (sc->sc_cmd_busy == 0)
 		ubt_xmit_cmd_start(sc);
@@ -1163,10 +1164,10 @@ ubt_xmit_cmd_start(struct ubt_softc *sc)
 	if (sc->sc_dying)
 		return;
 
-	if (MBUFQ_FIRST(&sc->sc_cmd_queue) == NULL)
+	if (ifq_empty(&sc->sc_cmd_queue))
 		return;
 
-	MBUFQ_DEQUEUE(&sc->sc_cmd_queue, m);
+	m = ifq_dequeue(&sc->sc_cmd_queue);
 	KASSERT(m != NULL);
 
 	DPRINTFN(15, "%s: xmit CMD packet (%d bytes)\n",
@@ -1253,7 +1254,7 @@ ubt_xmit_acl(struct device *self, struct mbuf *m)
 	KASSERT(sc->sc_enabled);
 
 	s = splusb();
-	MBUFQ_ENQUEUE(&sc->sc_aclwr_queue, m);
+	ifq_enqueue(&sc->sc_aclwr_queue, m);
 
 	if (sc->sc_aclwr_busy == 0)
 		ubt_xmit_acl_start(sc);
@@ -1271,13 +1272,13 @@ ubt_xmit_acl_start(struct ubt_softc *sc)
 	if (sc->sc_dying)
 		return;
 
-	if (MBUFQ_FIRST(&sc->sc_aclwr_queue) == NULL)
+	if (ifq_empty(&sc->sc_aclwr_queue))
 		return;
 
 	sc->sc_refcnt++;
 	sc->sc_aclwr_busy = 1;
 
-	MBUFQ_DEQUEUE(&sc->sc_aclwr_queue, m);
+	m = ifq_dequeue(&sc->sc_aclwr_queue);
 	KASSERT(m != NULL);
 
 	DPRINTFN(15, "%s: xmit ACL packet (%d bytes)\n",
@@ -1361,7 +1362,7 @@ ubt_xmit_sco(struct device *self, struct mbuf *m)
 	KASSERT(sc->sc_enabled);
 
 	s = splusb();
-	MBUFQ_ENQUEUE(&sc->sc_scowr_queue, m);
+	ifq_enqueue(&sc->sc_scowr_queue, m);
 
 	if (sc->sc_scowr_busy == 0)
 		ubt_xmit_sco_start(sc);
@@ -1408,7 +1409,7 @@ ubt_xmit_sco_start1(struct ubt_softc *sc, struct ubt_isoc_xfer *isoc)
 	m = sc->sc_scowr_mbuf;
 	while (space > 0) {
 		if (m == NULL) {
-			MBUFQ_DEQUEUE(&sc->sc_scowr_queue, m);
+			m = ifq_dequeue(&sc->sc_scowr_queue);
 			if (m == NULL)
 				break;
 
