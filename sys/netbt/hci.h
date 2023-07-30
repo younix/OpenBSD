@@ -2551,7 +2551,7 @@ struct hci_unit {
 
 	/* input queues */
 	void			*hci_rxint;	/* receive interrupt cookie */
-	kmutex_t		 hci_devlock;	/* device queue lock */
+	struct mutex		 hci_devlock;	/* device queue lock */
 	struct ifqueue		 hci_eventq;	/* Event queue */
 	struct ifqueue		 hci_aclrxq;	/* ACL rx queue */
 	struct ifqueue		 hci_scorxq;	/* SCO rx queue */
