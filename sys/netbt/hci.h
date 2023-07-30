@@ -2503,12 +2503,12 @@ struct hci_memo {
  * The Bluetooth HCI interface attachment structure
  */
 struct hci_if {
-	int	(*enable)(device_t);
-	void	(*disable)(device_t);
-	void	(*output_cmd)(device_t, struct mbuf *);
-	void	(*output_acl)(device_t, struct mbuf *);
-	void	(*output_sco)(device_t, struct mbuf *);
-	void	(*get_stats)(device_t, struct bt_stats *, int);
+	int	(*enable)(struct device *);
+	void	(*disable)(struct device *);
+	void	(*output_cmd)(struct device *, struct mbuf *);
+	void	(*output_acl)(struct device *, struct mbuf *);
+	void	(*output_sco)(struct device *, struct mbuf *);
+	void	(*get_stats)(struct device *, struct bt_stats *, int);
 	int	ipl;		/* for locking */
 };
 
@@ -2516,8 +2516,8 @@ struct hci_if {
  * The Bluetooth HCI device unit structure
  */
 struct hci_unit {
-	device_t	 hci_dev;		/* bthci handle */
-	device_t	 hci_bthub;		/* bthub(4) handle */
+	struct device	*hci_dev;		/* bthci handle */
+	struct device	*hci_bthub;		/* bthub(4) handle */
 	const struct hci_if *hci_if;		/* bthci driver interface */
 
 	/* device info */
