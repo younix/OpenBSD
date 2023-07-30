@@ -839,6 +839,7 @@ ubt_set_isoc_config(struct ubt_softc *sc)
 	return 0;
 }
 
+#if notyet
 /* sysctl helper to set alternate configurations */
 static int
 ubt_sysctl_config(SYSCTLFN_ARGS)
@@ -869,6 +870,7 @@ ubt_sysctl_config(SYSCTLFN_ARGS)
 	KERNEL_UNLOCK_ONE(curlwp);
 	return error;
 }
+#endif
 
 static void
 ubt_abortdealloc(struct ubt_softc *sc)
