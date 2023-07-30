@@ -459,20 +459,20 @@ ubt_match(struct device *parent, struct cfdata *match, void *aux)
 
 	for (i = 0; i < nitems(ubt_dev); i++) {
 		if (ubt_dev[i].vendor != -1
-		    && ubt_dev[i].vendor != (int)uaa->uaa_vendor)
+		    && ubt_dev[i].vendor != (int)uaa->vendor)
 			continue;
 		if (ubt_dev[i].product != -1
-		    && ubt_dev[i].product != (int)uaa->uaa_product)
+		    && ubt_dev[i].product != (int)uaa->product)
 			continue;
-		if (ubt_dev[i].class != -1
-		    && ubt_dev[i].class != uaa->uaa_class)
-			continue;
-		if (ubt_dev[i].subclass != -1
-		    && ubt_dev[i].subclass != uaa->uaa_subclass)
-			continue;
-		if (ubt_dev[i].proto != -1
-		    && ubt_dev[i].proto != uaa->uaa_proto)
-			continue;
+//		if (ubt_dev[i].class != -1
+//		    && ubt_dev[i].class != uaa->uaa_class)
+//			continue;
+//		if (ubt_dev[i].subclass != -1
+//		    && ubt_dev[i].subclass != uaa->uaa_subclass)
+//			continue;
+//		if (ubt_dev[i].proto != -1
+//		    && ubt_dev[i].proto != uaa->uaa_proto)
+//			continue;
 
 		return ubt_dev[i].match;
 	}
@@ -495,7 +495,7 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	DPRINTFN(50, "ubt_attach: sc=%p\n", sc);
 
 	sc->sc_dev = self;
-	sc->sc_udev = uaa->uaa_device;
+	sc->sc_udev = uaa->device;
 
 	// TODO: Fix NULLs before flight
 	ifq_init(&sc->sc_cmd_queue, NULL, 0);
