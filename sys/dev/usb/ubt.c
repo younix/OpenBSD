@@ -690,9 +690,9 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 #endif
 	sc->sc_ok = 1;
 
-	if (!pmf_device_register(self, NULL, NULL))
-		printf("%s: couldn't establish power handler\n",
-		    self->dv_xname);
+//TODO	if (!pmf_device_register(self, NULL, NULL))
+//		printf("%s: couldn't establish power handler\n",
+//		    self->dv_xname);
 
 	return;
 }
