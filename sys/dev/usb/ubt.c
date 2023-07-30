@@ -506,9 +506,9 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 
 	printf("\n");
 
-	devinfop = usbd_devinfo_alloc(sc->sc_udev, 0);
-	printf("%s: %s\n", self->dv_xname, devinfop);
-	usbd_devinfo_free(devinfop);
+//	devinfop = usbd_devinfo_alloc(sc->sc_udev, 0);
+//	printf("%s: %s\n", self->dv_xname, devinfop);
+//	usbd_devinfo_free(devinfop);
 
 	/*
 	 * Move the device into the configured state
