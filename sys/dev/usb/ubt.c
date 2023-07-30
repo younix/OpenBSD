@@ -507,8 +507,8 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	struct usb_attach_arg *uaa = aux;
 	usb_config_descriptor_t *cd;
 	usb_endpoint_descriptor_t *ed;
-	const struct sysctlnode *node;
-	char *devinfop;
+//	const struct sysctlnode *node;
+//	char *devinfop;
 	int err;
 	uint8_t count, i;
 
