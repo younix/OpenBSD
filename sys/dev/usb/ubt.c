@@ -457,7 +457,7 @@ ubt_match(struct device *parent, struct cfdata *match, void *aux)
 
 	DPRINTFN(50, "ubt_match\n");
 
-	for (i = 0; i < __arraycount(ubt_dev); i++) {
+	for (i = 0; i < nitems(ubt_dev); i++) {
 		if (ubt_dev[i].vendor != -1
 		    && ubt_dev[i].vendor != (int)uaa->uaa_vendor)
 			continue;
