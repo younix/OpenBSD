@@ -303,7 +303,7 @@ const struct cfattach ubt_ca = {
 };
 
 static int ubt_set_isoc_config(struct ubt_softc *);
-static int ubt_sysctl_config(SYSCTLFN_PROTO);
+//static int ubt_sysctl_config(SYSCTLFN_PROTO);
 static void ubt_abortdealloc(struct ubt_softc *);
 
 /*
@@ -621,7 +621,7 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_unit = hci_attach_pcb(&ubt_hci, sc->sc_dev, 0);
 
 	usbd_add_drv_event(USB_EVENT_DRIVER_ATTACH, sc->sc_udev, sc->sc_dev);
-
+#if notyet
 	/* sysctl set-up for alternate configs */
 	sysctl_createv(&sc->sc_log, 0, NULL, &node,
 		0,
@@ -669,7 +669,7 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 			CTL_HW, node->sysctl_num,
 			CTL_CREATE, CTL_EOL);
 	}
-
+#endif
 	sc->sc_ok = 1;
 
 	if (!pmf_device_register(self, NULL, NULL))
