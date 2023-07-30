@@ -638,7 +638,7 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	/* Attach HCI */
 	sc->sc_unit = hci_attach_pcb(&ubt_hci, sc->sc_dev, 0);
 
-	usbd_add_drv_event(USB_EVENT_DRIVER_ATTACH, sc->sc_udev, sc->sc_dev);
+//TODO:	usbd_add_drv_event(USB_EVENT_DRIVER_ATTACH, sc->sc_udev, sc->sc_dev);
 #if notyet
 	/* sysctl set-up for alternate configs */
 	sysctl_createv(&sc->sc_log, 0, NULL, &node,
@@ -737,7 +737,7 @@ ubt_detach(struct device *self, int flags)
 
 	splx(s);
 
-	usbd_add_drv_event(USB_EVENT_DRIVER_DETACH, sc->sc_udev, sc->sc_dev);
+//TODO	usbd_add_drv_event(USB_EVENT_DRIVER_DETACH, sc->sc_udev, sc->sc_dev);
 
 	DPRINTFN(1, "driver detached\n");
 
