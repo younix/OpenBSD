@@ -2459,7 +2459,7 @@ struct hci_link {
 	TAILQ_HEAD(,l2cap_pdu)	 hl_txq;	/* queue of outgoing PDUs */
 	int			 hl_txqlen;	/* number of fragments */
 	struct mbuf		*hl_rxp;	/* incoming PDU (accumulating)*/
-	callout_t		 hl_expire;	/* connection expiry timer */
+//	callout_t		 hl_expire;	/* connection expiry timer */
 	TAILQ_HEAD(,l2cap_req)	 hl_reqs;	/* pending requests */
 
 	/* SCO link info */
