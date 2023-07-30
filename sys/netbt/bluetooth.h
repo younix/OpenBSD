@@ -105,8 +105,8 @@ struct sockaddr_bt {
 
 #include <sys/protosw.h>
 
-#include <sys/mallocvar.h>
-MALLOC_DECLARE(M_BLUETOOTH);
+//#include <sys/mallocvar.h>
+//MALLOC_DECLARE(M_BLUETOOTH);
 
 /*
  * Bluetooth Protocol API callback methods

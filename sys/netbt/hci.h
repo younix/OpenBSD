@@ -2418,7 +2418,7 @@ struct btreq {
 
 #ifdef _KERNEL
 
-#include <sys/condvar.h>
+//#include <sys/condvar.h>
 #include <sys/device.h>
 
 struct l2cap_channel;
