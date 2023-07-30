@@ -127,7 +127,7 @@ extern const struct pr_usrreqs sco_usrreqs;
 extern const struct pr_usrreqs l2cap_usrreqs;
 extern const struct pr_usrreqs rfcomm_usrreqs;
 
-extern kmutex_t *bt_lock;
+extern struct mutex *bt_lock;
 
 /*
  * Debugging stuff
