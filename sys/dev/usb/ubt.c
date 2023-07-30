@@ -88,6 +88,9 @@ __KERNEL_RCSID(0, "$NetBSD: ubt.c,v 1.66 2022/04/06 22:01:45 mlelstv Exp $");
 #include <dev/usb/usbdi_util.h>
 #include <dev/usb/usbdevs.h>
 
+#include <net/if.h>
+#include <net/if_var.h>
+
 #include <netbt/bluetooth.h>
 #include <netbt/hci.h>
 
