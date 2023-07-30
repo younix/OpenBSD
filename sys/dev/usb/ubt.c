@@ -705,7 +705,7 @@ ubt_detach(struct device *self, int flags)
 
 	DPRINTF("sc=%p flags=%d\n", sc, flags);
 
-	pmf_device_deregister(self);
+//TODO	pmf_device_deregister(self);
 
 	sc->sc_dying = 1;
 
