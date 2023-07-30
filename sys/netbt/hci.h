@@ -2523,7 +2523,7 @@ struct hci_unit {
 	/* device info */
 	bdaddr_t	 hci_bdaddr;		/* device address */
 	uint16_t	 hci_flags;		/* see BTF_ above */
-	kcondvar_t	 hci_init;		/* sleep on this */
+//	kcondvar_t	 hci_init;		/* sleep on this */
 
 	uint16_t	 hci_packet_type;	/* packet types */
 	uint16_t	 hci_acl_mask;		/* ACL packet capabilities */
