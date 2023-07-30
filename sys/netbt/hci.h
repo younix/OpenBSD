@@ -2611,7 +2611,7 @@ int hci_ctloutput(int, struct socket *, struct sockopt *);
 void hci_mtap(struct mbuf *, struct hci_unit *);
 
 /* hci_unit.c */
-struct hci_unit *hci_attach_pcb(const struct hci_if *, device_t, uint16_t);
+struct hci_unit *hci_attach_pcb(const struct hci_if *, struct device *, uint16_t);
 void hci_detach_pcb(struct hci_unit *);
 int hci_enable(struct hci_unit *);
 void hci_disable(struct hci_unit *);
