@@ -83,8 +83,11 @@
 #include <sys/sysctl.h>
 #include <sys/systm.h>
 
+#include <amd64/bus.h>
+
 #include <dev/usb/usb.h>
 #include <dev/usb/usbdi.h>
+#include <dev/usb/usbdivar.h>
 #include <dev/usb/usbdi_util.h>
 #include <dev/usb/usbdevs.h>
 
@@ -238,6 +241,21 @@ struct ubt_softc {
 	/* Successfully attached */
 	int			 sc_ok;
 };
+
+int
+usbd_endpoint_count(struct usbd_interface *iface, u_int8_t *count)
+{
+	#ifdef DIAGNOSTIC
+	if (iface == NULL || iface->idesc == NULL) {
+		printf("usbd_endpoint_count: NULL pointer\n");
+
+		return (1);
+	}
+	#endif
+	*count = iface->idesc->bNumEndpoints;
+
+	return (0);
+}
 
 /*******************************************************************************
  *
