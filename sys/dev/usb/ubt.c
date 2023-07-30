@@ -292,13 +292,15 @@ static const struct hci_if ubt_hci = {
  *
  */
 
-static int	ubt_match(struct device *, struct cfdata *, void *);
+static int	ubt_match(struct device *, void *, void *);
 static void	ubt_attach(struct device *, struct device *, void *);
 static int	ubt_detach(struct device *, int);
-static int	ubt_activate(struct device *, enum devact);
+static int	ubt_activate(struct device *, int);
 
-CFATTACH_DECL_NEW(ubt, sizeof(struct ubt_softc), ubt_match, ubt_attach,
-    ubt_detach, ubt_activate);
+const struct cfattach ubt_ca = {
+	sizeof(struct ubt_softc), ubt_match, ubt_attach, ubt_detach,
+	ubt_activate
+};
 
 static int ubt_set_isoc_config(struct ubt_softc *);
 static int ubt_sysctl_config(SYSCTLFN_PROTO);
@@ -450,7 +452,7 @@ static const struct ubt_devno {
 };
 
 static int
-ubt_match(struct device *parent, struct cfdata *match, void *aux)
+ubt_match(struct device *parent, void *match, void *aux)
 {
 	struct usb_attach_arg *uaa = aux;
 	size_t i;
@@ -725,7 +727,7 @@ ubt_detach(struct device *self, int flags)
 }
 
 static int
-ubt_activate(struct device *self, enum devact act)
+ubt_activate(struct device *self, int act)
 {
 	struct ubt_softc *sc = device_private(self);
 
