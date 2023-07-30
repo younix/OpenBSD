@@ -502,11 +502,10 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	ifq_init(&sc->sc_aclwr_queue, NULL, 0);
 	ifq_init(&sc->sc_scowr_queue, NULL, 0);
 
-	aprint_naive("\n");
-	aprint_normal("\n");
+	printf("\n");
 
 	devinfop = usbd_devinfo_alloc(sc->sc_udev, 0);
-	aprint_normal_dev(self, "%s\n", devinfop);
+	printf("%s: %s\n", self->dv_xname, devinfop);
 	usbd_devinfo_free(devinfop);
 
 	/*
@@ -514,9 +513,8 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	 */
 	err = usbd_set_config_index(sc->sc_udev, 0, 1);
 	if (err) {
-		aprint_error_dev(self,
-		    "failed to set configuration idx 0: %s\n",
-		    usbd_errstr(err));
+		printf("%s: failed to set configuration idx 0: %s\n",
+		    self->dv_xname, usbd_errstr(err));
 
 		return;
 	}
@@ -529,9 +527,8 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	 */
 	err = usbd_device2interface_handle(sc->sc_udev, 0, &sc->sc_iface0);
 	if (err) {
-		aprint_error_dev(self,
-		    "Could not get interface 0 handle %s (%d)\n",
-		    usbd_errstr(err), err);
+		printf("%s: Could not get interface 0 handle %s (%d)\n",
+		    self->dv_xname, usbd_errstr(err), err);
 
 		return;
 	}
@@ -548,8 +545,8 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 
 		ed = usbd_interface2endpoint_descriptor(sc->sc_iface0, i);
 		if (ed == NULL) {
-			aprint_error_dev(self,
-			    "could not read endpoint descriptor %d\n", i);
+			printf("%s: could not read endpoint descriptor %d\n",
+			    self->dv_xname, i);
 
 			return;
 		}
@@ -566,20 +563,20 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	}
 
 	if (sc->sc_evt_addr == -1) {
-		aprint_error_dev(self,
-		    "missing INTERRUPT endpoint on interface 0\n");
+		printf("%s: missing INTERRUPT endpoint on interface 0\n",
+		    self->dv_xname);
 
 		return;
 	}
 	if (sc->sc_aclrd_addr == -1) {
-		aprint_error_dev(self,
-		    "missing BULK IN endpoint on interface 0\n");
+		printf("%s: missing BULK IN endpoint on interface 0\n",
+		    self->dv_xname);
 
 		return;
 	}
 	if (sc->sc_aclwr_addr == -1) {
-		aprint_error_dev(self,
-		    "missing BULK OUT endpoint on interface 0\n");
+		printf("%s: missing BULK OUT endpoint on interface 0\n",
+		    self->dv_xname);
 
 		return;
 	}
@@ -595,16 +592,15 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	 */
 	err = usbd_device2interface_handle(sc->sc_udev, 1, &sc->sc_iface1);
 	if (err) {
-		aprint_error_dev(self,
-		    "Could not get interface 1 handle %s (%d)\n",
-		    usbd_errstr(err), err);
+		printf("%s: Could not get interface 1 handle %s (%d)\n",
+		    self->dv_xname, usbd_errstr(err), err);
 
 		return;
 	}
 
 	cd = usbd_get_config_descriptor(sc->sc_udev);
 	if (cd == NULL) {
-		aprint_error_dev(self, "could not get config descriptor\n");
+		printf("%s: could not get config descriptor\n", self->dv_xname);
 
 		return;
 	}
@@ -614,7 +610,7 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	/* set initial config */
 	err = ubt_set_isoc_config(sc);
 	if (err) {
-		aprint_error_dev(self, "ISOC config failed\n");
+		printf("%s: ISOC config failed\n", self->dv_xname);
 
 		return;
 	}
@@ -675,7 +671,8 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 	sc->sc_ok = 1;
 
 	if (!pmf_device_register(self, NULL, NULL))
-		aprint_error_dev(self, "couldn't establish power handler\n");
+		printf("%s: couldn't establish power handler\n",
+		    self->dv_xname);
 
 	return;
 }
@@ -754,9 +751,8 @@ ubt_set_isoc_config(struct ubt_softc *sc)
 
 	err = usbd_set_interface(sc->sc_iface1, sc->sc_config);
 	if (err != USBD_NORMAL_COMPLETION) {
-		aprint_error_dev(sc->sc_dev,
-		    "Could not set config %d on ISOC interface. %s (%d)\n",
-		    sc->sc_config, usbd_errstr(err), err);
+		printf("%s: Could not set config %d on ISOC interface. %s (%d)\n",
+		    sc->sc_dev->dv_xname, sc->sc_config, usbd_errstr(err), err);
 
 		return err == USBD_IN_USE ? EBUSY : EIO;
 	}
@@ -780,8 +776,8 @@ ubt_set_isoc_config(struct ubt_softc *sc)
 	for (i = 0 ; i < count ; i++) {
 		ed = usbd_interface2endpoint_descriptor(sc->sc_iface1, i);
 		if (ed == NULL) {
-			aprint_error_dev(sc->sc_dev,
-			    "could not read endpoint descriptor %d\n", i);
+			printf("%s: could not read endpoint descriptor %d\n",
+			    sc->sc_dev->dv_xname, i);
 
 			return EIO;
 		}
@@ -806,29 +802,27 @@ ubt_set_isoc_config(struct ubt_softc *sc)
 	}
 
 	if (rd_addr == -1) {
-		aprint_error_dev(sc->sc_dev,
-		    "missing ISOC IN endpoint on interface config %d\n",
-		    sc->sc_config);
+		printf("%s: missing ISOC IN endpoint on interface config %d\n",
+		    sc->sc_dev->dv_xname, sc->sc_config);
 
 		return ENOENT;
 	}
 	if (wr_addr == -1) {
-		aprint_error_dev(sc->sc_dev,
-		    "missing ISOC OUT endpoint on interface config %d\n",
-		    sc->sc_config);
+		printf("%s: missing ISOC OUT endpoint on interface config %d\n",
+		    sc->sc_dev->dv_xname, sc->sc_config);
 
 		return ENOENT;
 	}
 
 	if (rd_size > MLEN) {
-		aprint_error_dev(sc->sc_dev, "rd_size=%d exceeds MLEN\n",
+		printf("%s: rd_size=%d exceeds MLEN\n", sc->sc_dev->dv_xname,
 		    rd_size);
 
 		return EOVERFLOW;
 	}
 
 	if (wr_size > MLEN) {
-		aprint_error_dev(sc->sc_dev, "wr_size=%d exceeds MLEN\n",
+		printf("%s: wr_size=%d exceeds MLEN\n", sc->sc_dev->dv_xname,
 		    wr_size);
 
 		return EOVERFLOW;
@@ -1783,8 +1777,9 @@ ubt_recv_sco_complete(struct usbd_xfer *xfer,
 			if (m == NULL) {
 				MGETHDR(m, M_DONTWAIT, MT_DATA);
 				if (m == NULL) {
-					aprint_error_dev(sc->sc_dev,
-					    "out of memory (xfer halted)\n");
+					printf("%s: out of memory"
+					    "(xfer halted)\n",
+					    sc->sc_dev->dv_xname);
 
 					sc->sc_stats.err_rx++;
 					return;		/* lost sync */
@@ -1816,9 +1811,9 @@ ubt_recv_sco_complete(struct usbd_xfer *xfer,
 					    mtod(m, hci_scodata_hdr_t *)->length;
 					want += len;
 					if (len == 0 || want > MHLEN) {
-						aprint_error_dev(sc->sc_dev,
-						    "packet too large %u "
-						    "(lost sync)\n", len);
+						printf("packet too large %u "
+						    "(lost sync)\n",
+						    sc->sc_dev->dv_xname, len);
 						sc->sc_stats.err_rx++;
 						return;
 					}
