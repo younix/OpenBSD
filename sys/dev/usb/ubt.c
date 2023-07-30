@@ -485,7 +485,7 @@ ubt_match(struct device *parent, void *match, void *aux)
 static void
 ubt_attach(struct device *parent, struct device *self, void *aux)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	struct usb_attach_arg *uaa = aux;
 	usb_config_descriptor_t *cd;
 	usb_endpoint_descriptor_t *ed;
@@ -682,7 +682,7 @@ ubt_attach(struct device *parent, struct device *self, void *aux)
 static int
 ubt_detach(struct device *self, int flags)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	int s;
 
 	DPRINTF("sc=%p flags=%d\n", sc, flags);
@@ -729,7 +729,7 @@ ubt_detach(struct device *self, int flags)
 static int
 ubt_activate(struct device *self, int act)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 
 	DPRINTFN(1, "sc=%p, act=%d\n", sc, act);
 
@@ -989,7 +989,7 @@ ubt_abortdealloc(struct ubt_softc *sc)
 static int
 ubt_enable(struct device *self)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	usbd_status err;
 	int s, i, error;
 
@@ -1117,7 +1117,7 @@ bad:
 static void
 ubt_disable(struct device *self)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	int s;
 
 	DPRINTFN(1, "sc=%p\n", sc);
@@ -1135,7 +1135,7 @@ ubt_disable(struct device *self)
 static void
 ubt_xmit_cmd(struct device *self, struct mbuf *m)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	int s;
 
 	KASSERT(sc->sc_enabled);
@@ -1244,7 +1244,7 @@ ubt_xmit_cmd_complete(struct usbd_xfer *xfer,
 static void
 ubt_xmit_acl(struct device *self, struct mbuf *m)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	int s;
 
 	KASSERT(sc->sc_enabled);
@@ -1352,7 +1352,7 @@ ubt_xmit_acl_complete(struct usbd_xfer *xfer,
 static void
 ubt_xmit_sco(struct device *self, struct mbuf *m)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	int s;
 
 	KASSERT(sc->sc_enabled);
@@ -1847,7 +1847,7 @@ restart: /* and restart */
 void
 ubt_stats(struct device *self, struct bt_stats *dest, int flush)
 {
-	struct ubt_softc *sc = device_private(self);
+	struct ubt_softc *sc = (struct ubt_softc *)self;
 	int s;
 
 	s = splusb();
