@@ -713,7 +713,7 @@ ubt_detach(struct device *self, int flags)
 		return 0;
 
 	/* delete sysctl nodes */
-	sysctl_teardown(&sc->sc_log);
+//TODO	sysctl_teardown(&sc->sc_log);
 
 	/* Detach HCI interface */
 	if (sc->sc_unit) {
