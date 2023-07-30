@@ -733,7 +733,7 @@ ubt_detach(struct device *self, int flags)
 	/* wait for all processes to finish */
 	s = splusb();
 	if (sc->sc_refcnt-- > 0)
-		usb_detach_waitold(sc->sc_dev);
+		usb_detach_wait(sc->sc_dev);
 
 	splx(s);
 
