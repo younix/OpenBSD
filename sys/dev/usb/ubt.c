@@ -77,7 +77,6 @@
 #include <sys/device.h>
 #include <sys/ioctl.h>
 #include <sys/kernel.h>
-#include <sys/kmem.h>
 #include <sys/mbuf.h>
 #include <sys/proc.h>
 #include <sys/sysctl.h>
@@ -924,7 +923,7 @@ ubt_abortdealloc(struct ubt_softc *sc)
 
 	/* Free event buffer */
 	if (sc->sc_evt_buf != NULL) {
-		kmem_free(sc->sc_evt_buf, UBT_BUFSIZ_EVENT);
+		free(sc->sc_evt_buf, M_USBDEV, UBT_BUFSIZ_EVENT);
 		sc->sc_evt_buf = NULL;
 	}
 
@@ -1023,7 +1022,7 @@ ubt_enable(struct device *self)
 	s = splusb();
 
 	/* Events */
-	sc->sc_evt_buf = kmem_alloc(UBT_BUFSIZ_EVENT, KM_SLEEP);
+	sc->sc_evt_buf = malloc(UBT_BUFSIZ_EVENT, M_USBDEV, M_WAITOK);
 	err = usbd_open_pipe_intr(sc->sc_iface0,
 				  sc->sc_evt_addr,
 				  USBD_SHORT_XFER_OK,
