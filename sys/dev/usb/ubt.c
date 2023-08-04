@@ -897,6 +897,7 @@ ubt_abortdealloc(struct ubt_softc *sc)
 
 	DPRINTFN(1, "sc=%p\n", sc);
 
+#ifdef notyet
 	/* Abort all pipes */
 	usbd_abort_pipe(sc->sc_udev->ud_pipe0);
 
@@ -919,6 +920,7 @@ ubt_abortdealloc(struct ubt_softc *sc)
 	if (sc->sc_scowr_pipe != NULL) {
 		usbd_abort_pipe(sc->sc_scowr_pipe);
 	}
+#endif
 
 	/* Free event buffer */
 	if (sc->sc_evt_buf != NULL) {
