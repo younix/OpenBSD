@@ -1861,7 +1861,7 @@ ubt_recv_sco_complete(struct usbd_xfer *xfer,
 					    mtod(m, hci_scodata_hdr_t *)->length;
 					want += len;
 					if (len == 0 || want > MHLEN) {
-						printf("packet too large %u "
+						printf("%s: packet too large %u "
 						    "(lost sync)\n",
 						    sc->sc_dev->dv_xname, len);
 						sc->sc_stats.err_rx++;
