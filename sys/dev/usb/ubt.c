@@ -1574,7 +1574,7 @@ ubt_mbufload(uint8_t *buf, int count, uint8_t type)
 
 	*mtod(m, uint8_t *) = type;
 	m->m_pkthdr.len = m->m_len = MHLEN;
-	m_copyback(m, 1, count, buf);	// (extends if necessary)
+	m_copyback(m, 1, count, buf, M_NOWAIT);	// (extends if necessary)
 	if (m->m_pkthdr.len != MAX(MHLEN, count + 1)) {
 		m_freem(m);
 		return NULL;
