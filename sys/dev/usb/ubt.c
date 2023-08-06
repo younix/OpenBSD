@@ -1261,7 +1261,7 @@ ubt_xmit_cmd_complete(struct usbd_xfer *xfer,
 
 	if (--sc->sc_refcnt < 0) {
 		DPRINTF("sc_refcnt=%d\n", sc->sc_refcnt);
-		usb_detach_wakeupold(sc->sc_dev);
+		usb_detach_wakeup(sc->sc_dev);
 		return;
 	}
 
@@ -1371,7 +1371,7 @@ ubt_xmit_acl_complete(struct usbd_xfer *xfer,
 	sc->sc_aclwr_busy = 0;
 
 	if (--sc->sc_refcnt < 0) {
-		usb_detach_wakeupold(sc->sc_dev);
+		usb_detach_wakeup(sc->sc_dev);
 		return;
 	}
 
@@ -1535,7 +1535,7 @@ ubt_xmit_sco_complete(struct usbd_xfer *xfer,
 	}
 
 	if (--sc->sc_refcnt < 0) {
-		usb_detach_wakeupold(sc->sc_dev);
+		usb_detach_wakeup(sc->sc_dev);
 		return;
 	}
 
@@ -1669,7 +1669,7 @@ ubt_recv_acl_complete(struct usbd_xfer *xfer,
 
 	if (--sc->sc_refcnt < 0) {
 		DPRINTF("refcnt = %d\n", sc->sc_refcnt);
-		usb_detach_wakeupold(sc->sc_dev);
+		usb_detach_wakeup(sc->sc_dev);
 		return;
 	}
 
@@ -1759,7 +1759,7 @@ ubt_recv_sco_complete(struct usbd_xfer *xfer,
 
 	if (--sc->sc_refcnt < 0) {
 		DPRINTF("refcnt=%d\n", sc->sc_refcnt);
-		usb_detach_wakeupold(sc->sc_dev);
+		usb_detach_wakeup(sc->sc_dev);
 		return;
 	}
 
