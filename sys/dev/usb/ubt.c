@@ -1339,6 +1339,7 @@ ubt_xmit_acl_start(struct ubt_softc *sc)
 	sc->sc_stats.byte_tx += len;
 
 	usbd_setup_xfer(sc->sc_aclwr_xfer,
+			sc->sc_aclwr_pipe,
 			sc,
 			sc->sc_aclwr_buf,
 			len,
@@ -1633,6 +1634,7 @@ ubt_recv_acl_start(struct ubt_softc *sc)
 	sc->sc_aclrd_busy = 1;
 
 	usbd_setup_xfer(sc->sc_aclrd_xfer,
+			sc->sc_aclrd_pipe,
 			sc,
 			sc->sc_aclrd_buf,
 			UBT_BUFSIZ_ACL,
