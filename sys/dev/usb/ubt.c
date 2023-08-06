@@ -1036,7 +1036,7 @@ ubt_enable(struct device *self)
 	}
 
 	/* Commands */
-	struct usbd_pipe *pipe0 = usbd_get_pipe0(sc->sc_udev);
+	struct usbd_pipe *pipe0 = sc->sc_udev->default_pipe;
 	error = usbd_create_xfer(pipe0, UBT_BUFSIZ_CMD, USBD_FORCE_SHORT_XFER,
 	    0, &sc->sc_cmd_xfer);
 	if (error)
