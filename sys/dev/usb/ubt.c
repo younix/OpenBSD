@@ -927,32 +927,32 @@ ubt_abortdealloc(struct ubt_softc *sc)
 
 	/* Free all xfers and xfer buffers (implicit) */
 	if (sc->sc_cmd_xfer != NULL) {
-		usbd_destroy_xfer(sc->sc_cmd_xfer);
+		usbd_free_xfer(sc->sc_cmd_xfer);
 		sc->sc_cmd_xfer = NULL;
 		sc->sc_cmd_buf = NULL;
 	}
 
 	if (sc->sc_aclrd_xfer != NULL) {
-		usbd_destroy_xfer(sc->sc_aclrd_xfer);
+		usbd_free_xfer(sc->sc_aclrd_xfer);
 		sc->sc_aclrd_xfer = NULL;
 		sc->sc_aclrd_buf = NULL;
 	}
 
 	if (sc->sc_aclwr_xfer != NULL) {
-		usbd_destroy_xfer(sc->sc_aclwr_xfer);
+		usbd_free_xfer(sc->sc_aclwr_xfer);
 		sc->sc_aclwr_xfer = NULL;
 		sc->sc_aclwr_buf = NULL;
 	}
 
 	for (i = 0 ; i < UBT_NXFERS ; i++) {
 		if (sc->sc_scord[i].xfer != NULL) {
-			usbd_destroy_xfer(sc->sc_scord[i].xfer);
+			usbd_free_xfer(sc->sc_scord[i].xfer);
 			sc->sc_scord[i].xfer = NULL;
 			sc->sc_scord[i].buf = NULL;
 		}
 
 		if (sc->sc_scowr[i].xfer != NULL) {
-			usbd_destroy_xfer(sc->sc_scowr[i].xfer);
+			usbd_free_xfer(sc->sc_scowr[i].xfer);
 			sc->sc_scowr[i].xfer = NULL;
 			sc->sc_scowr[i].buf = NULL;
 		}
