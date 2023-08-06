@@ -1500,6 +1500,7 @@ ubt_xmit_sco_start1(struct ubt_softc *sc, struct ubt_isoc_xfer *isoc)
 	}
 
 	usbd_setup_isoc_xfer(isoc->xfer,
+			     sc->sc_scowr_pipe,
 			     isoc,
 			     isoc->size,
 			     num,
@@ -1733,6 +1734,7 @@ ubt_recv_sco_start1(struct ubt_softc *sc, struct ubt_isoc_xfer *isoc)
 		isoc->size[i] = sc->sc_scord_size;
 
 	usbd_setup_isoc_xfer(isoc->xfer,
+			     sc->sc_scord_pipe,
 			     isoc,
 			     isoc->size,
 			     UBT_NFRAMES,
