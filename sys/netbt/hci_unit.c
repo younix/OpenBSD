@@ -42,7 +42,7 @@
 #include <sys/proc.h>
 #include <sys/queue.h>
 #include <sys/systm.h>
-#include <sys/intr.h>
+//#include <sys/intr.h>
 #include <sys/socketvar.h>
 
 #include <netbt/bluetooth.h>
