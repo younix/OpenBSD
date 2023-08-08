@@ -44,6 +44,7 @@
 #include <sys/systm.h>
 //#include <sys/intr.h>
 #include <sys/socketvar.h>
+#include <sys/mutex.h>
 
 #include <net/if.h>
 #include <net/if_var.h>
@@ -101,7 +102,7 @@ hci_attach_pcb(const struct hci_if *hci_if, struct device *dev, uint16_t flags)
 	unit->hci_if = hci_if;
 	unit->hci_flags = flags;
 
-	mutex_init(&unit->hci_devlock, MUTEX_DRIVER, hci_if->ipl);
+	mtx_init(&unit->hci_devlock, hci_if->ipl);
 	cv_init(&unit->hci_init, "hci_init");
 
 	MBUFQ_INIT(&unit->hci_eventq);
@@ -113,9 +114,9 @@ hci_attach_pcb(const struct hci_if *hci_if, struct device *dev, uint16_t flags)
 	TAILQ_INIT(&unit->hci_links);
 	LIST_INIT(&unit->hci_memos);
 
-	mutex_enter(bt_lock);
+	mtx_enter(bt_lock);
 	SIMPLEQ_INSERT_TAIL(&hci_unit_list, unit, hci_next);
-	mutex_exit(bt_lock);
+	mtx_leave(bt_lock);
 
 	return unit;
 }
@@ -124,14 +125,14 @@ void
 hci_detach_pcb(struct hci_unit *unit)
 {
 
-	mutex_enter(bt_lock);
+	mtx_enter(bt_lock);
 	hci_disable(unit);
 
 	SIMPLEQ_REMOVE(&hci_unit_list, unit, hci_unit, hci_next);
-	mutex_exit(bt_lock);
+	mtx_leave(bt_lock);
 
 	cv_destroy(&unit->hci_init);
-	mutex_destroy(&unit->hci_devlock);
+//	mtx_destroy(&unit->hci_devlock);
 	free(unit, M_BLUETOOTH);
 }
 
@@ -222,9 +223,9 @@ hci_disable(struct hci_unit *unit)
 		hub = unit->hci_bthub;
 		unit->hci_bthub = NULL;
 
-		mutex_exit(bt_lock);
+		mtx_leave(bt_lock);
 		config_detach(hub, DETACH_FORCE);
-		mutex_enter(bt_lock);
+		mtx_enter(bt_lock);
 	}
 
 	if (unit->hci_rxint) {
@@ -353,14 +354,14 @@ hci_intr(void *arg)
 	struct hci_unit *unit = arg;
 	struct mbuf *m;
 
-	mutex_enter(bt_lock);
+	mtx_enter(bt_lock);
 another:
-	mutex_enter(&unit->hci_devlock);
+	mtx_enter(&unit->hci_devlock);
 
 	if (unit->hci_eventqlen > 0) {
 		MBUFQ_DEQUEUE(&unit->hci_eventq, m);
 		unit->hci_eventqlen--;
-		mutex_exit(&unit->hci_devlock);
+		mtx_leave(&unit->hci_devlock);
 
 		KASSERT(m != NULL);
 
@@ -377,7 +378,7 @@ another:
 	if (unit->hci_scorxqlen > 0) {
 		MBUFQ_DEQUEUE(&unit->hci_scorxq, m);
 		unit->hci_scorxqlen--;
-		mutex_exit(&unit->hci_devlock);
+		mtx_leave(&unit->hci_devlock);
 
 		KASSERT(m != NULL);
 
@@ -394,7 +395,7 @@ another:
 	if (unit->hci_aclrxqlen > 0) {
 		MBUFQ_DEQUEUE(&unit->hci_aclrxq, m);
 		unit->hci_aclrxqlen--;
-		mutex_exit(&unit->hci_devlock);
+		mtx_leave(&unit->hci_devlock);
 
 		KASSERT(m != NULL);
 
@@ -412,7 +413,7 @@ another:
 	if (m != NULL) {
 		struct hci_link *link;
 
-		mutex_exit(&unit->hci_devlock);
+		mtx_leave(&unit->hci_devlock);
 
 		DPRINTFN(11, "(%s) complete SCO\n",
 				device_xname(unit->hci_dev));
@@ -430,8 +431,8 @@ another:
 		goto another;
 	}
 
-	mutex_exit(&unit->hci_devlock);
-	mutex_exit(bt_lock);
+	mtx_leave(&unit->hci_devlock);
+	mtx_leave(bt_lock);
 
 	DPRINTFN(10, "done\n");
 }
@@ -450,7 +451,7 @@ hci_input_event(struct hci_unit *unit, struct mbuf *m)
 {
 	bool rv;
 
-	mutex_enter(&unit->hci_devlock);
+	mtx_enter(&unit->hci_devlock);
 
 	if (unit->hci_eventqlen > hci_eventq_max || unit->hci_rxint == NULL) {
 		DPRINTF("(%s) dropped event packet.\n", device_xname(unit->hci_dev));
@@ -463,7 +464,7 @@ hci_input_event(struct hci_unit *unit, struct mbuf *m)
 		rv = true;
 	}
 
-	mutex_exit(&unit->hci_devlock);
+	mtx_leave(&unit->hci_devlock);
 	return rv;
 }
 
@@ -472,7 +473,7 @@ hci_input_acl(struct hci_unit *unit, struct mbuf *m)
 {
 	bool rv;
 
-	mutex_enter(&unit->hci_devlock);
+	mtx_enter(&unit->hci_devlock);
 
 	if (unit->hci_aclrxqlen > hci_aclrxq_max || unit->hci_rxint == NULL) {
 		DPRINTF("(%s) dropped ACL packet.\n", device_xname(unit->hci_dev));
@@ -485,7 +486,7 @@ hci_input_acl(struct hci_unit *unit, struct mbuf *m)
 		rv = true;
 	}
 
-	mutex_exit(&unit->hci_devlock);
+	mtx_leave(&unit->hci_devlock);
 	return rv;
 }
 
@@ -494,7 +495,7 @@ hci_input_sco(struct hci_unit *unit, struct mbuf *m)
 {
 	bool rv;
 
-	mutex_enter(&unit->hci_devlock);
+	mtx_enter(&unit->hci_devlock);
 
 	if (unit->hci_scorxqlen > hci_scorxq_max || unit->hci_rxint == NULL) {
 		DPRINTF("(%s) dropped SCO packet.\n", device_xname(unit->hci_dev));
@@ -507,7 +508,7 @@ hci_input_sco(struct hci_unit *unit, struct mbuf *m)
 		rv = true;
 	}
 
-	mutex_exit(&unit->hci_devlock);
+	mtx_leave(&unit->hci_devlock);
 	return rv;
 }
 
@@ -570,11 +571,11 @@ hci_complete_sco(struct hci_unit *unit, struct mbuf *m)
 		return false;
 	}
 
-	mutex_enter(&unit->hci_devlock);
+	mtx_enter(&unit->hci_devlock);
 
 	MBUFQ_ENQUEUE(&unit->hci_scodone, m);
 	softint_schedule(unit->hci_rxint);
 
-	mutex_exit(&unit->hci_devlock);
+	mtx_leave(&unit->hci_devlock);
 	return true;
 }
