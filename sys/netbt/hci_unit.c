@@ -82,7 +82,7 @@ static const uint8_t hci_cmds_v10[HCI_COMMANDS_SIZE] = {
 static void hci_intr (void *);
 
 struct hci_unit *
-hci_attach_pcb(const struct hci_if *hci_if, device_t dev, uint16_t flags)
+hci_attach_pcb(const struct hci_if *hci_if, struct device *dev, uint16_t flags)
 {
 	struct hci_unit *unit;
 
@@ -217,7 +217,7 @@ hci_disable(struct hci_unit *unit)
 	int acl;
 
 	if (unit->hci_bthub) {
-		device_t hub;
+		struct device *hub;
 
 		hub = unit->hci_bthub;
 		unit->hci_bthub = NULL;
