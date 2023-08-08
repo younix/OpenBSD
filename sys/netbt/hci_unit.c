@@ -53,8 +53,6 @@
 
 struct hci_unit_list hci_unit_list = SIMPLEQ_HEAD_INITIALIZER(hci_unit_list);
 
-MALLOC_DEFINE(M_BLUETOOTH, "Bluetooth", "Bluetooth System Memory");
-
 /*
  * HCI Input Queue max lengths.
  */
