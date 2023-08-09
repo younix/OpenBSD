@@ -128,7 +128,7 @@ hci_detach_pcb(struct hci_unit *unit)
 	mtx_enter(bt_lock);
 	hci_disable(unit);
 
-	SIMPLEQ_REMOVE_HEAD(&hci_unit_list, unit, hci_unit, hci_next);
+	SIMPLEQ_REMOVE_HEAD(&hci_unit_list, hci_next);
 	mtx_leave(bt_lock);
 
 //	cv_destroy(&unit->hci_init);
