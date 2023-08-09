@@ -105,11 +105,12 @@ hci_attach_pcb(const struct hci_if *hci_if, struct device *dev, uint16_t flags)
 	mtx_init(&unit->hci_devlock, hci_if->ipl);
 //	cv_init(&unit->hci_init, "hci_init");
 
-	MBUFQ_INIT(&unit->hci_eventq);
-	MBUFQ_INIT(&unit->hci_aclrxq);
-	MBUFQ_INIT(&unit->hci_scorxq);
-	MBUFQ_INIT(&unit->hci_cmdwait);
-	MBUFQ_INIT(&unit->hci_scodone);
+	// TODO: Fix NULLs before flight
+	ifq_init(&unit->hci_eventq, NULL, 0);
+	ifq_init(&unit->hci_aclrxq, NULL, 0);
+	ifq_init(&unit->hci_scorxq, NULL, 0);
+	ifq_init(&unit->hci_cmdwait, NULL, 0);
+	ifq_init(&unit->hci_scodone, NULL, 0);
 
 	TAILQ_INIT(&unit->hci_links);
 	LIST_INIT(&unit->hci_memos);
@@ -254,17 +255,17 @@ hci_disable(struct hci_unit *unit)
 
 	/* (no need to hold hci_devlock, the driver is disabled) */
 
-	MBUFQ_DRAIN(&unit->hci_eventq);
+	ifq_purge(&unit->hci_eventq);
 	unit->hci_eventqlen = 0;
 
-	MBUFQ_DRAIN(&unit->hci_aclrxq);
+	ifq_purge(&unit->hci_aclrxq);
 	unit->hci_aclrxqlen = 0;
 
-	MBUFQ_DRAIN(&unit->hci_scorxq);
+	ifq_purge(&unit->hci_scorxq);
 	unit->hci_scorxqlen = 0;
 
-	MBUFQ_DRAIN(&unit->hci_cmdwait);
-	MBUFQ_DRAIN(&unit->hci_scodone);
+	ifq_purge(&unit->hci_cmdwait);
+	ifq_purge(&unit->hci_scodone);
 }
 
 struct hci_unit *
@@ -293,8 +294,8 @@ hci_num_cmds(struct hci_unit *unit, uint8_t num)
 
 	unit->hci_num_cmd_pkts = num;
 
-	while (unit->hci_num_cmd_pkts > 0 && MBUFQ_FIRST(&unit->hci_cmdwait)) {
-		MBUFQ_DEQUEUE(&unit->hci_cmdwait, m);
+	while (unit->hci_num_cmd_pkts > 0 && ifq_empty(&unit->hci_cmdwait)) {
+		m = ifq_dequeue(&unit->hci_cmdwait);
 		hci_output_cmd(unit, m);
 	}
 }
@@ -335,7 +336,7 @@ hci_send_cmd(struct hci_unit *unit, uint16_t opcode, void *buf, uint8_t len)
 
 	/* and send it on */
 	if (unit->hci_num_cmd_pkts == 0)
-		MBUFQ_ENQUEUE(&unit->hci_cmdwait, m);
+		ifq_enqueue(&unit->hci_cmdwait, m);
 	else
 		hci_output_cmd(unit, m);
 
@@ -359,7 +360,7 @@ another:
 	mtx_enter(&unit->hci_devlock);
 
 	if (unit->hci_eventqlen > 0) {
-		MBUFQ_DEQUEUE(&unit->hci_eventq, m);
+		m = ifq_dequeue(&unit->hci_eventq);
 		unit->hci_eventqlen--;
 		mtx_leave(&unit->hci_devlock);
 
@@ -376,7 +377,7 @@ another:
 	}
 
 	if (unit->hci_scorxqlen > 0) {
-		MBUFQ_DEQUEUE(&unit->hci_scorxq, m);
+		m = ifq_dequeue(&unit->hci_scorxq);
 		unit->hci_scorxqlen--;
 		mtx_leave(&unit->hci_devlock);
 
@@ -393,7 +394,7 @@ another:
 	}
 
 	if (unit->hci_aclrxqlen > 0) {
-		MBUFQ_DEQUEUE(&unit->hci_aclrxq, m);
+		m = ifq_dequeue(&unit->hci_aclrxq);
 		unit->hci_aclrxqlen--;
 		mtx_leave(&unit->hci_devlock);
 
@@ -409,7 +410,7 @@ another:
 		goto another;
 	}
 
-	MBUFQ_DEQUEUE(&unit->hci_scodone, m);
+	m = ifq_dequeue(&unit->hci_scodone);
 	if (m != NULL) {
 		struct hci_link *link;
 
@@ -459,7 +460,7 @@ hci_input_event(struct hci_unit *unit, struct mbuf *m)
 		rv = false;
 	} else {
 		unit->hci_eventqlen++;
-		MBUFQ_ENQUEUE(&unit->hci_eventq, m);
+		ifq_enqueue(&unit->hci_eventq, m);
 		softint_schedule(unit->hci_rxint);
 		rv = true;
 	}
@@ -481,7 +482,7 @@ hci_input_acl(struct hci_unit *unit, struct mbuf *m)
 		rv = false;
 	} else {
 		unit->hci_aclrxqlen++;
-		MBUFQ_ENQUEUE(&unit->hci_aclrxq, m);
+		ifq_enqueue(&unit->hci_aclrxq, m);
 		softint_schedule(unit->hci_rxint);
 		rv = true;
 	}
@@ -503,7 +504,7 @@ hci_input_sco(struct hci_unit *unit, struct mbuf *m)
 		rv = false;
 	} else {
 		unit->hci_scorxqlen++;
-		MBUFQ_ENQUEUE(&unit->hci_scorxq, m);
+		ifq_enqueue(&unit->hci_scorxq, m);
 		softint_schedule(unit->hci_rxint);
 		rv = true;
 	}
@@ -573,7 +574,7 @@ hci_complete_sco(struct hci_unit *unit, struct mbuf *m)
 
 	mtx_enter(&unit->hci_devlock);
 
-	MBUFQ_ENQUEUE(&unit->hci_scodone, m);
+	ifq_enqueue(&unit->hci_scodone, m);
 	softint_schedule(unit->hci_rxint);
 
 	mtx_leave(&unit->hci_devlock);
