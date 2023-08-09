@@ -42,7 +42,7 @@
 #include <sys/proc.h>
 #include <sys/queue.h>
 #include <sys/systm.h>
-//#include <sys/intr.h>
+#include <machine/intr.h>
 #include <sys/socketvar.h>
 #include <sys/mutex.h>
 
@@ -162,7 +162,7 @@ hci_enable(struct hci_unit *unit)
 
 	memcpy(unit->hci_cmds, hci_cmds_v10, HCI_COMMANDS_SIZE);
 
-	unit->hci_rxint = softint_establish(SOFTINT_NET, &hci_intr, unit);
+	unit->hci_rxint = softintr_establish(IPL_SOFTNET, &hci_intr, unit);
 	if (unit->hci_rxint == NULL)
 		return EIO;
 
@@ -205,7 +205,7 @@ bad2:
 	(*unit->hci_if->disable)(unit->hci_dev);
 	unit->hci_flags &= ~BTF_RUNNING;
 bad1:
-	softint_disestablish(unit->hci_rxint);
+	softintr_disestablish(unit->hci_rxint);
 	unit->hci_rxint = NULL;
 
 	return err;
@@ -230,7 +230,7 @@ hci_disable(struct hci_unit *unit)
 	}
 
 	if (unit->hci_rxint) {
-		softint_disestablish(unit->hci_rxint);
+		softintr_disestablish(unit->hci_rxint);
 		unit->hci_rxint = NULL;
 	}
 
@@ -461,7 +461,7 @@ hci_input_event(struct hci_unit *unit, struct mbuf *m)
 	} else {
 		unit->hci_eventqlen++;
 		ifq_enqueue(&unit->hci_eventq, m);
-		softint_schedule(unit->hci_rxint);
+		softintr_schedule(unit->hci_rxint);
 		rv = true;
 	}
 
@@ -483,7 +483,7 @@ hci_input_acl(struct hci_unit *unit, struct mbuf *m)
 	} else {
 		unit->hci_aclrxqlen++;
 		ifq_enqueue(&unit->hci_aclrxq, m);
-		softint_schedule(unit->hci_rxint);
+		softintr_schedule(unit->hci_rxint);
 		rv = true;
 	}
 
@@ -505,7 +505,7 @@ hci_input_sco(struct hci_unit *unit, struct mbuf *m)
 	} else {
 		unit->hci_scorxqlen++;
 		ifq_enqueue(&unit->hci_scorxq, m);
-		softint_schedule(unit->hci_rxint);
+		softintr_schedule(unit->hci_rxint);
 		rv = true;
 	}
 
@@ -575,7 +575,7 @@ hci_complete_sco(struct hci_unit *unit, struct mbuf *m)
 	mtx_enter(&unit->hci_devlock);
 
 	ifq_enqueue(&unit->hci_scodone, m);
-	softint_schedule(unit->hci_rxint);
+	softintr_schedule(unit->hci_rxint);
 
 	mtx_leave(&unit->hci_devlock);
 	return true;
