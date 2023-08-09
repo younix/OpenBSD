@@ -324,7 +324,7 @@ hci_send_cmd(struct hci_unit *unit, uint16_t opcode, void *buf, uint8_t len)
 	if (len) {
 		KASSERT(buf != NULL);
 
-		m_copyback(m, sizeof(hci_cmd_hdr_t), len, buf);
+		m_copyback(m, sizeof(hci_cmd_hdr_t), len, buf, M_WAIT);
 		if (m->m_pkthdr.len != (sizeof(hci_cmd_hdr_t) + len)) {
 			m_freem(m);
 			return ENOMEM;
