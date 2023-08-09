@@ -103,7 +103,7 @@ hci_attach_pcb(const struct hci_if *hci_if, struct device *dev, uint16_t flags)
 	unit->hci_flags = flags;
 
 	mtx_init(&unit->hci_devlock, hci_if->ipl);
-	cv_init(&unit->hci_init, "hci_init");
+//	cv_init(&unit->hci_init, "hci_init");
 
 	MBUFQ_INIT(&unit->hci_eventq);
 	MBUFQ_INIT(&unit->hci_aclrxq);
@@ -128,10 +128,10 @@ hci_detach_pcb(struct hci_unit *unit)
 	mtx_enter(bt_lock);
 	hci_disable(unit);
 
-	SIMPLEQ_REMOVE(&hci_unit_list, unit, hci_unit, hci_next);
+	SIMPLEQ_REMOVE_HEAD(&hci_unit_list, unit, hci_unit, hci_next);
 	mtx_leave(bt_lock);
 
-	cv_destroy(&unit->hci_init);
+//	cv_destroy(&unit->hci_init);
 //	mtx_destroy(&unit->hci_devlock);
 	free(unit, M_BLUETOOTH);
 }
@@ -182,7 +182,7 @@ hci_enable(struct hci_unit *unit)
 		goto bad2;
 
 	while (unit->hci_flags & BTF_INIT) {
-		err = cv_timedwait_sig(&unit->hci_init, bt_lock, 5 * hz);
+//TODO:		err = cv_timedwait_sig(&unit->hci_init, bt_lock, 5 * hz);
 		if (err)
 			goto bad2;
 
