@@ -134,7 +134,7 @@ hci_detach_pcb(struct hci_unit *unit)
 
 //	cv_destroy(&unit->hci_init);
 //	mtx_destroy(&unit->hci_devlock);
-	free(unit, M_BLUETOOTH);
+	free(unit, M_BLUETOOTH, sizeof *unit);
 }
 
 int
