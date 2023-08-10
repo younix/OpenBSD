@@ -138,6 +138,15 @@ hci_detach_pcb(struct hci_unit *unit)
 }
 
 int
+hcictlprint(void *aux, const char *pnp)
+{
+	if (pnp)
+		printf("btdev at %s", pnp);
+
+	return (UNCONF);
+}
+
+int
 hci_enable(struct hci_unit *unit)
 {
 	int err;
@@ -196,8 +205,8 @@ hci_enable(struct hci_unit *unit)
 	/*
 	 * Attach Bluetooth Device Hub
 	 */
-	unit->hci_bthub = config_found(unit->hci_dev, &unit->hci_bdaddr, NULL,
-	    CFARGS(.iattr = "btbus"));
+	unit->hci_bthub = config_found(unit->hci_dev, &unit->hci_bdaddr,
+	    hcictlprint);
 
 	return 0;
 
