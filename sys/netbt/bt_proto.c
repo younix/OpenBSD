@@ -54,6 +54,7 @@
 
 static void	bt_init(void);
 
+#ifdef notyet
 PR_WRAP_CTLOUTPUT(hci_ctloutput)
 PR_WRAP_CTLOUTPUT(sco_ctloutput)
 PR_WRAP_CTLOUTPUT(l2cap_ctloutput)
@@ -63,6 +64,7 @@ PR_WRAP_CTLOUTPUT(rfcomm_ctloutput)
 #define	sco_ctloutput		sco_ctloutput_wrapper
 #define	l2cap_ctloutput		l2cap_ctloutput_wrapper
 #define	rfcomm_ctloutput	rfcomm_ctloutput_wrapper
+#endif
 
 static const struct protosw btsw[] = {
 	{ /* raw HCI commands */
