@@ -50,8 +50,6 @@
 #include <netbt/sco.h>
 #endif
 
-DOMAIN_DEFINE(btdomain);	/* forward declare and add to link set */
-
 static void	bt_init(void);
 
 PR_WRAP_CTLOUTPUT(hci_ctloutput)
