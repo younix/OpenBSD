@@ -31,7 +31,7 @@
  */
 
 #include <sys/cdefs.h>
-__KERNEL_RCSID(0, "$NetBSD: bt_proto.c,v 1.16 2016/01/21 15:41:30 riastradh Exp $");
+//__KERNEL_RCSID(0, "$NetBSD: bt_proto.c,v 1.16 2016/01/21 15:41:30 riastradh Exp $");
 
 #include <sys/param.h>
 #include <sys/domain.h>
