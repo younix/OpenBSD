@@ -429,7 +429,7 @@ another:
 				device_xname(unit->hci_dev));
 
 		TAILQ_FOREACH(link, &unit->hci_links, hl_next) {
-			if (link == M_GETCTX(m, struct hci_link *)) {
+			if (link == (struct hci_link *)m->m_pkthdr.ph_cookie) {
 				hci_sco_complete(link, 1);
 				break;
 			}
@@ -538,7 +538,7 @@ hci_output_cmd(struct hci_unit *unit, struct mbuf *m)
 	 * If context is set, this was from a HCI raw socket
 	 * and a record needs to be dropped from the sockbuf.
 	 */
-	arg = M_GETCTX(m, void *);
+	arg = m->m_pkthdr.ph_cookie;
 	if (arg != NULL)
 		hci_drop(arg);
 
