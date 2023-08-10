@@ -76,6 +76,7 @@ static const struct protosw btsw[] = {
 		.pr_ctloutput = hci_ctloutput,
 		.pr_usrreqs = &hci_usrreqs,
 	},
+#ifdef notyet
 	{ /* HCI SCO data (audio) */
 		.pr_type = SOCK_SEQPACKET,
 		.pr_domain = &btdomain,
@@ -102,6 +103,7 @@ static const struct protosw btsw[] = {
 		.pr_usrreqs = &rfcomm_usrreqs,
 		.pr_init = rfcomm_init,
 	},
+#endif
 };
 
 struct domain btdomain = {
