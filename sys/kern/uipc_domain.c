@@ -57,6 +57,7 @@ const struct domain *const domains[] = {
 	&inetdomain,
 	&unixdomain,
 	&routedomain,
+	&btdomain,
 	NULL
 };
 

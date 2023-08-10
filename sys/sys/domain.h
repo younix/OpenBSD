@@ -72,4 +72,5 @@ extern const struct domain mplsdomain;
 extern const struct domain pfkeydomain;
 extern const struct domain routedomain;
 extern const struct domain unixdomain;
+extern const struct domain btdomain;
 #endif /* _KERNEL */
