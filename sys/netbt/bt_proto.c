@@ -111,7 +111,7 @@ const struct domain btdomain = {
 	.dom_name = "bluetooth",
 	.dom_init = bt_init,
 	.dom_protosw = btsw,
-	.dom_protoswNPROTOSW = &btsw[__arraycount(btsw)],
+	.dom_protoswNPROTOSW = &btsw[nitems(btsw)],
 };
 
 struct mutex bt_lock;
