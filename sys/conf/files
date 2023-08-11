@@ -873,6 +873,7 @@ file net80211/ieee80211_ra.c		wlan
 file net80211/ieee80211_ra_vht.c	wlan
 file net80211/ieee80211_rssadapt.c	wlan
 file net80211/ieee80211_regdomain.c	wlan
+file netbt/hci_socket.c
 file netbt/hci_unit.c
 file netbt/bt_proto.c
 file netinet/if_ether.c			ether
