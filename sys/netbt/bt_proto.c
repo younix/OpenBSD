@@ -114,11 +114,11 @@ const struct domain btdomain = {
 	.dom_protoswNPROTOSW = &btsw[__arraycount(btsw)],
 };
 
-kmutex_t *bt_lock;
+struct mutex bt_lock;
 
 static void
 bt_init(void)
 {
 
-	bt_lock = mutex_obj_alloc(MUTEX_DEFAULT, IPL_NONE);
+	mtx_init(&bt_lock, IPL_NONE);
 }

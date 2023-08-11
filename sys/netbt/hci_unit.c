@@ -115,9 +115,9 @@ hci_attach_pcb(const struct hci_if *hci_if, struct device *dev, uint16_t flags)
 	TAILQ_INIT(&unit->hci_links);
 	LIST_INIT(&unit->hci_memos);
 
-	mtx_enter(bt_lock);
+	mtx_enter(&bt_lock);
 	SIMPLEQ_INSERT_TAIL(&hci_unit_list, unit, hci_next);
-	mtx_leave(bt_lock);
+	mtx_leave(&bt_lock);
 
 	return unit;
 }
@@ -126,11 +126,11 @@ void
 hci_detach_pcb(struct hci_unit *unit)
 {
 
-	mtx_enter(bt_lock);
+	mtx_enter(&bt_lock);
 	hci_disable(unit);
 
 	SIMPLEQ_REMOVE_HEAD(&hci_unit_list, hci_next);
-	mtx_leave(bt_lock);
+	mtx_leave(&bt_lock);
 
 //	cv_destroy(&unit->hci_init);
 //	mtx_destroy(&unit->hci_devlock);
@@ -233,9 +233,9 @@ hci_disable(struct hci_unit *unit)
 		hub = unit->hci_bthub;
 		unit->hci_bthub = NULL;
 
-		mtx_leave(bt_lock);
+		mtx_leave(&bt_lock);
 		config_detach(hub, DETACH_FORCE);
-		mtx_enter(bt_lock);
+		mtx_enter(&bt_lock);
 	}
 
 	if (unit->hci_rxint) {
@@ -364,7 +364,7 @@ hci_intr(void *arg)
 	struct hci_unit *unit = arg;
 	struct mbuf *m;
 
-	mtx_enter(bt_lock);
+	mtx_enter(&bt_lock);
 another:
 	mtx_enter(&unit->hci_devlock);
 
@@ -442,7 +442,7 @@ another:
 	}
 
 	mtx_leave(&unit->hci_devlock);
-	mtx_leave(bt_lock);
+	mtx_leave(&bt_lock);
 
 	DPRINTFN(10, "done\n");
 }
