@@ -31,7 +31,7 @@
  */
 
 #include <sys/cdefs.h>
-__KERNEL_RCSID(0, "$NetBSD: hci_socket.c,v 1.47 2019/09/28 07:10:55 plunky Exp $");
+//__KERNEL_RCSID(0, "$NetBSD: hci_socket.c,v 1.47 2019/09/28 07:10:55 plunky Exp $");
 
 /* load symbolic names */
 #ifdef BLUETOOTH_DEBUG
