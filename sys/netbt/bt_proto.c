@@ -106,7 +106,7 @@ static const struct protosw btsw[] = {
 #endif
 };
 
-struct domain btdomain = {
+const struct domain btdomain = {
 	.dom_family = AF_BLUETOOTH,
 	.dom_name = "bluetooth",
 	.dom_init = bt_init,
