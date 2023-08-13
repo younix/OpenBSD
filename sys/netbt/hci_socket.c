@@ -51,6 +51,9 @@
 #include <sys/socketvar.h>
 #include <sys/systm.h>
 
+#include <net/if.h>
+#include <net/if_var.h>
+
 #include <netbt/bluetooth.h>
 #include <netbt/hci.h>
 
