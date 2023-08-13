@@ -41,9 +41,9 @@
 
 #include <sys/param.h>
 #include <sys/domain.h>
-#include <sys/kauth.h>
+//#include <sys/kauth.h>
 #include <sys/kernel.h>
-#include <sys/kmem.h>
+//#include <sys/kmem.h>
 #include <sys/mbuf.h>
 #include <sys/proc.h>
 #include <sys/protosw.h>
