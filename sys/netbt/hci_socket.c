@@ -226,7 +226,7 @@ hci_device_cb(kauth_cred_t cred, kauth_action_t action, void *cookie,
 		if (hdr->type != HCI_CMD_PKT)
 			break;
 
-		for (i = 0; i < __arraycount(hci_cmds); i++) {
+		for (i = 0; i < nitems(hci_cmds); i++) {
 			if (hdr->opcode == hci_cmds[i].opcode
 			    && hdr->length == hci_cmds[i].length
 			    && (unit->hci_cmds[hci_cmds[i].offs] & hci_cmds[i].mask)) {
@@ -247,7 +247,7 @@ hci_device_cb(kauth_cred_t cred, kauth_action_t action, void *cookie,
 			 * Allow to see any unprivileged command packet
 			 */
 
-			for (i = 0; i < __arraycount(hci_cmds); i++) {
+			for (i = 0; i < nitems(hci_cmds); i++) {
 				if (opcode == hci_cmds[i].opcode) {
 					result = KAUTH_RESULT_ALLOW;
 					break;
