@@ -375,6 +375,8 @@ int		bnxt_hwrm_port_phy_qcfg(struct bnxt_softc *,
 		    struct ifmediareq *);
 int		bnxt_hwrm_func_rgtr_async_events(struct bnxt_softc *);
 int		bnxt_get_sffpage(struct bnxt_softc *, struct if_sffpage *);
+int		bnxt_hwrm_vnic_tpa_cfg(struct bnxt_softc *softc,
+		    struct bnxt_vnic_info *);
 
 /* not used yet: */
 #if 0
@@ -383,7 +385,6 @@ int bnxt_hwrm_func_drv_unrgtr(struct bnxt_softc *softc, bool shutdown);
 int bnxt_hwrm_port_qstats(struct bnxt_softc *softc);
 
 
-int bnxt_hwrm_vnic_tpa_cfg(struct bnxt_softc *softc);
 void bnxt_validate_hw_lro_settings(struct bnxt_softc *softc);
 int bnxt_hwrm_fw_reset(struct bnxt_softc *softc, uint8_t processor,
     uint8_t *selfreset);
@@ -1129,6 +1130,8 @@ bnxt_up(struct bnxt_softc *sc)
 			goto dealloc_vnic;
 		}
 	}
+
+	bnxt_hwrm_vnic_tpa_cfg(sc, &sc->sc_vnic);
 
 	bnxt_iff(sc);
 	SET(ifp->if_flags, IFF_RUNNING);
@@ -3256,27 +3259,29 @@ bnxt_validate_hw_lro_settings(struct bnxt_softc *softc)
 	softc->hw_lro.min_agg_len = min(softc->hw_lro.min_agg_len, BNXT_MAX_MTU);
 }
 
+#endif
+
 int
-bnxt_hwrm_vnic_tpa_cfg(struct bnxt_softc *softc)
+bnxt_hwrm_vnic_tpa_cfg(struct bnxt_softc *softc, struct bnxt_vnic_info *vnic)
 {
 	struct hwrm_vnic_tpa_cfg_input req = {0};
+	struct ifnet *ifp = &softc->sc_ac.ac_if;
 	uint32_t flags;
-
-	if (softc->vnic_info.id == (uint16_t) HWRM_NA_SIGNATURE) {
-		return 0;
-	}
+//	if (softc->vnic_info.id == (uint16_t) HWRM_NA_SIGNATURE) {
+//		return 0;
+//	}
 
 	bnxt_hwrm_cmd_hdr_init(softc, &req, HWRM_VNIC_TPA_CFG);
 
-	if (softc->hw_lro.enable) {
+	if (ISSET(ifp->if_xflags, IFXF_LRO)) {
 		flags = HWRM_VNIC_TPA_CFG_INPUT_FLAGS_TPA |
-			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_ENCAP_TPA |
-			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_AGG_WITH_ECN |
-			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_AGG_WITH_SAME_GRE_SEQ;
+//			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_ENCAP_TPA |
+			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_AGG_WITH_ECN;
+//			HWRM_VNIC_TPA_CFG_INPUT_FLAGS_AGG_WITH_SAME_GRE_SEQ;
 		
-        	if (softc->hw_lro.is_mode_gro)
-			flags |= HWRM_VNIC_TPA_CFG_INPUT_FLAGS_GRO;
-		else
+//		if (softc->hw_lro.is_mode_gro)
+//			flags |= HWRM_VNIC_TPA_CFG_INPUT_FLAGS_GRO;
+//		else
 			flags |= HWRM_VNIC_TPA_CFG_INPUT_FLAGS_RSC_WND_UPDATE;
 			
 		req.flags = htole32(flags);
@@ -3285,16 +3290,17 @@ bnxt_hwrm_vnic_tpa_cfg(struct bnxt_softc *softc)
 				HWRM_VNIC_TPA_CFG_INPUT_ENABLES_MAX_AGGS |
 				HWRM_VNIC_TPA_CFG_INPUT_ENABLES_MIN_AGG_LEN);
 
-		req.max_agg_segs = htole16(softc->hw_lro.max_agg_segs);
-		req.max_aggs = htole16(softc->hw_lro.max_aggs);
-		req.min_agg_len = htole32(softc->hw_lro.min_agg_len);
+		req.max_agg_segs = htole16(HWRM_VNIC_TPA_CFG_INPUT_MAX_AGG_SEGS_MAX);
+		req.max_aggs = htole16(HWRM_VNIC_TPA_CFG_INPUT_MAX_AGGS_MAX);
+		req.min_agg_len = htole32(512);	/* from Linux */
 	}
 
-	req.vnic_id = htole16(softc->vnic_info.id);
+	req.vnic_id = htole16(vnic->id);
 
 	return hwrm_send_message(softc, &req, sizeof(req));
 }
 
+#if 0
 
 int
 bnxt_hwrm_fw_reset(struct bnxt_softc *softc, uint8_t processor,
