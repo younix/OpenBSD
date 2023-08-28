@@ -344,9 +344,9 @@ hci_cmdwait_flush(struct socket *so)
 	SIMPLEQ_FOREACH(unit, &hci_unit_list, hci_next) {
 		m = MBUFQ_FIRST(&unit->hci_cmdwait);
 		while (m != NULL) {
-			ctx = M_GETCTX(m, struct socket *);
+			ctx = (struct socket *)m->m_pkthdr.ph_cookie;
 			if (ctx == so)
-				M_SETCTX(m, NULL);
+				m->m_pkthdr.ph_cookie = NULL;
 
 			m = MBUFQ_NEXT(m);
 		}
@@ -668,7 +668,7 @@ hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
 		goto bad;
 	}
 	sbappendrecord(&pcb->hp_socket->so_snd, m0);
-	M_SETCTX(m, pcb->hp_socket);	/* enable drop callback */
+	m->m_pkthdr.ph_cookie = pcb->hp_socket;	/* enable drop callback */
 
 	DPRINTFN(2, "(%s) opcode (%03x|%04x)\n", device_xname(unit->hci_dev),
 		HCI_OGF(hdr.opcode), HCI_OCF(hdr.opcode));
