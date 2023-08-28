@@ -643,6 +643,8 @@ bnxt_attach(struct device *parent, struct device *self, void *aux)
 	ifp->if_capabilities = IFCAP_VLAN_MTU | IFCAP_CSUM_IPv4 |
 	    IFCAP_CSUM_UDPv4 | IFCAP_CSUM_TCPv4 | IFCAP_CSUM_UDPv6 |
 	    IFCAP_CSUM_TCPv6;
+	ifp->if_capabilities = IFCAP_LRO;
+	ifp->if_xflags |= IFXF_LRO;
 #if NVLAN > 0
 	ifp->if_capabilities |= IFCAP_VLAN_HWTAGGING;
 #endif
