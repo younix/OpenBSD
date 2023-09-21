@@ -344,13 +344,13 @@ hci_cmdwait_flush(struct socket *so)
 	DPRINTF("flushing %p\n", so);
 
 	SIMPLEQ_FOREACH(unit, &hci_unit_list, hci_next) {
-		m = MBUFQ_FIRST(&unit->hci_cmdwait);
+		m = ifq_deq_begin(&unit->hci_cmdwait);
 		while (m != NULL) {
 			ctx = (struct socket *)m->m_pkthdr.ph_cookie;
 			if (ctx == so)
 				m->m_pkthdr.ph_cookie = NULL;
 
-			m = MBUFQ_NEXT(m);
+			m = m->m_nextpkt;
 		}
 	}
 }
@@ -677,7 +677,7 @@ hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
 
 	/* Sendss it */
 	if (unit->hci_num_cmd_pkts == 0)
-		MBUFQ_ENQUEUE(&unit->hci_cmdwait, m);
+		ifq_enqueue(&unit->hci_cmdwait, m);
 	else
 		hci_output_cmd(unit, m);
 
