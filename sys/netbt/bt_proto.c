@@ -72,7 +72,7 @@ static const struct protosw btsw[] = {
 		.pr_domain = &btdomain,
 		.pr_protocol = BTPROTO_HCI,
 		.pr_flags = (PR_ADDR | PR_ATOMIC),
-		.pr_init = hci_init,
+//		.pr_init = hci_init,
 		.pr_ctloutput = hci_ctloutput,
 		.pr_usrreqs = &hci_usrreqs,
 	},

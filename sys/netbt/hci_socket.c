@@ -68,7 +68,7 @@
  */
 struct hci_pcb {
 	struct socket		*hp_socket;	/* socket */
-	kauth_cred_t		hp_cred;	/* owner credential */
+//	kauth_cred_t		hp_cred;	/* owner credential */
 	unsigned int		hp_flags;	/* flags */
 	bdaddr_t		hp_laddr;	/* local address */
 	bdaddr_t		hp_raddr;	/* remote address */
@@ -202,6 +202,7 @@ static const struct {
 	  20, 0x10, sizeof(hci_read_encryption_key_size_cp) },
 };
 
+#if 0
 /*
  * supply a basic device send/recv policy
  */
@@ -313,6 +314,7 @@ hci_init(void)
 	if (kauth_listen_scope(KAUTH_SCOPE_DEVICE, hci_device_cb, NULL) == NULL)
 		panic("Bluetooth HCI: cannot listen on device scope");
 }
+#endif
 
 /*
  * When command packet reaches the device, we can drop
