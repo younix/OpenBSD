@@ -325,7 +325,7 @@ hci_drop(void *arg)
 {
 	struct socket *so = arg;
 
-	sbdroprecord(&so->so_snd);
+	sbdroprecord(so, &so->so_snd);
 	sowwakeup(so);
 }
 
