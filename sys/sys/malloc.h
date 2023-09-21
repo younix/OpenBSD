@@ -65,252 +65,182 @@ enum malloc_flags {
  * Types of memory to be allocated
  */
 enum malloc_type {
-	M_FREE		= 0,	/* should be on free list */
-/* 1 -	free */
-	M_DEVBUF	= 2,	/* device driver memory */
-/* 3 - free */
-	M_PCB		= 4,	/* protocol control blocks */
-	M_RTABLE	= 5,	/* routing tables */
-	M_PF		= 6,	/* packet filter structures */
-/* 7 - free */
-/* 8 - free */
-	M_IFADDR	= 9,	/* interface addresses */
-	M_IFGROUP	= 10,	/* interface groups */
-	M_SYSCTL	= 11,	/* sysctl persistent buffers */
-	M_COUNTERS	= 12,	/* per-CPU counters via counters_alloc(9) */
-/* 13 - free */
-	M_IOCTLOPS	= 14,	/* ioctl data buffers */
-/* 15-18 - free */
-	M_IOV		= 19,	/* large IOVs */
-	M_MOUNT		= 20,	/* VFS mount structs */
-/* 21 - free */
-	M_NFSREQ	= 22,	/* NFS request headers */
-	M_NFSMNT	= 23,	/* NFS mount structures */
-	M_LOG		= 24,	/* messages in kernel log stash */
-	M_VNODE		= 25,	/* Dynamically allocated vnodes */
-/* 26 - free */
-	M_DQUOT		= 27,	/* UFS quota entries */
-	M_UFSMNT	= 28,	/* UFS mount structures */
-	M_SHM		= 29,	/* SVID compatible shared memory segments */
-	M_VMMAP		= 30,	/* VM map structures */
-	M_SEM		= 31,	/* SVID compatible semaphores */
-	M_DIRHASH	= 32,	/* UFS directory hash structures */
-	M_ACPI		= 33,	/* ACPI structures */
-	M_VMPMAP	= 34,	/* VM pmap data */
-/* 35-38 - free */
-	M_FILEDESC	= 39,	/* open file descriptor tables */
-	M_SIGIO		= 40,	/* sigio structures */
-	M_PROC		= 41,	/* proc structures */
-	M_SUBPROC	= 42,	/* proc sub-structures */
-/* 43-45 - free */
-	M_MFSNODE	= 46,	/* MFS vnode private part */
-/* 47-48 - free */
-	M_NETADDR	= 49,	/* export host address structures */
-	M_NFSSVC	= 50,	/* NFS server structures */
-/* 51 - free */
-	M_NFSD		= 52,	/* NFS server daemon structures */
-	M_IPMOPTS	= 53,	/* internet multicast options */
-	M_IPMADDR	= 54,	/* internet multicast addresses */
-	M_IFMADDR	= 55,	/* link-level multicast addresses */
-	M_MRTABLE	= 56,	/* multicast routing tables */
-	M_ISOFSMNT	= 57,	/* ISOFS mount structures */
-	M_ISOFSNODE	= 58,	/* ISOFS vnode private part */
-	M_MSDOSFSMNT	= 59,	/* MSDOS FS mount structures */
-	M_MSDOSFSFAT	= 60,	/* MSDOS FS FAT tables */
-	M_MSDOSFSNODE	= 61,	/* MSDOS FS vnode private part */
-	M_TTYS		= 62,	/* allocated tty structures */
-	M_EXEC		= 63,	/* argument lists & other mem used by exec */
-	M_MISCFSMNT	= 64,	/* miscellaneous FS mount structures */
-	M_FUSEFS	= 65,	/* FUSE FS mount structures */
-/* 66-73 - free */
-	M_PFKEY		= 74,	/* pfkey data */
-	M_TDB		= 75,	/* transforms database */
-	M_XDATA		= 76,	/* IPsec data */
-/* 77 - free */
-	M_PAGEDEP	= 78,	/* file page dependencies */
-	M_INODEDEP	= 79,	/* inode dependencies */
-	M_NEWBLK	= 80,	/* new block allocation */
-/* 81-82 - free */
-	M_INDIRDEP	= 83,	/* indirect block dependencies */
-/* 84-91 - free */
-	M_VMSWAP	= 92,	/* VM swap structures */
-/* 93-97 - free */
-	M_UVMAMAP	= 98,	/* UVM amap and related */
-	M_UVMAOBJ	= 99,	/* UVM aobj and related */
-/* 100 - free */
-	M_USB		= 101,	/* USB general */
-	M_USBDEV	= 102,	/* USB device driver */
-	M_USBHC		= 103,	/* USB host controller */
-	M_WITNESS	= 104,	/* witness(4) memory */
-	M_MEMDESC	= 105,	/* memory range */
-/* 106-107 - free */
-	M_CRYPTO_DATA	= 108,	/* crypto(9) data buffers */
-/* 109 - free */
-	M_CREDENTIALS	= 110,	/* ipsec(4) related credentials */
-/* 111-122 - free */
+	M_FREE = 0,	/* should be on free list */
+	M_DEVBUF,	/* device driver memory */
+	M_PCB,		/* protocol control blocks */
+	M_RTABLE,	/* routing tables */
+	M_PF,		/* packet filter structures */
+	M_IFADDR,	/* interface addresses */
+	M_IFGROUP,	/* interface groups */
+	M_SYSCTL,	/* sysctl persistent buffers */
+	M_COUNTERS,	/* per-CPU counters via counters_alloc(9) */
+	M_IOCTLOPS,	/* ioctl data buffers */
+	M_IOV,		/* large IOVs */
+	M_MOUNT,	/* VFS mount structs */
+	M_NFSREQ,	/* NFS request headers */
+	M_NFSMNT,	/* NFS mount structures */
+	M_LOG,		/* messages in kernel log stash */
+	M_VNODE,	/* Dynamically allocated vnodes */
+	M_DQUOT,	/* UFS quota entries */
+	M_UFSMNT,	/* UFS mount structures */
+	M_SHM,		/* SVID compatible shared memory segments */
+	M_VMMAP,	/* VM map structures */
+	M_SEM,		/* SVID compatible semaphores */
+	M_DIRHASH,	/* UFS directory hash structures */
+	M_ACPI,		/* ACPI structures */
+	M_VMPMAP,	/* VM pmap data */
+	M_FILEDESC,	/* open file descriptor tables */
+	M_SIGIO,	/* sigio structures */
+	M_PROC,		/* proc structures */
+	M_SUBPROC,	/* proc sub-structures */
+	M_MFSNODE,	/* MFS vnode private part */
+	M_NETADDR,	/* export host address structures */
+	M_NFSSVC,	/* NFS server structures */
+	M_NFSD,		/* NFS server daemon structures */
+	M_IPMOPTS,	/* internet multicast options */
+	M_IPMADDR,	/* internet multicast addresses */
+	M_IFMADDR,	/* link-level multicast addresses */
+	M_MRTABLE,	/* multicast routing tables */
+	M_ISOFSMNT,	/* ISOFS mount structures */
+	M_ISOFSNODE,	/* ISOFS vnode private part */
+	M_MSDOSFSMNT,	/* MSDOS FS mount structures */
+	M_MSDOSFSFAT,	/* MSDOS FS FAT tables */
+	M_MSDOSFSNODE,	/* MSDOS FS vnode private part */
+	M_TTYS,		/* allocated tty structures */
+	M_EXEC,		/* argument lists & other mem used by exec */
+	M_MISCFSMNT,	/* miscellaneous FS mount structures */
+	M_FUSEFS,	/* FUSE FS mount structures */
+	M_PFKEY,	/* pfkey data */
+	M_TDB,		/* transforms database */
+	M_XDATA,	/* IPsec data */
+	M_PAGEDEP,	/* file page dependencies */
+	M_INODEDEP,	/* inode dependencies */
+	M_NEWBLK,	/* new block allocation */
+	M_INDIRDEP,	/* indirect block dependencies */
+	M_VMSWAP,	/* VM swap structures */
+	M_UVMAMAP,	/* UVM amap and related */
+	M_UVMAOBJ,	/* UVM aobj and related */
+	M_USB,		/* USB general */
+	M_USBDEV,	/* USB device driver */
+	M_USBHC,	/* USB host controller */
+	M_WITNESS,	/* witness(4) memory */
+	M_MEMDESC,	/* memory range */
+	M_CRYPTO_DATA,	/* crypto(9) data buffers */
+	M_CREDENTIALS,	/* ipsec(4) related credentials */
 
-/* KAME IPv6 */
-	M_IP6OPT	= 123,	/* IPv6 options */
-	M_IP6NDP	= 124,	/* IPv6 Neighbor Discovery structures */
-/* 125-126 - free */
-	M_TEMP		= 127,	/* miscellaneous temporary data buffers */
+	/* KAME IPv6 */
+	M_IP6OPT,	/* IPv6 options */
+	M_IP6NDP,	/* IPv6 Neighbor Discovery structures */
 
-	M_NTFSMNT	= 128,	/* NTFS mount structures */
-	M_NTFSNTNODE	= 129,	/* NTFS ntnode information */
-	M_NTFSFNODE	= 130,	/* NTFS fnode information */
-	M_NTFSDIR	= 131,	/* NTFS directory buffers */
-	M_NTFSNTHASH	= 132,	/* NTFS ntnode hash tables */
-	M_NTFSNTVATTR	= 133,	/* NTFS file attribute information */
-	M_NTFSRDATA	= 134,	/* NTFS resident data */
-	M_NTFSDECOMP	= 135,	/* NTFS decompression temporary storage */
-	M_NTFSRUN	= 136,	/* NTFS vrun storage */
+	M_TEMP,		/* miscellaneous temporary data buffers */
 
-	M_KEVENT	= 137,	/* kqueue(2) data structures */
+	M_NTFSMNT,	/* NTFS mount structures */
+	M_NTFSNTNODE,	/* NTFS ntnode information */
+	M_NTFSFNODE,	/* NTFS fnode information */
+	M_NTFSDIR,	/* NTFS directory buffers */
+	M_NTFSNTHASH,	/* NTFS ntnode hash tables */
+	M_NTFSNTVATTR,	/* NTFS file attribute information */
+	M_NTFSRDATA,	/* NTFS resident data */
+	M_NTFSDECOMP,	/* NTFS decompression temporary storage */
+	M_NTFSRUN,	/* NTFS vrun storage */
 
-/* 138 - free */
-	M_SYNCACHE	= 139,	/* SYN cache hash array */
+	M_KEVENT,	/* kqueue(2) data structures */
 
-	M_UDFMOUNT	= 140,	/* UDF mount structures */
-	M_UDFFENTRY	= 141,	/* UDF file entries */
-	M_UDFFID	= 142,	/* UDF file IDs */
+	M_SYNCACHE,	/* SYN cache hash array */
 
-/* 143 - free */
+	M_UDFMOUNT,	/* UDF mount structures */
+	M_UDFFENTRY,	/* UDF file entries */
+	M_UDFFID,	/* UDF file IDs */
 
-	M_AGP		= 144,	/* AGP memory */
+	M_AGP,		/* AGP memory */
 
-	M_DRM		= 145,	/* Direct Rendering Manager */
+	M_DRM,		/* Direct Rendering Manager */
 
-	M_LAST		= 146	/* is last type + 1 */
+	M_LAST		/* is last type + 1 */
 };
 
 #define	INITKMEMNAMES { \
-	"free",		/* 0 M_FREE */ \
-	NULL, \
-	"devbuf",	/* 2 M_DEVBUF */ \
-	NULL, \
-	"pcb",		/* 4 M_PCB */ \
-	"rtable",	/* 5 M_RTABLE */ \
-	"pf",		/* 6 M_PF */ \
-	NULL, \
-	NULL, \
-	"ifaddr",	/* 9 M_IFADDR */ \
-	"ifgroup",	/* 10 M_IFGROUP */ \
-	"sysctl",	/* 11 M_SYSCTL */ \
-	"counters",	/* 12 M_COUNTERS */ \
-	NULL, \
-	"ioctlops",	/* 14 M_IOCTLOPS */ \
-	NULL, \
-	NULL, \
-	NULL, \
-	NULL, \
-	"iov",		/* 19 M_IOV */ \
-	"mount",	/* 20 M_MOUNT */ \
-	NULL, \
-	"NFS req",	/* 22 M_NFSREQ */ \
-	"NFS mount",	/* 23 M_NFSMNT */ \
-	"log",		/* 24 M_LOG */ \
-	"vnodes",	/* 25 M_VNODE */ \
-	NULL, \
-	"UFS quota",	/* 27 M_DQUOT */ \
-	"UFS mount",	/* 28 M_UFSMNT */ \
-	"shm",		/* 29 M_SHM */ \
-	"VM map",	/* 30 M_VMMAP */ \
-	"sem",		/* 31 M_SEM */ \
-	"dirhash",	/* 32 M_DIRHASH */ \
-	"ACPI", 	/* 33 M_ACPI */ \
-	"VM pmap",	/* 34 M_VMPMAP */ \
-	NULL,	/* 35 */ \
-	NULL,	/* 36 */ \
-	NULL,	/* 37 */ \
-	NULL, \
-	"file desc",	/* 39 M_FILEDESC */ \
-	"sigio",	/* 40 M_SIGIO */ \
-	"proc",		/* 41 M_PROC */ \
-	"subproc",	/* 42 M_SUBPROC */ \
-	NULL, \
-	NULL, \
-	NULL, \
-	"MFS node",	/* 46 M_MFSNODE */ \
-	NULL, \
-	NULL, \
-	"Export Host",	/* 49 M_NETADDR */ \
-	"NFS srvsock",	/* 50 M_NFSSVC */ \
-	NULL, \
-	"NFS daemon",	/* 52 M_NFSD */ \
-	"ip_moptions",	/* 53 M_IPMOPTS */ \
-	"in_multi",	/* 54 M_IPMADDR */ \
-	"ether_multi",	/* 55 M_IFMADDR */ \
-	"mrt",		/* 56 M_MRTABLE */ \
-	"ISOFS mount",	/* 57 M_ISOFSMNT */ \
-	"ISOFS node",	/* 58 M_ISOFSNODE */ \
-	"MSDOSFS mount", /* 59 M_MSDOSFSMNT */ \
-	"MSDOSFS fat",	/* 60 M_MSDOSFSFAT */ \
-	"MSDOSFS node",	/* 61 M_MSDOSFSNODE */ \
-	"ttys",		/* 62 M_TTYS */ \
-	"exec",		/* 63 M_EXEC */ \
-	"miscfs mount",	/* 64 M_MISCFSMNT */ \
-	"fusefs mount", /* 65 M_FUSEFS */ \
-	NULL, \
-	NULL, \
-	NULL, \
-	NULL, \
-	NULL, \
-	NULL, \
-	NULL, \
-	NULL, \
-	"pfkey data",	/* 74 M_PFKEY */ \
-	"tdb",		/* 75 M_TDB */ \
-	"xform_data",	/* 76 M_XDATA */ \
-	NULL, \
-	"pagedep",	/* 78 M_PAGEDEP */ \
-	"inodedep",	/* 79 M_INODEDEP */ \
-	"newblk",	/* 80 M_NEWBLK */ \
-	NULL, \
-	NULL, \
-	"indirdep",	/* 83 M_INDIRDEP */ \
-	NULL, NULL, NULL, NULL, \
-	NULL, NULL, NULL, NULL, \
-	"VM swap",	/* 92 M_VMSWAP */ \
-	NULL, NULL, NULL, NULL, NULL, \
-	"UVM amap",	/* 98 M_UVMAMAP */ \
-	"UVM aobj",	/* 99 M_UVMAOBJ */ \
-	NULL, \
-	"USB",		/* 101 M_USB */ \
-	"USB device",	/* 102 M_USBDEV */ \
-	"USB HC",	/* 103 M_USBHC */ \
-	"witness",	/* 104 M_WITNESS */ \
-	"memdesc",	/* 105 M_MEMDESC */ \
-	NULL,	/* 106 */ \
-	NULL, \
-	"crypto data",	/* 108 M_CRYPTO_DATA */ \
-	NULL, \
-	"IPsec creds",	/* 110 M_CREDENTIALS */ \
-	NULL, NULL, NULL, NULL, \
-	NULL, NULL, NULL, NULL, \
-	NULL, NULL, NULL, NULL, \
-	"ip6_options",	/* 123 M_IP6OPT */ \
-	"NDP",		/* 124 M_IP6NDP */ \
-	NULL, \
-	NULL, \
-	"temp",		/* 127 M_TEMP */ \
-	"NTFS mount",	/* 128 M_NTFSMNT */ \
-	"NTFS node",	/* 129 M_NTFSNTNODE */ \
-	"NTFS fnode",	/* 130 M_NTFSFNODE */ \
-	"NTFS dir",	/* 131 M_NTFSDIR */ \
-	"NTFS hash",	/* 132 M_NTFSNTHASH */ \
-	"NTFS attr",	/* 133 M_NTFSNTVATTR */ \
-	"NTFS data",	/* 134 M_NTFSRDATA */ \
-	"NTFS decomp",	/* 135 M_NTFSDECOMP */ \
-	"NTFS vrun",	/* 136 M_NTFSRUN */ \
-	"kqueue",	/* 137 M_KEVENT */ \
-	NULL,	/* 138 free */ \
-	"SYN cache",	/* 139 M_SYNCACHE */ \
-	"UDF mount",	/* 140 M_UDFMOUNT */ \
-	"UDF file entry",	/* 141 M_UDFFENTRY */ \
-	"UDF file id",	/* 142 M_UDFFID */ \
-	NULL,	/* 143 free */ \
-	"AGP Memory",	/* 144 M_AGP */ \
-	"DRM",	/* 145 M_DRM */ \
+	"free",			/* M_FREE */ \
+	"devbuf",		/* M_DEVBUF */ \
+	"pcb",			/* M_PCB */ \
+	"rtable",		/* M_RTABLE */ \
+	"pf",			/* M_PF */ \
+	"ifaddr",		/* M_IFADDR */ \
+	"ifgroup",		/* M_IFGROUP */ \
+	"sysctl",		/* M_SYSCTL */ \
+	"counters",		/* M_COUNTERS */ \
+	"ioctlops",		/* M_IOCTLOPS */ \
+	"iov",			/* M_IOV */ \
+	"mount",		/* M_MOUNT */ \
+	"NFS req",		/* M_NFSREQ */ \
+	"NFS mount",		/* M_NFSMNT */ \
+	"log",			/* M_LOG */ \
+	"vnodes",		/* M_VNODE */ \
+	"UFS quota",		/* M_DQUOT */ \
+	"UFS mount",		/* M_UFSMNT */ \
+	"shm",			/* M_SHM */ \
+	"VM map",		/* M_VMMAP */ \
+	"sem",			/* M_SEM */ \
+	"dirhash",		/* M_DIRHASH */ \
+	"ACPI", 		/* M_ACPI */ \
+	"VM pmap",		/* M_VMPMAP */ \
+	"file desc",		/* M_FILEDESC */ \
+	"sigio",		/* M_SIGIO */ \
+	"proc",			/* M_PROC */ \
+	"subproc",		/* M_SUBPROC */ \
+	"MFS node",		/* M_MFSNODE */ \
+	"Export Host",		/* M_NETADDR */ \
+	"NFS srvsock",		/* M_NFSSVC */ \
+	"NFS daemon",		/* M_NFSD */ \
+	"ip_moptions",		/* M_IPMOPTS */ \
+	"in_multi",		/* M_IPMADDR */ \
+	"ether_multi",		/* M_IFMADDR */ \
+	"mrt",			/* M_MRTABLE */ \
+	"ISOFS mount",		/* M_ISOFSMNT */ \
+	"ISOFS node",		/* M_ISOFSNODE */ \
+	"MSDOSFS mount",	/* M_MSDOSFSMNT */ \
+	"MSDOSFS fat",		/* M_MSDOSFSFAT */ \
+	"MSDOSFS node",		/* M_MSDOSFSNODE */ \
+	"ttys",			/* M_TTYS */ \
+	"exec",			/* M_EXEC */ \
+	"miscfs mount",		/* M_MISCFSMNT */ \
+	"fusefs mount", 	/* M_FUSEFS */ \
+	"pfkey data",		/* M_PFKEY */ \
+	"tdb",			/* M_TDB */ \
+	"xform_data",		/* M_XDATA */ \
+	"pagedep",		/* M_PAGEDEP */ \
+	"inodedep",		/* M_INODEDEP */ \
+	"newblk",		/* M_NEWBLK */ \
+	"indirdep",		/* M_INDIRDEP */ \
+	"VM swap",		/* M_VMSWAP */ \
+	"UVM amap",		/* M_UVMAMAP */ \
+	"UVM aobj",		/* M_UVMAOBJ */ \
+	"USB",			/* M_USB */ \
+	"USB device",		/* M_USBDEV */ \
+	"USB HC",		/* M_USBHC */ \
+	"witness",		/* M_WITNESS */ \
+	"memdesc",		/* M_MEMDESC */ \
+	"crypto data",		/* M_CRYPTO_DATA */ \
+	"IPsec creds",		/* M_CREDENTIALS */ \
+	"ip6_options",		/* M_IP6OPT */ \
+	"NDP",			/* M_IP6NDP */ \
+	"temp",			/* M_TEMP */ \
+	"NTFS mount",		/* M_NTFSMNT */ \
+	"NTFS node",		/* M_NTFSNTNODE */ \
+	"NTFS fnode",		/* M_NTFSFNODE */ \
+	"NTFS dir",		/* M_NTFSDIR */ \
+	"NTFS hash",		/* M_NTFSNTHASH */ \
+	"NTFS attr",		/* M_NTFSNTVATTR */ \
+	"NTFS data",		/* M_NTFSRDATA */ \
+	"NTFS decomp",		/* M_NTFSDECOMP */ \
+	"NTFS vrun",		/* M_NTFSRUN */ \
+	"kqueue",		/* M_KEVENT */ \
+	"SYN cache",		/* M_SYNCACHE */ \
+	"UDF mount",		/* M_UDFMOUNT */ \
+	"UDF file entry",	/* M_UDFFENTRY */ \
+	"UDF file id",		/* M_UDFFID */ \
+	"AGP Memory",		/* M_AGP */ \
+	"DRM",			/* M_DRM */ \
 }
 
 struct kmemstats {
