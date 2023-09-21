@@ -153,7 +153,7 @@ struct timeval malloc_lasterr;
  * Allocate a block of memory
  */
 void *
-malloc(size_t size, int type, int flags)
+malloc(size_t size, enum malloc_type type, enum malloc_flags flags)
 {
 	struct kmembuckets *kbp;
 	struct kmemusage *kup;
@@ -368,7 +368,7 @@ out:
  * Free a block of memory allocated by malloc.
  */
 void
-free(void *addr, int type, size_t freedsize)
+free(void *addr, enum malloc_type type, size_t freedsize)
 {
 	struct kmembuckets *kbp;
 	struct kmemusage *kup;
@@ -744,7 +744,8 @@ malloc_printit(
 #define MUL_NO_OVERFLOW	(1UL << (sizeof(size_t) * 4))
 
 void *
-mallocarray(size_t nmemb, size_t size, int type, int flags)
+mallocarray(size_t nmemb, size_t size, enum malloc_type type,
+    enum malloc_flags flags)
 {
 	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    nmemb > 0 && SIZE_MAX / nmemb < size) {
