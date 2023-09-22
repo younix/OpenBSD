@@ -2795,7 +2795,7 @@ umb_send_connect(struct umb_softc *sc, int command)
 	int	 off;
 
 	/* Too large or the stack */
-	c = malloc(sizeof (*c), M_USBDEV, M_WAIT|M_ZERO);
+	c = malloc(sizeof (*c), M_USBDEV, M_WAITOK|M_ZERO);
 	c->sessionid = htole32(umb_session_id);
 	c->command = htole32(command);
 	off = offsetof(struct mbim_cid_connect, data);

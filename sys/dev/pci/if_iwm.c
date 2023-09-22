@@ -4038,7 +4038,7 @@ iwm_nvm_init(struct iwm_softc *sc)
 
 	memset(nvm_sections, 0, sizeof(nvm_sections));
 
-	buf = malloc(bufsz, M_DEVBUF, M_WAIT);
+	buf = malloc(bufsz, M_DEVBUF, M_WAITOK);
 	if (buf == NULL)
 		return ENOMEM;
 
@@ -4051,7 +4051,7 @@ iwm_nvm_init(struct iwm_softc *sc)
 			err = 0;
 			continue;
 		}
-		nvm_sections[section].data = malloc(len, M_DEVBUF, M_WAIT);
+		nvm_sections[section].data = malloc(len, M_DEVBUF, M_WAITOK);
 		if (nvm_sections[section].data == NULL) {
 			err = ENOMEM;
 			break;
@@ -7744,7 +7744,7 @@ iwm_lmac_scan(struct iwm_softc *sc, int bgscan)
 	if (req_len > IWM_MAX_CMD_PAYLOAD_SIZE)
 		return ENOMEM;
 	req = malloc(req_len, M_DEVBUF,
-	    (async ? M_NOWAIT : M_WAIT) | M_CANFAIL | M_ZERO);
+	    (async ? M_NOWAIT : M_WAITOK) | M_CANFAIL | M_ZERO);
 	if (req == NULL)
 		return ENOMEM;
 
@@ -7859,7 +7859,7 @@ iwm_config_umac_scan(struct iwm_softc *sc)
 
 	cmd_size = sizeof(*scan_config) + sc->sc_capa_n_scan_channels;
 
-	scan_config = malloc(cmd_size, M_DEVBUF, M_WAIT | M_CANFAIL | M_ZERO);
+	scan_config = malloc(cmd_size, M_DEVBUF, M_WAITOK | M_CANFAIL | M_ZERO);
 	if (scan_config == NULL)
 		return ENOMEM;
 
@@ -7990,7 +7990,7 @@ iwm_umac_scan(struct iwm_softc *sc, int bgscan)
 	    req_len > IWM_MAX_CMD_PAYLOAD_SIZE)
 		return ERANGE;
 	req = malloc(req_len, M_DEVBUF,
-	    (async ? M_NOWAIT : M_WAIT) | M_CANFAIL | M_ZERO);
+	    (async ? M_NOWAIT : M_WAITOK) | M_CANFAIL | M_ZERO);
 	if (req == NULL)
 		return ENOMEM;
 

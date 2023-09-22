@@ -277,7 +277,7 @@ ixgbe_attach(struct device *parent, struct device *self, void *aux)
 
 	/* Allocate multicast array memory. */
 	sc->mta = mallocarray(IXGBE_ETH_LENGTH_OF_ADDRESS,
-	    MAX_NUM_MULTICAST_ADDRESSES, M_DEVBUF, M_NOWAIT);
+	    MAX_NUM_MULTICAST_ADDRESSES, M_NOWAIT, M_DEVBUF);
 	if (sc->mta == NULL) {
 		printf(": Can not allocate multicast setup array\n");
 		goto err_late;
