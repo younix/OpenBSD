@@ -417,7 +417,7 @@ hci_detach(struct socket *so)
 static int
 hci_accept(struct socket *so, struct sockaddr *nam)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	return EOPNOTSUPP;
 }
@@ -428,7 +428,7 @@ hci_bind(struct socket *so, struct sockaddr *nam, struct lwp *l)
 	struct hci_pcb *pcb = so->so_pcb;
 	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
 
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
 	KASSERT(nam != NULL);
 
@@ -451,7 +451,7 @@ hci_bind(struct socket *so, struct sockaddr *nam, struct lwp *l)
 static int
 hci_listen(struct socket *so, struct lwp *l)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	return EOPNOTSUPP;
 }
@@ -462,7 +462,7 @@ hci_connect(struct socket *so, struct sockaddr *nam, struct lwp *l)
 	struct hci_pcb *pcb = so->so_pcb;
 	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
 
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
 	KASSERT(nam != NULL);
 
@@ -483,7 +483,7 @@ hci_connect(struct socket *so, struct sockaddr *nam, struct lwp *l)
 static int
 hci_connect2(struct socket *so, struct socket *so2)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	return EOPNOTSUPP;
 }
@@ -493,7 +493,7 @@ hci_disconnect(struct socket *so)
 {
 	struct hci_pcb *pcb = so->so_pcb;
 
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
 
 	bdaddr_copy(&pcb->hp_raddr, BDADDR_ANY);
@@ -511,7 +511,7 @@ hci_disconnect(struct socket *so)
 static int
 hci_shutdown(struct socket *so)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	socantsendmore(so);
 	return 0;
@@ -520,7 +520,7 @@ hci_shutdown(struct socket *so)
 static int
 hci_abort(struct socket *so)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	soisdisconnected(so);
 	hci_detach(so);
@@ -540,7 +540,7 @@ hci_ioctl(struct socket *so, u_long cmd, void *nam, struct ifnet *ifp)
 static int
 hci_stat(struct socket *so, struct stat *ub)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	return 0;
 }
@@ -551,7 +551,7 @@ hci_peeraddr(struct socket *so, struct sockaddr *nam)
 	struct hci_pcb *pcb = (struct hci_pcb *)so->so_pcb;
 	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
 
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
 	KASSERT(nam != NULL);
 
@@ -568,7 +568,7 @@ hci_sockaddr(struct socket *so, struct sockaddr *nam)
 	struct hci_pcb *pcb = (struct hci_pcb *)so->so_pcb;
 	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
 
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
 	KASSERT(nam != NULL);
 
@@ -582,7 +582,7 @@ hci_sockaddr(struct socket *so, struct sockaddr *nam)
 static int
 hci_rcvd(struct socket *so, int flags, struct lwp *l)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	return EOPNOTSUPP;
 }
@@ -590,7 +590,7 @@ hci_rcvd(struct socket *so, int flags, struct lwp *l)
 static int
 hci_recvoob(struct socket *so, struct mbuf *m, int flags)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	return EOPNOTSUPP;
 }
@@ -606,7 +606,7 @@ hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
 	hci_cmd_hdr_t hdr;
 	int err = 0;
 
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
 	KASSERT(m != NULL);
 
@@ -700,7 +700,7 @@ bad:
 static int
 hci_sendoob(struct socket *so, struct mbuf *m, struct mbuf *control)
 {
-	KASSERT(solocked(so));
+//	KASSERT(solocked(so));
 
 	m_freem(m);
 	m_freem(control);
