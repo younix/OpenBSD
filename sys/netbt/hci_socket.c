@@ -363,12 +363,15 @@ hci_attach(struct socket *so, int proto)
 
 	KASSERT(so->so_pcb == NULL);
 
+// XXX: check this before flight
+#if 0
 	if (so->so_lock == NULL) {
 		mutex_obj_hold(bt_lock);
 		so->so_lock = bt_lock;
 		solock(so);
 	}
 	KASSERT(solocked(so));
+#endif
 
 	error = soreserve(so, hci_sendspace, hci_recvspace);
 	if (error) {
