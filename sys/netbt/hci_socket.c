@@ -43,7 +43,6 @@
 #include <sys/domain.h>
 //#include <sys/kauth.h>
 #include <sys/kernel.h>
-//#include <sys/kmem.h>
 #include <sys/mbuf.h>
 #include <sys/proc.h>
 #include <sys/protosw.h>
@@ -378,7 +377,7 @@ hci_attach(struct socket *so, int proto)
 		return error;
 	}
 
-	pcb = kmem_zalloc(sizeof(struct hci_pcb), KM_SLEEP);
+	pcb = malloc(sizeof(struct hci_pcb), M_BLUETOOTH, M_WAITOK|M_ZERO);
 	pcb->hp_cred = kauth_cred_dup(curlwp->l_cred);
 	pcb->hp_socket = so;
 
@@ -412,7 +411,7 @@ hci_detach(struct socket *so)
 
 	so->so_pcb = NULL;
 	LIST_REMOVE(pcb, hp_next);
-	kmem_free(pcb, sizeof(*pcb));
+	free(pcb, M_BLUETOOTH, sizeof(*pcb));
 }
 
 static int
