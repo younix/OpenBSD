@@ -719,38 +719,43 @@ hci_purgeif(struct socket *so, struct ifnet *ifp)
  * get/set socket options
  */
 int
-hci_ctloutput(int req, struct socket *so, struct sockopt *sopt)
+hci_ctloutput(int req, struct socket *so, int level, int optname,
+    struct mbuf *m)
 {
 	struct hci_pcb *pcb = (struct hci_pcb *)so->so_pcb;
-	int optval, err = 0;
+	int optval = 0, err = 0;
 
 	DPRINTFN(2, "req %s\n", prcorequests[req]);
 
 	if (pcb == NULL)
 		return EINVAL;
 
-	if (sopt->sopt_level != BTPROTO_HCI)
+	if (level != BTPROTO_HCI)
 		return ENOPROTOOPT;
 
 	switch(req) {
 	case PRCO_GETOPT:
-		switch (sopt->sopt_name) {
+		switch (optname) {
 		case SO_HCI_EVT_FILTER:
-			err = sockopt_set(sopt, &pcb->hp_efilter,
-			    sizeof(struct hci_filter));
-
+			m->m_len = sizeof (struct hci_filter);
+			memcpy(mtod(m, struct hci_filter *),
+			    &pcb->hp_efilter,
+			    sizeof(pcb->hp_efilter));
 			break;
 
 		case SO_HCI_PKT_FILTER:
-			err = sockopt_set(sopt, &pcb->hp_pfilter,
-			    sizeof(struct hci_filter));
-
+			m->m_len = sizeof (struct hci_filter);
+			memcpy(mtod(m, struct hci_filter *),
+			    &pcb->hp_pfilter,
+			    sizeof(pcb->hp_pfilter));
 			break;
 
 		case SO_HCI_DIRECTION:
-			err = sockopt_setint(sopt,
-			    (pcb->hp_flags & HCI_DIRECTION ? 1 : 0));
-
+			if (pcb->hp_flags & HCI_DIRECTION)
+				optval = 1;
+			else
+				optval = 0;
+			*mtod(m, int *) = optval;
 			break;
 
 		default:
@@ -760,23 +765,28 @@ hci_ctloutput(int req, struct socket *so, struct sockopt *sopt)
 		break;
 
 	case PRCO_SETOPT:
-		switch (sopt->sopt_name) {
+		switch (optname) {
 		case SO_HCI_EVT_FILTER:	/* set event filter */
-			err = sockopt_get(sopt, &pcb->hp_efilter,
+			if (m == NULL || m->m_len != sizeof(pcb->hp_efilter))
+				return (EINVAL);
+			memcpy(&pcb->hp_efilter,
+			    mtod(m, struct hci_filter *),
 			    sizeof(pcb->hp_efilter));
-
 			break;
 
 		case SO_HCI_PKT_FILTER:	/* set packet filter */
-			err = sockopt_get(sopt, &pcb->hp_pfilter,
+			if (m == NULL || m->m_len != sizeof(pcb->hp_pfilter))
+				return (EINVAL);
+			memcpy(&pcb->hp_pfilter,
+			    mtod(m, struct hci_filter *),
 			    sizeof(pcb->hp_pfilter));
-
 			break;
 
 		case SO_HCI_DIRECTION:	/* request direction ctl messages */
-			err = sockopt_getint(sopt, &optval);
-			if (err)
-				break;
+			if (m == NULL || m->m_len != sizeof(int))
+				return (EINVAL);
+
+			optval = *mtod(m, int *);
 
 			if (optval)
 				pcb->hp_flags |= HCI_DIRECTION;
