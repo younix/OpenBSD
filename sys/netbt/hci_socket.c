@@ -669,7 +669,7 @@ hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
 #endif
 
 	/* makess a copy for precious to keep */
-	m0 = m_copypacket(m, M_DONTWAIT);
+	m0 = m_copym(m, 0, M_COPYALL, M_DONTWAIT);
 	if (m0 == NULL) {
 		err = ENOMEM;
 		goto bad;
@@ -908,7 +908,7 @@ hci_mtap(struct mbuf *m, struct hci_unit *unit)
 		/*
 		 * copy to socket
 		 */
-		m0 = m_copypacket(m, M_DONTWAIT);
+		m0 = m_copym(m, 0, M_COPYALL, M_DONTWAIT);
 		if (m0 && sbappendaddr(&pcb->hp_socket->so_rcv,
 				(struct sockaddr *)&sa, m0, ctlmsg)) {
 			sorwakeup(pcb->hp_socket);
