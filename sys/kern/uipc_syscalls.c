@@ -1214,15 +1214,11 @@ sys_setsockopt(struct proc *p, void *v, register_t *retval)
 	if (SCARG(uap, val)) {
 		m = m_get(M_WAIT, MT_SOOPTS);
 		if (SCARG(uap, valsize) > MLEN) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_WAIT);
 			if ((m->m_flags & M_EXT) == 0) {
 				error = ENOBUFS;
 				goto bad;
 			}
-		}
-		if (m == NULL) {
-			error = ENOBUFS;
-			goto bad;
 		}
 		error = copyin(SCARG(uap, val), mtod(m, caddr_t),
 		    SCARG(uap, valsize));
