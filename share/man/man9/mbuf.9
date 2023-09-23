@@ -442,7 +442,7 @@ is M_COPYALL,
 the whole mbuf is copied.
 The
 .Fa wait
-parameter can be M_WAIT or
+parameter can be M_WAITOK or
 M_NOWAIT.
 It does not copy clusters, it just increases their reference count.
 .It Fn m_free "struct mbuf *m"
@@ -618,7 +618,7 @@ bytes from the beginning, extending the mbuf chain if
 necessary, sleeping for mbufs if
 .Fa wait
 is
-.Fa M_WAIT .
+.Fa M_WAITOK .
 If
 .Fa M_NOWAIT
 is set and no mbufs are available,

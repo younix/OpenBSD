@@ -428,7 +428,7 @@ tcp_newtcpcb(struct inpcb *inp, int wait)
 	struct tcpcb *tp;
 	int i;
 
-	tp = pool_get(&tcpcb_pool, (wait == M_WAIT ? PR_WAITOK : PR_NOWAIT) |
+	tp = pool_get(&tcpcb_pool, (wait == M_WAITOK ? PR_WAITOK : PR_NOWAIT) |
 	    PR_ZERO);
 	if (tp == NULL)
 		return (NULL);

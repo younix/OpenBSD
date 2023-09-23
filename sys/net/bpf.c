@@ -221,9 +221,9 @@ bpf_movein(struct uio *uio, struct bpf_d *d, struct mbuf **mp,
 	if (mlen > MAXMCLBYTES)
 		return (EMSGSIZE);
 
-	MGETHDR(m, M_WAIT, MT_DATA);
+	MGETHDR(m, M_WAITOK, MT_DATA);
 	if (mlen > MHLEN) {
-		MCLGETL(m, M_WAIT, mlen);
+		MCLGETL(m, M_WAITOK, mlen);
 		if ((m->m_flags & M_EXT) == 0) {
 			error = ENOBUFS;
 			goto bad;
@@ -275,7 +275,7 @@ bpf_movein(struct uio *uio, struct bpf_d *d, struct mbuf **mp,
 	/*
 	 * Prepend the data link type as a mbuf tag
 	 */
-	mtag = m_tag_get(PACKET_TAG_DLT, sizeof(u_int), M_WAIT);
+	mtag = m_tag_get(PACKET_TAG_DLT, sizeof(u_int), M_WAITOK);
 	*(u_int *)(mtag + 1) = linktype;
 	m_tag_prepend(m, mtag);
 

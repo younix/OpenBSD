@@ -607,7 +607,7 @@ rip6_attach(struct socket *so, int proto, int wait)
 	in6p->inp_cksum6 = -1;
 
 	in6p->inp_icmp6filt = malloc(sizeof(struct icmp6_filter), M_PCB,
-	    wait == M_WAIT ? M_WAITOK : M_NOWAIT);
+	    wait == M_WAITOK ? M_WAITOK : M_NOWAIT);
 	if (in6p->inp_icmp6filt == NULL) {
 		in_pcbdetach(in6p);
 		return ENOMEM;

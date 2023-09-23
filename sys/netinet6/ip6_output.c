@@ -1527,7 +1527,7 @@ do { \
 			if (optdatalen > MCLBYTES)
 				return (EMSGSIZE); /* XXX */
 			if (optdatalen > MLEN)
-				MCLGET(m, M_WAIT);
+				MCLGET(m, M_WAITOK);
 			m->m_len = optdatalen;
 			bcopy(optdata, mtod(m, void *), optdatalen);
 			break;
@@ -1785,7 +1785,7 @@ ip6_getpcbopt(struct ip6_pktopts *pktopt, int optname, struct mbuf *m)
 	if (optdatalen > MCLBYTES)
 		return (EMSGSIZE); /* XXX */
 	if (optdatalen > MLEN)
-		MCLGET(m, M_WAIT);
+		MCLGET(m, M_WAITOK);
 	m->m_len = optdatalen;
 	if (optdatalen)
 		bcopy(optdata, mtod(m, void *), optdatalen);

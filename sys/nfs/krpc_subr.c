@@ -166,7 +166,7 @@ krpc_portmap(struct sockaddr_in *sin, u_int prog, u_int vers, u_int16_t *portp)
 		return 0;
 	}
 
-	m = m_get(M_WAIT, MT_DATA);
+	m = m_get(M_WAITOK, MT_DATA);
 	sdata = mtod(m, struct sdata *);
 	m->m_len = sizeof(*sdata);
 
@@ -234,7 +234,7 @@ krpc_call(struct sockaddr_in *sa, u_int prog, u_int vers, u_int func,
 	if ((error = socreate(AF_INET, &so, SOCK_DGRAM, 0)))
 		goto out;
 
-	m = m_get(M_WAIT, MT_SOOPTS);
+	m = m_get(M_WAITOK, MT_SOOPTS);
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
 	memcpy(mtod(m, struct timeval *), &tv, sizeof tv);
@@ -249,7 +249,7 @@ krpc_call(struct sockaddr_in *sa, u_int prog, u_int vers, u_int func,
 	 */
 	if (from_p) {
 		int32_t *on;
-		m = m_get(M_WAIT, MT_SOOPTS);
+		m = m_get(M_WAITOK, MT_SOOPTS);
 		on = mtod(m, int32_t *);
 		m->m_len = sizeof(*on);
 		*on = 1;
@@ -264,7 +264,7 @@ krpc_call(struct sockaddr_in *sa, u_int prog, u_int vers, u_int func,
 	 * because some NFS servers refuse requests from
 	 * non-reserved (non-privileged) ports.
 	 */
-	MGET(mopt, M_WAIT, MT_SOOPTS);
+	MGET(mopt, M_WAITOK, MT_SOOPTS);
 	mopt->m_len = sizeof(int);
 	ip = mtod(mopt, int *);
 	*ip = IP_PORTRANGE_LOW;
@@ -273,7 +273,7 @@ krpc_call(struct sockaddr_in *sa, u_int prog, u_int vers, u_int func,
 	if (error)
 		goto out;
 
-	MGET(m, M_WAIT, MT_SONAME);
+	MGET(m, M_WAITOK, MT_SONAME);
 	sin = mtod(m, struct sockaddr_in *);
 	memset(sin, 0, sizeof(*sin));
 	sin->sin_len = m->m_len = sizeof(struct sockaddr_in);
@@ -289,7 +289,7 @@ krpc_call(struct sockaddr_in *sa, u_int prog, u_int vers, u_int func,
 		goto out;
 	}
 
-	MGET(mopt, M_WAIT, MT_SOOPTS);
+	MGET(mopt, M_WAITOK, MT_SOOPTS);
 	mopt->m_len = sizeof(int);
 	ip = mtod(mopt, int *);
 	*ip = IP_PORTRANGE_DEFAULT;
@@ -301,14 +301,14 @@ krpc_call(struct sockaddr_in *sa, u_int prog, u_int vers, u_int func,
 	/*
 	 * Setup socket address for the server.
 	 */
-	nam = m_get(M_WAIT, MT_SONAME);
+	nam = m_get(M_WAITOK, MT_SONAME);
 	sin = mtod(nam, struct sockaddr_in *);
 	bcopy(sa, sin, (nam->m_len = sa->sin_len));
 
 	/*
 	 * Prepend RPC message header.
 	 */
-	mhead = m_gethdr(M_WAIT, MT_DATA);
+	mhead = m_gethdr(M_WAITOK, MT_DATA);
 	mhead->m_next = *data;
 	call = mtod(mhead, struct rpc_call *);
 	mhead->m_len = sizeof(*call);
@@ -341,7 +341,7 @@ krpc_call(struct sockaddr_in *sa, u_int prog, u_int vers, u_int func,
 	 */
 	for (timo = 0; retries; retries--) {
 		/* Send RPC request (or re-send). */
-		m = m_copym(mhead, 0, M_COPYALL, M_WAIT);
+		m = m_copym(mhead, 0, M_COPYALL, M_WAITOK);
 		if (m == NULL) {
 			error = ENOBUFS;
 			goto out;
@@ -500,9 +500,9 @@ xdr_string_encode(char *str, int len)
 	if (mlen > MCLBYTES)		/* If too big, we just can't do it. */
 		return (NULL);
 
-	m = m_get(M_WAIT, MT_DATA);
+	m = m_get(M_WAITOK, MT_DATA);
 	if (mlen > MLEN) {
-		MCLGET(m, M_WAIT);
+		MCLGET(m, M_WAITOK);
 		if ((m->m_flags & M_EXT) == 0) {
 			(void) m_free(m);	/* There can be only one. */
 			return (NULL);
@@ -574,7 +574,7 @@ xdr_inaddr_encode(struct in_addr *ia)
 	u_int8_t *cp;
 	u_int32_t *ip;
 
-	m = m_get(M_WAIT, MT_DATA);
+	m = m_get(M_WAITOK, MT_DATA);
 	xi = mtod(m, struct xdr_inaddr *);
 	m->m_len = sizeof(*xi);
 	xi->atype = txdr_unsigned(1);

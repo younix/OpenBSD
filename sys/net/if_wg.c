@@ -850,9 +850,9 @@ wg_send_buf(struct wg_softc *sc, struct wg_endpoint *e, uint8_t *buf,
 	int		 ret = 0;
 
 retry:
-	m = m_gethdr(M_WAIT, MT_DATA);
+	m = m_gethdr(M_WAITOK, MT_DATA);
 	m->m_len = 0;
-	m_copyback(m, 0, len, buf, M_WAIT);
+	m_copyback(m, 0, len, buf, M_WAITOK);
 
 	/* As we're sending a handshake packet here, we want high priority */
 	m->m_pkthdr.pf.prio = IFQ_MAXPRIO;

@@ -228,7 +228,7 @@ in_pcballoc(struct socket *so, struct inpcbtable *table, int wait)
 {
 	struct inpcb *inp;
 
-	inp = pool_get(&inpcb_pool, (wait == M_WAIT ? PR_WAITOK : PR_NOWAIT) |
+	inp = pool_get(&inpcb_pool, (wait == M_WAITOK ? PR_WAITOK : PR_NOWAIT) |
 	    PR_ZERO);
 	if (inp == NULL)
 		return (ENOBUFS);

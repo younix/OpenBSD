@@ -1254,11 +1254,11 @@ tht_rxf_fill(struct tht_softc *sc, int wait)
 		if ((pkt = tht_pkt_get(&sc->sc_rx_list)) == NULL)
 			goto done;
 
-		MGETHDR(m, wait ? M_WAIT : M_NOWAIT, MT_DATA);
+		MGETHDR(m, wait ? M_WAITOK : M_NOWAIT, MT_DATA);
 		if (m == NULL)
 			goto put_pkt;
 
-		MCLGET(m, wait ? M_WAIT : M_NOWAIT);
+		MCLGET(m, wait ? M_WAITOK : M_NOWAIT);
 		if (!ISSET(m->m_flags, M_EXT))
 			goto free_m;
 

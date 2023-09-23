@@ -117,7 +117,7 @@ igmp_init(void)
 	LIST_INIT(&rti_head);
 
 	igmpcounters = counters_alloc(igps_ncounters);
-	router_alert = m_get(M_WAIT, MT_DATA);
+	router_alert = m_get(M_WAITOK, MT_DATA);
 
 	/*
 	 * Construct a Router Alert option (RAO) to use in report

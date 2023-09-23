@@ -284,7 +284,7 @@ uipc_attach(struct socket *so, int proto, int wait)
 		if (error)
 			return (error);
 	}
-	unp = pool_get(&unpcb_pool, (wait == M_WAIT ? PR_WAITOK : PR_NOWAIT) |
+	unp = pool_get(&unpcb_pool, (wait == M_WAITOK ? PR_WAITOK : PR_NOWAIT) |
 	    PR_ZERO);
 	if (unp == NULL)
 		return (ENOBUFS);
@@ -862,7 +862,7 @@ unp_connect(struct socket *so, struct mbuf *nam, struct proc *p)
 		solock(so2);
 
 		if ((so2->so_options & SO_ACCEPTCONN) == 0 ||
-		    (so3 = sonewconn(so2, 0, M_WAIT)) == NULL) {
+		    (so3 = sonewconn(so2, 0, M_WAITOK)) == NULL) {
 			error = ECONNREFUSED;
 		}
 
@@ -1229,7 +1229,7 @@ morespace:
 		memcpy(tmp, mtod(control, caddr_t), control->m_len);
 
 		/* allocate a cluster and try again */
-		MCLGET(control, M_WAIT);
+		MCLGET(control, M_WAITOK);
 		if ((control->m_flags & M_EXT) == 0) {
 			free(tmp, M_TEMP, control->m_len);
 			error = ENOBUFS;       /* allocation failed */

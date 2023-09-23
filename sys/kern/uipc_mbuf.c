@@ -240,7 +240,7 @@ m_get(int nowait, int type)
 
 	KASSERT(type >= 0 && type < MT_NTYPES);
 
-	m = pool_get(&mbpool, nowait == M_WAIT ? PR_WAITOK : PR_NOWAIT);
+	m = pool_get(&mbpool, nowait == M_WAITOK ? PR_WAITOK : PR_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -273,7 +273,7 @@ m_gethdr(int nowait, int type)
 
 	KASSERT(type >= 0 && type < MT_NTYPES);
 
-	m = pool_get(&mbpool, nowait == M_WAIT ? PR_WAITOK : PR_NOWAIT);
+	m = pool_get(&mbpool, nowait == M_WAITOK ? PR_WAITOK : PR_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -397,7 +397,7 @@ m_clget(struct mbuf *m, int how, u_int pktlen)
 
 		m = m0;
 	}
-	buf = pool_get(pp, how == M_WAIT ? PR_WAITOK : PR_NOWAIT);
+	buf = pool_get(pp, how == M_WAITOK ? PR_WAITOK : PR_NOWAIT);
 	if (buf == NULL) {
 		m_freem(m0);
 		return (NULL);
@@ -635,7 +635,7 @@ m_prepend(struct mbuf *m, int len, int how)
 /*
  * Make a copy of an mbuf chain starting "off" bytes from the beginning,
  * continuing for "len" bytes.  If len is M_COPYALL, copy to end of mbuf.
- * The wait parameter is a choice of M_WAIT/M_NOWAIT from caller.
+ * The wait parameter is a choice of M_WAITOK/M_NOWAIT from caller.
  */
 struct mbuf *
 m_copym(struct mbuf *m0, int off, int len, int wait)

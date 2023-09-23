@@ -349,11 +349,11 @@ pppwrite(struct tty *tp, struct uio *uio, int flag)
 	return (EMSGSIZE);
     for (mp = &m0; uio->uio_resid; mp = &m->m_next) {
 	if (mp == &m0) {
-	    MGETHDR(m, M_WAIT, MT_DATA);
+	    MGETHDR(m, M_WAITOK, MT_DATA);
 	    m->m_pkthdr.len = uio->uio_resid - PPP_HDRLEN;
 	    m->m_pkthdr.ph_ifidx = 0;
 	} else
-	    MGET(m, M_WAIT, MT_DATA);
+	    MGET(m, M_WAITOK, MT_DATA);
 	*mp = m;
 	m->m_len = 0;
 	if (uio->uio_resid >= MCLBYTES / 2)

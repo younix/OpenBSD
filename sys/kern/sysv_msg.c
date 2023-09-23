@@ -380,7 +380,7 @@ que_create(key_t key, struct ucred *cred, int mode)
 	struct que *que, *que2;
 	int nextix = 1;
 
-	que = malloc(sizeof(*que), M_TEMP, M_WAIT|M_ZERO);
+	que = malloc(sizeof(*que), M_TEMP, M_WAITOK|M_ZERO);
 
 	/* if malloc slept, a queue with the same key may have been created */
 	if (que_key_lookup(key)) {
@@ -590,9 +590,9 @@ msg_copyin(struct msg *msg, const char *ubuf, size_t len, struct proc *p)
 	mm = &msg->msg_data;
 
 	while (msg->msg_len < len) {
-		m = m_get(M_WAIT, MT_DATA);
+		m = m_get(M_WAITOK, MT_DATA);
 		if (len >= MINCLSIZE) {
-			MCLGET(m, M_WAIT);
+			MCLGET(m, M_WAITOK);
 			xfer = min(len, MCLBYTES);
 		} else {
 			xfer = min(len, MLEN);
@@ -683,7 +683,7 @@ sysctl_sysvmsg(int *name, u_int namelen, void *where, size_t *sizep)
 		if (*sizep == sizeof(struct msginfo))
 			return (copyout(&msginfo, where, sizeof(msginfo)));
 
-		info = malloc(infolen0, M_TEMP, M_WAIT|M_ZERO);
+		info = malloc(infolen0, M_TEMP, M_WAITOK|M_ZERO);
 
 		/* if the malloc slept, this may have changed */
 		infolen = sizeof(msginfo) +

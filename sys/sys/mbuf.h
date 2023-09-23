@@ -250,7 +250,6 @@ struct mbuf {
 
 /* flags to m_get/MGET */
 #include <sys/malloc.h>
-#define	M_WAIT		M_WAITOK
 
 /*
  * mbuf allocation/deallocation macros:

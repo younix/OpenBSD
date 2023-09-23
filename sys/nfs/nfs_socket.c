@@ -253,9 +253,9 @@ nfs_connect(struct nfsmount *nmp, struct nfsreq *rep)
 
 	/* Allocate mbufs possibly waiting before grabbing the socket lock. */
 	if (nmp->nm_sotype == SOCK_STREAM || saddr->sa_family == AF_INET)
-		MGET(mopt, M_WAIT, MT_SOOPTS);
+		MGET(mopt, M_WAITOK, MT_SOOPTS);
 	if (saddr->sa_family == AF_INET)
-		MGET(nam, M_WAIT, MT_SONAME);
+		MGET(nam, M_WAITOK, MT_SONAME);
 
 	so = nmp->nm_so;
 	nmp->nm_soflags = so->so_proto->pr_flags;
@@ -570,7 +570,7 @@ tryagain:
 			goto tryagain;
 		}
 		while (rep->r_flags & R_MUSTRESEND) {
-			m = m_copym(rep->r_mreq, 0, M_COPYALL, M_WAIT);
+			m = m_copym(rep->r_mreq, 0, M_COPYALL, M_WAITOK);
 			nfsstats.rpcretries++;
 			rep->r_rtt = 0;
 			rep->r_flags &= ~R_TIMING;
@@ -868,7 +868,7 @@ nfs_request(struct vnode *vp, int procnum, struct nfsm_info *infop)
 	rep->r_procnum = procnum;
 
 	/* empty mbuf for AUTH_UNIX header */
-	rep->r_mreq = m_gethdr(M_WAIT, MT_DATA);
+	rep->r_mreq = m_gethdr(M_WAITOK, MT_DATA);
 	rep->r_mreq->m_next = infop->nmi_mreq;
 	rep->r_mreq->m_len = 0;
 	m_calchdrlen(rep->r_mreq);
@@ -885,7 +885,7 @@ nfs_request(struct vnode *vp, int procnum, struct nfsm_info *infop)
 	 * For stream protocols, insert a Sun RPC Record Mark.
 	 */
 	if (nmp->nm_sotype == SOCK_STREAM) {
-		M_PREPEND(m, NFSX_UNSIGNED, M_WAIT);
+		M_PREPEND(m, NFSX_UNSIGNED, M_WAITOK);
 		*mtod(m, u_int32_t *) = htonl(0x80000000 |
 		    (m->m_pkthdr.len - NFSX_UNSIGNED));
 	}
@@ -922,7 +922,7 @@ tryagain:
 			error = nfs_sndlock(&nmp->nm_flag, rep);
 		if (!error) {
 			error = nfs_send(nmp->nm_so, nmp->nm_nam,
-			    m_copym(m, 0, M_COPYALL, M_WAIT), rep);
+			    m_copym(m, 0, M_COPYALL, M_WAITOK), rep);
 			if (nmp->nm_soflags & PR_CONNREQUIRED)
 				nfs_sndunlock(&nmp->nm_flag);
 		}
@@ -1046,7 +1046,7 @@ nfs_rephead(int siz, struct nfsrv_descript *nd, struct nfssvc_sock *slp,
 	struct mbuf *mreq;
 	struct mbuf *mb;
 
-	MGETHDR(mreq, M_WAIT, MT_DATA);
+	MGETHDR(mreq, M_WAITOK, MT_DATA);
 	mb = mreq;
 	/*
 	 * If this is a big reply, use a cluster else
@@ -1054,7 +1054,7 @@ nfs_rephead(int siz, struct nfsrv_descript *nd, struct nfssvc_sock *slp,
 	 */
 	siz += RPC_REPLYSIZ;
 	if (siz >= MHLEN - max_hdr) {
-		MCLGET(mreq, M_WAIT);
+		MCLGET(mreq, M_WAITOK);
 	} else
 		mreq->m_data += max_hdr;
 	tl = mtod(mreq, u_int32_t *);
@@ -1383,10 +1383,10 @@ nfs_realign(struct mbuf **pm, int hsiz)
 	while ((m = *pm) != NULL) {
 		if (!ALIGNED_POINTER(m->m_data, void *) ||
 		    !ALIGNED_POINTER(m->m_len,  void *)) {
-			MGET(n, M_WAIT, MT_DATA);
+			MGET(n, M_WAITOK, MT_DATA);
 #define ALIGN_POINTER(n) ((u_int)(((n) + sizeof(void *)) & ~sizeof(void *)))
 			if (ALIGN_POINTER(m->m_len) >= MINCLSIZE) {
-				MCLGET(n, M_WAIT);
+				MCLGET(n, M_WAITOK);
 			}
 			n->m_len = 0;
 			break;
@@ -1400,7 +1400,7 @@ nfs_realign(struct mbuf **pm, int hsiz)
 	if (n != NULL) {
 		++nfs_realign_count;
 		while (m) {
-			m_copyback(n, off, m->m_len, mtod(m, caddr_t), M_WAIT);
+			m_copyback(n, off, m->m_len, mtod(m, caddr_t), M_WAITOK);
 
 			/*
 			 * If an unaligned amount of memory was copied, fix up
@@ -1553,7 +1553,7 @@ nfs_msg(struct nfsreq *rep, char *msg)
  * Socket upcall routine for the nfsd sockets.
  * The caddr_t arg is a pointer to the "struct nfssvc_sock".
  * Essentially do as much as possible non-blocking, else punt and it will
- * be called with M_WAIT from an nfsd.
+ * be called with M_WAITOK from an nfsd.
  */
 void
 nfsrv_rcv(struct socket *so, caddr_t arg, int waitflag)

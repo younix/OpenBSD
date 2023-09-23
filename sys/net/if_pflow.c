@@ -148,7 +148,7 @@ pflow_clone_create(struct if_clone *ifc, int unit)
 
 	pflowif = malloc(sizeof(*pflowif), M_DEVBUF, M_WAITOK|M_ZERO);
 	rw_init(&pflowif->sc_lock, "pflowlk");
-	MGET(pflowif->send_nam, M_WAIT, MT_SONAME);
+	MGET(pflowif->send_nam, M_WAITOK, MT_SONAME);
 	pflowif->sc_version = PFLOW_PROTO_DEFAULT;
 
 	/* ipfix template init */
@@ -438,7 +438,7 @@ pflow_set(struct pflow_softc *sc, struct pflowreq *pflowr)
 			if (pflowvalidsockaddr(sc->sc_flowsrc, 1)) {
 				struct mbuf *m;
 
-				MGET(m, M_WAIT, MT_SONAME);
+				MGET(m, M_WAITOK, MT_SONAME);
 				m->m_len = sc->sc_flowsrc->sa_len;
 				sa = mtod(m, struct sockaddr *);
 				memcpy(sa, sc->sc_flowsrc,

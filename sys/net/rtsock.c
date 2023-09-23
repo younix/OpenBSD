@@ -228,7 +228,7 @@ route_attach(struct socket *so, int proto, int wait)
 	 * code does not care about the additional fields
 	 * and works directly on the raw socket.
 	 */
-	rop = pool_get(&rtpcb_pool, (wait == M_WAIT ? PR_WAITOK : PR_NOWAIT) |
+	rop = pool_get(&rtpcb_pool, (wait == M_WAITOK ? PR_WAITOK : PR_NOWAIT) |
 	    PR_ZERO);
 	if (rop == NULL)
 		return (ENOBUFS);

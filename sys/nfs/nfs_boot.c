@@ -341,7 +341,7 @@ bp_whoami(struct sockaddr_in *bpsin, struct in_addr *my_ip,
 	/*
 	 * Build request message for PMAPPROC_CALLIT.
 	 */
-	m = m_get(M_WAIT, MT_DATA);
+	m = m_get(M_WAITOK, MT_DATA);
 	call = mtod(m, struct whoami_call *);
 	m->m_len = sizeof(*call);
 	call->call_prog = txdr_unsigned(BOOTPARAM_PROG);

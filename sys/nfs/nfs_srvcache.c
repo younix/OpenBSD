@@ -159,7 +159,7 @@ nfsrv_getcache(struct nfsrv_descript *nd, struct nfssvc_sock *slp,
 			ret = RC_REPLY;
 		} else if (rp->rc_flag & RC_REPMBUF) {
 			nfsstats.srvcache_nonidemdonehits++;
-			*repp = m_copym(rp->rc_reply, 0, M_COPYALL, M_WAIT);
+			*repp = m_copym(rp->rc_reply, 0, M_COPYALL, M_WAITOK);
 			ret = RC_REPLY;
 		} else {
 			nfsstats.srvcache_idemdonehits++;
@@ -203,7 +203,7 @@ nfsrv_getcache(struct nfsrv_descript *nd, struct nfssvc_sock *slp,
 		break;
 	default:
 		rp->rc_flag |= RC_NAM;
-		rp->rc_nam = m_copym(nd->nd_nam, 0, M_COPYALL, M_WAIT);
+		rp->rc_nam = m_copym(nd->nd_nam, 0, M_COPYALL, M_WAITOK);
 		break;
 	};
 	rp->rc_proc = nd->nd_procnum;
@@ -242,7 +242,7 @@ nfsrv_updatecache(struct nfsrv_descript *nd, int repvalid,
 				rp->rc_flag |= RC_REPSTATUS;
 			} else {
 				rp->rc_reply = m_copym(repmbuf, 0, M_COPYALL,
-				    M_WAIT);
+				    M_WAITOK);
 				rp->rc_flag |= RC_REPMBUF;
 			}
 		}

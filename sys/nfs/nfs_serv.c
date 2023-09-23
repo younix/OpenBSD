@@ -459,8 +459,8 @@ nfsrv_readlink(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 		goto out;
 	}
 
-	MGET(mp, M_WAIT, MT_DATA);
-	MCLGET(mp, M_WAIT);		/* MLEN < NFS_MAXPATHLEN < MCLBYTES */
+	MGET(mp, M_WAITOK, MT_DATA);
+	MCLGET(mp, M_WAITOK);		/* MLEN < NFS_MAXPATHLEN < MCLBYTES */
 	mp->m_len = NFS_MAXPATHLEN;
 	len = NFS_MAXPATHLEN;
 	iov.iov_base = mtod(mp, caddr_t);
@@ -602,9 +602,9 @@ nfsrv_read(struct nfsrv_descript *nfsd, struct nfssvc_sock *slp,
 				i++;
 			}
 			if (left > 0) {
-				MGET(m, M_WAIT, MT_DATA);
+				MGET(m, M_WAITOK, MT_DATA);
 				if (left >= MINCLSIZE)
-					MCLGET(m, M_WAIT);
+					MCLGET(m, M_WAITOK);
 				m->m_len = 0;
 				m2->m_next = m;
 				m2 = m;

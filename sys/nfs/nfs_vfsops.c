@@ -389,7 +389,7 @@ nfs_mount_diskless(struct nfs_dlmount *ndmntp, char *mntname, int mntflag,
 	mp->mnt_flag |= mntflag;
 
 	/* Get mbuf for server sockaddr. */
-	m = m_get(M_WAIT, MT_SONAME);
+	m = m_get(M_WAITOK, MT_SONAME);
 	bcopy(ndmntp->ndm_args.addr, mtod(m, caddr_t),
 	    (m->m_len = ndmntp->ndm_args.addr->sa_len));
 

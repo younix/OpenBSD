@@ -516,9 +516,9 @@ nfsm_reqhead(int hsiz)
 {
 	struct mbuf *mb;
 
-	MGET(mb, M_WAIT, MT_DATA);
+	MGET(mb, M_WAITOK, MT_DATA);
 	if (hsiz > MLEN)
-		MCLGET(mb, M_WAIT);
+		MCLGET(mb, M_WAITOK);
 	mb->m_len = 0;
 	
 	/* Finally, return values */
@@ -718,9 +718,9 @@ nfsm_uiotombuf(struct mbuf **mp, struct uio *uiop, size_t len)
 		mb->m_len += xfer;
 		len -= xfer;
 		if (len > 0) {
-			MGET(mb2, M_WAIT, MT_DATA);
+			MGET(mb2, M_WAITOK, MT_DATA);
 			if (len > MLEN)
-				MCLGET(mb2, M_WAIT);
+				MCLGET(mb2, M_WAITOK);
 			mb2->m_len = 0;
 			mb->m_next = mb2;
 			mb = mb2;
@@ -729,7 +729,7 @@ nfsm_uiotombuf(struct mbuf **mp, struct uio *uiop, size_t len)
 
 	if (pad > 0) {
 		if (pad > m_trailingspace(mb)) {
-			MGET(mb2, M_WAIT, MT_DATA);
+			MGET(mb2, M_WAITOK, MT_DATA);
 			mb2->m_len = 0;
 			mb->m_next = mb2;
 			mb = mb2;
@@ -817,7 +817,7 @@ nfsm_disct(struct mbuf **mdp, caddr_t *dposp, int siz, int left, caddr_t *cp2)
 	} else if (siz > MHLEN) {
 		panic("nfs S too big");
 	} else {
-		MGET(mp2, M_WAIT, MT_DATA);
+		MGET(mp2, M_WAITOK, MT_DATA);
 		mp2->m_next = mp->m_next;
 		mp->m_next = mp2;
 		mp->m_len -= left;
@@ -1793,7 +1793,7 @@ nfsm_build(struct mbuf **mp, u_int len)
 	bpos = mb_offset(mb);
 
 	if (len > m_trailingspace(mb)) {
-		MGET(mb2, M_WAIT, MT_DATA);
+		MGET(mb2, M_WAITOK, MT_DATA);
 		if (len > MLEN)
 			panic("build > MLEN");
 		mb->m_next = mb2;

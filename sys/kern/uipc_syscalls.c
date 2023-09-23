@@ -276,7 +276,7 @@ doaccept(struct proc *p, int sock, struct sockaddr *name, socklen_t *anamelen,
 		return (error);
 	}
 
-	nam = m_get(M_WAIT, MT_SONAME);
+	nam = m_get(M_WAITOK, MT_SONAME);
 
 	head = headfp->f_data;
 	solock(head);
@@ -1212,7 +1212,7 @@ sys_setsockopt(struct proc *p, void *v, register_t *retval)
 		goto bad;
 	}
 	if (SCARG(uap, val)) {
-		m = m_get(M_WAIT, MT_SOOPTS);
+		m = m_get(M_WAITOK, MT_SOOPTS);
 		if (SCARG(uap, valsize) > MLEN) {
 			MCLGET(m, M_NOWAIT);
 			if ((m->m_flags & M_EXT) == 0) {
@@ -1267,7 +1267,7 @@ sys_getsockopt(struct proc *p, void *v, register_t *retval)
 			goto out;
 	} else
 		valsize = 0;
-	m = m_get(M_WAIT, MT_SOOPTS);
+	m = m_get(M_WAITOK, MT_SOOPTS);
 	so = fp->f_data;
 	error = sogetopt(so, SCARG(uap, level), SCARG(uap, name), m);
 	if (error == 0 && SCARG(uap, val) && valsize && m != NULL) {
@@ -1318,7 +1318,7 @@ sys_getsockname(struct proc *p, void *v, register_t *retval)
 		error = ENOTSOCK;
 		goto bad;
 	}
-	m = m_getclr(M_WAIT, MT_SONAME);
+	m = m_getclr(M_WAITOK, MT_SONAME);
 	solock_shared(so);
 	error = pru_sockaddr(so, m);
 	sounlock_shared(so);
@@ -1365,7 +1365,7 @@ sys_getpeername(struct proc *p, void *v, register_t *retval)
 	error = copyin(SCARG(uap, alen), &len, sizeof (len));
 	if (error)
 		goto bad;
-	m = m_getclr(M_WAIT, MT_SONAME);
+	m = m_getclr(M_WAITOK, MT_SONAME);
 	solock_shared(so);
 	error = pru_peeraddr(so, m);
 	sounlock_shared(so);
@@ -1396,7 +1396,7 @@ sockargs(struct mbuf **mp, const void *buf, size_t buflen, int type)
 		return (EINVAL);
 
 	/* Allocate an mbuf to hold the arguments. */
-	m = m_get(M_WAIT, type);
+	m = m_get(M_WAITOK, type);
 	if (buflen > MLEN) {
 		MCLGET(m, M_WAITOK);
 		if ((m->m_flags & M_EXT) == 0) {
@@ -1502,7 +1502,7 @@ ypsockargs(struct mbuf **mp, const void *buf, size_t buflen, int type)
 		return (EINVAL);
 
 	/* Allocate an mbuf to hold the arguments. */
-	m = m_get(M_WAIT, type);
+	m = m_get(M_WAITOK, type);
 	if (buflen > MLEN) {
 		MCLGET(m, M_WAITOK);
 		if ((m->m_flags & M_EXT) == 0) {

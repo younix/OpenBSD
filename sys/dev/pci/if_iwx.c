@@ -1516,7 +1516,7 @@ iwx_read_firmware(struct iwx_softc *sc)
 				fw->iml_len = 0;
 			}
 			sc->sc_fw.iml = malloc(tlv_len, M_DEVBUF,
-			    M_WAIT | M_CANFAIL | M_ZERO);
+			    M_WAITOK | M_CANFAIL | M_ZERO);
 			if (sc->sc_fw.iml == NULL) {
 				err = ENOMEM;
 				goto parse_out;
@@ -7156,7 +7156,7 @@ iwx_umac_scan_v14(struct iwx_softc *sc, int bgscan)
 	uint32_t bitmap_ssid = 0;
 
 	cmd = malloc(sizeof(*cmd), M_DEVBUF,
-	    (async ? M_NOWAIT : M_WAIT) | M_CANFAIL | M_ZERO);
+	    (async ? M_NOWAIT : M_WAITOK) | M_CANFAIL | M_ZERO);
 	if (cmd == NULL)
 		return ENOMEM;
 

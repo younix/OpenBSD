@@ -279,7 +279,7 @@ pfkeyv2_attach(struct socket *so, int proto, int wait)
 	if (error)
 		return (error);
 
-	kp = pool_get(&pkpcb_pool, (wait == M_WAIT ? PR_WAITOK : PR_NOWAIT) |
+	kp = pool_get(&pkpcb_pool, (wait == M_WAITOK ? PR_WAITOK : PR_NOWAIT) |
 	    PR_ZERO);
 	if (kp == NULL)
 		return (ENOBUFS);

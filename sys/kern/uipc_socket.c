@@ -152,7 +152,7 @@ soalloc(int wait)
 {
 	struct socket *so;
 
-	so = pool_get(&socket_pool, (wait == M_WAIT ? PR_WAITOK : PR_NOWAIT) |
+	so = pool_get(&socket_pool, (wait == M_WAITOK ? PR_WAITOK : PR_NOWAIT) |
 	    PR_ZERO);
 	if (so == NULL)
 		return (NULL);
@@ -190,7 +190,7 @@ socreate(int dom, struct socket **aso, int type, int proto)
 		return (EPROTONOSUPPORT);
 	if (prp->pr_type != type)
 		return (EPROTOTYPE);
-	so = soalloc(M_WAIT);
+	so = soalloc(M_WAITOK);
 	so->so_type = type;
 	if (suser(p) == 0)
 		so->so_state = SS_PRIV;
@@ -204,7 +204,7 @@ socreate(int dom, struct socket **aso, int type, int proto)
 	so->so_rcv.sb_timeo_nsecs = INFSLP;
 
 	solock(so);
-	error = pru_attach(so, proto, M_WAIT);
+	error = pru_attach(so, proto, M_WAITOK);
 	if (error) {
 		so->so_state |= SS_NOFDREF;
 		/* sofree() calls sounlock(). */
@@ -682,12 +682,12 @@ m_getuio(struct mbuf **mp, int atomic, long space, struct uio *uio)
 
 	do {
 		if (top == NULL) {
-			MGETHDR(m, M_WAIT, MT_DATA);
+			MGETHDR(m, M_WAITOK, MT_DATA);
 			mlen = MHLEN;
 			m->m_pkthdr.len = 0;
 			m->m_pkthdr.ph_ifidx = 0;
 		} else {
-			MGET(m, M_WAIT, MT_DATA);
+			MGET(m, M_WAITOK, MT_DATA);
 			mlen = MLEN;
 		}
 		/* chain mbuf together */
@@ -813,7 +813,7 @@ soreceive(struct socket *so, struct mbuf **paddr, struct uio *uio,
 	else
 		flags = 0;
 	if (flags & MSG_OOB) {
-		m = m_get(M_WAIT, MT_DATA);
+		m = m_get(M_WAITOK, MT_DATA);
 		solock(so);
 		error = pru_rcvoob(so, m, flags & MSG_PEEK);
 		sounlock(so);
@@ -1097,7 +1097,7 @@ dontblock:
 				orig_resid = 0;
 			} else {
 				if (mp)
-					*mp = m_copym(m, 0, len, M_WAIT);
+					*mp = m_copym(m, 0, len, M_WAITOK);
 				m->m_data += len;
 				m->m_len -= len;
 				so->so_rcv.sb_cc -= len;
@@ -1359,7 +1359,7 @@ sosplice(struct socket *so, int fd, off_t max, struct timeval *tv)
 	 * To prevent softnet interrupt from calling somove() while
 	 * we sleep, the socket buffers are not marked as spliced yet.
 	 */
-	if (somove(so, M_WAIT)) {
+	if (somove(so, M_WAITOK)) {
 		so->so_rcv.sb_flags |= SB_SPLICE;
 		sosp->so_snd.sb_flags |= SB_SPLICE;
 	}

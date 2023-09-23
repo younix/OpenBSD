@@ -261,7 +261,7 @@ nfssvc_addsock(struct file *fp, struct mbuf *mynam)
 	 * repeatedly for the same socket, but that isn't harmful.
 	 */
 	if (so->so_type == SOCK_STREAM) {
-		MGET(m, M_WAIT, MT_SOOPTS);
+		MGET(m, M_WAITOK, MT_SOOPTS);
 		*mtod(m, int32_t *) = 1;
 		m->m_len = sizeof(int32_t);
 		sosetopt(so, SOL_SOCKET, SO_KEEPALIVE, m);
@@ -269,7 +269,7 @@ nfssvc_addsock(struct file *fp, struct mbuf *mynam)
 	}
 	if (so->so_proto->pr_domain->dom_family == AF_INET &&
 	    so->so_proto->pr_protocol == IPPROTO_TCP) {
-		MGET(m, M_WAIT, MT_SOOPTS);
+		MGET(m, M_WAITOK, MT_SOOPTS);
 		*mtod(m, int32_t *) = 1;
 		m->m_len = sizeof(int32_t);
 		sosetopt(so, IPPROTO_TCP, TCP_NODELAY, m);
@@ -336,7 +336,7 @@ loop:
 			} else if (ISSET(slp->ns_flag, SLP_NEEDQ)) {
 				CLR(slp->ns_flag, SLP_NEEDQ);
 				nfs_sndlock(&slp->ns_solock, NULL);
-				nfsrv_rcv(slp->ns_so, (caddr_t)slp, M_WAIT);
+				nfsrv_rcv(slp->ns_so, (caddr_t)slp, M_WAITOK);
 				nfs_sndunlock(&slp->ns_solock);
 			}
 
@@ -412,7 +412,7 @@ loop:
 
 		/* For stream protocols, prepend a Sun RPC Record Mark. */
 		if (sotype == SOCK_STREAM) {
-			M_PREPEND(m, NFSX_UNSIGNED, M_WAIT);
+			M_PREPEND(m, NFSX_UNSIGNED, M_WAITOK);
 			*mtod(m, u_int32_t *) = htonl(0x80000000 | siz);
 		}
 

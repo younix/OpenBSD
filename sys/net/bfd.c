@@ -448,7 +448,7 @@ bfd_listener(struct bfd_config *bfd, unsigned int port)
 		return (NULL);
 	}
 
-	MGET(mopt, M_WAIT, MT_SOOPTS);
+	MGET(mopt, M_WAITOK, MT_SOOPTS);
 	mopt->m_len = sizeof(int);
 	ip = mtod(mopt, int *);
 	*ip = MAXTTL;
@@ -460,7 +460,7 @@ bfd_listener(struct bfd_config *bfd, unsigned int port)
 		goto close;
 	}
 
-	MGET(m, M_WAIT, MT_SONAME);
+	MGET(m, M_WAITOK, MT_SONAME);
 	m->m_len = src->sa_len;
 	sa = mtod(m, struct sockaddr *);
 	memcpy(sa, src, src->sa_len);
@@ -525,7 +525,7 @@ bfd_sender(struct bfd_config *bfd, unsigned int port)
 	if (error)
 		return (NULL);
 
-	MGET(mopt, M_WAIT, MT_SOOPTS);
+	MGET(mopt, M_WAITOK, MT_SOOPTS);
 	mopt->m_len = sizeof(int);
 	ip = mtod(mopt, int *);
 	*ip = IP_PORTRANGE_HIGH;
@@ -537,7 +537,7 @@ bfd_sender(struct bfd_config *bfd, unsigned int port)
 		goto close;
 	}
 
-	MGET(mopt, M_WAIT, MT_SOOPTS);
+	MGET(mopt, M_WAITOK, MT_SOOPTS);
 	mopt->m_len = sizeof(int);
 	ip = mtod(mopt, int *);
 	*ip = MAXTTL;
@@ -549,7 +549,7 @@ bfd_sender(struct bfd_config *bfd, unsigned int port)
 		goto close;
 	}
 
-	MGET(mopt, M_WAIT, MT_SOOPTS);
+	MGET(mopt, M_WAITOK, MT_SOOPTS);
 	mopt->m_len = sizeof(int);
 	ip = mtod(mopt, int *);
 	*ip = IPTOS_PREC_INTERNETCONTROL;
@@ -561,7 +561,7 @@ bfd_sender(struct bfd_config *bfd, unsigned int port)
 		goto close;
 	}
 
-	MGET(m, M_WAIT, MT_SONAME);
+	MGET(m, M_WAITOK, MT_SONAME);
 	m->m_len = src->sa_len;
 	sa = mtod(m, struct sockaddr *);
 	memcpy(sa, src, src->sa_len);
@@ -961,8 +961,8 @@ bfd_send_control(void *x)
 	struct bfd_header	*h;
 	int error, len;
 
-	MGETHDR(m, M_WAIT, MT_DATA);
-	MCLGET(m, M_WAIT);
+	MGETHDR(m, M_WAITOK, MT_DATA);
+	MCLGET(m, M_WAITOK);
 
 	len = BFD_HDRLEN;
 	m->m_len = m->m_pkthdr.len = len;
