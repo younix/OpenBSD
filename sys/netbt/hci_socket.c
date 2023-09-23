@@ -674,7 +674,7 @@ hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
 		err = ENOMEM;
 		goto bad;
 	}
-	sbappendrecord(&pcb->hp_socket->so_snd, m0);
+	sbappendrecord(so, &pcb->hp_socket->so_snd, m0);
 	m->m_pkthdr.ph_cookie = pcb->hp_socket;	/* enable drop callback */
 
 	DPRINTFN(2, "(%s) opcode (%03x|%04x)\n", device_xname(unit->hci_dev),
