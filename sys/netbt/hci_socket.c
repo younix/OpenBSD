@@ -884,11 +884,14 @@ hci_mtap(struct mbuf *m, struct hci_unit *unit)
 			break;
 		}
 
+// XXX: check before flight
+#if 0
 		if (pcb->hp_cred != NULL
 		    && kauth_authorize_device(pcb->hp_cred,
 		    KAUTH_DEVICE_BLUETOOTH_RECV,
 		    KAUTH_ARG(type), KAUTH_ARG(arg1), NULL, NULL) != 0)
 			continue;
+#endif
 
 		/*
 		 * create control messages
