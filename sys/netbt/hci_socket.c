@@ -423,7 +423,7 @@ hci_accept(struct socket *so, struct sockaddr *nam)
 }
 
 static int
-hci_bind(struct socket *so, struct sockaddr *nam, struct lwp *l)
+hci_bind(struct socket *so, struct sockaddr *nam)
 {
 	struct hci_pcb *pcb = so->so_pcb;
 	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
@@ -449,7 +449,7 @@ hci_bind(struct socket *so, struct sockaddr *nam, struct lwp *l)
 }
 
 static int
-hci_listen(struct socket *so, struct lwp *l)
+hci_listen(struct socket *so)
 {
 //	KASSERT(solocked(so));
 
@@ -457,7 +457,7 @@ hci_listen(struct socket *so, struct lwp *l)
 }
 
 static int
-hci_connect(struct socket *so, struct sockaddr *nam, struct lwp *l)
+hci_connect(struct socket *so, struct sockaddr *nam)
 {
 	struct hci_pcb *pcb = so->so_pcb;
 	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
@@ -580,7 +580,7 @@ hci_sockaddr(struct socket *so, struct sockaddr *nam)
 }
 
 static int
-hci_rcvd(struct socket *so, int flags, struct lwp *l)
+hci_rcvd(struct socket *so, int flags)
 {
 //	KASSERT(solocked(so));
 
@@ -597,7 +597,7 @@ hci_recvoob(struct socket *so, struct mbuf *m, int flags)
 
 static int
 hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
-    struct mbuf *control, struct lwp *l)
+    struct mbuf *control)
 {
 	struct hci_pcb *pcb = so->so_pcb;
 	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
