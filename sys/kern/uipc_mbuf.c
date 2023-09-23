@@ -635,7 +635,7 @@ m_prepend(struct mbuf *m, int len, int how)
 /*
  * Make a copy of an mbuf chain starting "off" bytes from the beginning,
  * continuing for "len" bytes.  If len is M_COPYALL, copy to end of mbuf.
- * The wait parameter is a choice of M_WAIT/M_DONTWAIT from caller.
+ * The wait parameter is a choice of M_WAIT/M_NOWAIT from caller.
  */
 struct mbuf *
 m_copym(struct mbuf *m0, int off, int len, int wait)
@@ -967,12 +967,12 @@ m_pullup(struct mbuf *m0, int len)
 		m0->m_next = m;
 		m = m0;
 
-		MGET(m0, M_DONTWAIT, m->m_type);
+		MGET(m0, M_NOWAIT, m->m_type);
 		if (m0 == NULL)
 			goto bad;
 
 		if (space > MHLEN) {
-			MCLGETL(m0, M_DONTWAIT, space);
+			MCLGETL(m0, M_NOWAIT, space);
 			if ((m0->m_flags & M_EXT) == 0)
 				goto bad;
 		}
@@ -1167,9 +1167,9 @@ m_makespace(struct mbuf *m0, int skip, int hlen, int *off)
 		struct mbuf *n;
 
 		if (remain > 0) {
-			MGET(n, M_DONTWAIT, m->m_type);
+			MGET(n, M_NOWAIT, m->m_type);
 			if (n && remain > MLEN) {
-				MCLGETL(n, M_DONTWAIT, remain);
+				MCLGETL(n, M_NOWAIT, remain);
 				if ((n->m_flags & M_EXT) == 0) {
 					m_free(n);
 					n = NULL;
@@ -1190,7 +1190,7 @@ m_makespace(struct mbuf *m0, int skip, int hlen, int *off)
 			m->m_len += hlen;
 			*off = skip;
 		} else {
-			n = m_get(M_DONTWAIT, m->m_type);
+			n = m_get(M_NOWAIT, m->m_type);
 			if (n == NULL)
 				return NULL;
 
@@ -1234,7 +1234,7 @@ m_devget(char *buf, int totlen, int off)
 	if (off < 0 || off > MHLEN)
 		return (NULL);
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (NULL);
 
@@ -1244,7 +1244,7 @@ m_devget(char *buf, int totlen, int off)
 
 	while (totlen > 0) {
 		if (top != NULL) {
-			MGET(m, M_DONTWAIT, MT_DATA);
+			MGET(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				/*
 				 * As we might get called by pfkey, make sure
@@ -1258,7 +1258,7 @@ m_devget(char *buf, int totlen, int off)
 		}
 
 		if (totlen + off >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (m->m_flags & M_EXT)
 				len = MCLBYTES;
 		} else {

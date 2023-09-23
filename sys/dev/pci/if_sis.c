@@ -1322,7 +1322,7 @@ sis_newbuf(struct sis_softc *sc, struct sis_desc *c)
 	if (c == NULL)
 		return (EINVAL);
 
-	m_new = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m_new = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m_new)
 		return (ENOBUFS);
 
@@ -1611,7 +1611,7 @@ sis_encap(struct sis_softc *sc, struct mbuf *m_head, u_int32_t *txidx)
 		break;
 
 	case EFBIG:
-		if (m_defrag(m_head, M_DONTWAIT) == 0 &&
+		if (m_defrag(m_head, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmat, map, m_head,
 		    BUS_DMA_NOWAIT) == 0)
 			break;

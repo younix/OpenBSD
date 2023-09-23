@@ -336,7 +336,7 @@ ether_encap(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
 		return (NULL);
 	}
 
-	m = m_prepend(m, ETHER_ALIGN + sizeof(eh), M_DONTWAIT);
+	m = m_prepend(m, ETHER_ALIGN + sizeof(eh), M_NOWAIT);
 	if (m == NULL) {
 		*errorp = ENOBUFS;
 		return (NULL);

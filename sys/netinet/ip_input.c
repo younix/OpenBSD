@@ -1383,7 +1383,7 @@ ip_srcroute(struct mbuf *m0)
 
 	if (isr->isr_nhops == 0)
 		return (NULL);
-	m = m_get(M_DONTWAIT, MT_SOOPTS);
+	m = m_get(M_NOWAIT, MT_SOOPTS);
 	if (m == NULL) {
 		ipstat_inc(ips_idropped);
 		return (NULL);
@@ -1517,7 +1517,7 @@ ip_forward(struct mbuf *m, struct ifnet *ifp, struct rtentry *rt, int srcrt)
 	 */
 	memset(&mfake.m_hdr, 0, sizeof(mfake.m_hdr));
 	mfake.m_type = m->m_type;
-	if (m_dup_pkthdr(&mfake, m, M_DONTWAIT) == 0) {
+	if (m_dup_pkthdr(&mfake, m, M_NOWAIT) == 0) {
 		mfake.m_data = mfake.m_pktdat;
 		len = min(ntohs(ip->ip_len), 68);
 		m_copydata(m, 0, len, mfake.m_pktdat);
@@ -1625,7 +1625,7 @@ ip_forward(struct mbuf *m, struct ifnet *ifp, struct rtentry *rt, int srcrt)
 		code = ICMP_UNREACH_HOST;
 		break;
 	}
-	mcopy = m_copym(&mfake, 0, len, M_DONTWAIT);
+	mcopy = m_copym(&mfake, 0, len, M_NOWAIT);
 	if (mcopy)
 		icmp_error(mcopy, type, code, dest, destmtu);
 

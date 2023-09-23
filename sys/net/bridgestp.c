@@ -373,7 +373,7 @@ bstp_transmit_tcn(struct bstp_state *bs, struct bstp_port *bp)
 	if ((ifp->if_flags & IFF_RUNNING) == 0)
 		goto rele;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		goto rele;
 	m->m_pkthdr.ph_ifidx = ifp->if_index;
@@ -486,7 +486,7 @@ bstp_send_bpdu(struct bstp_state *bs, struct bstp_port *bp,
 	if ((ifp->if_flags & IFF_RUNNING) == 0)
 		goto rele;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		goto rele;
 

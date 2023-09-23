@@ -850,12 +850,12 @@ vge_newbuf(struct vge_softc *sc, int idx, struct mbuf *m)
 
 	if (m == NULL) {
 		/* Allocate a new mbuf */
-		MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+		MGETHDR(m_new, M_NOWAIT, MT_DATA);
 		if (m_new == NULL)
 			return (ENOBUFS);
 
 		/* Allocate a cluster */
-		MCLGET(m_new, M_DONTWAIT);
+		MCLGET(m_new, M_NOWAIT);
 		if (!(m_new->m_flags & M_EXT)) {
 			m_freem(m_new);
 			return (ENOBUFS);
@@ -1335,7 +1335,7 @@ vge_encap(struct vge_softc *sc, struct mbuf *m_head, int idx)
 	case 0:
 		break;
 	case EFBIG: /* mbuf chain is too fragmented */
-		if ((error = m_defrag(m_head, M_DONTWAIT)) == 0 &&
+		if ((error = m_defrag(m_head, M_NOWAIT)) == 0 &&
 		    (error = bus_dmamap_load_mbuf(sc->sc_dmat, txmap, m_head,
 		    BUS_DMA_NOWAIT)) == 0)
 			break;

@@ -674,7 +674,7 @@ wpi_alloc_rx_ring(struct wpi_softc *sc, struct wpi_rx_ring *ring)
 			goto fail;
 		}
 
-		data->m = MCLGETL(NULL, M_DONTWAIT, WPI_RBUF_SIZE);
+		data->m = MCLGETL(NULL, M_NOWAIT, WPI_RBUF_SIZE);
 		if (data->m == NULL) {
 			printf("%s: could not allocate RX mbuf\n",
 			    sc->sc_dev.dv_xname);
@@ -1216,7 +1216,7 @@ wpi_rx_done(struct wpi_softc *sc, struct wpi_rx_desc *desc,
 		return;
 	}
 
-	m1 = MCLGETL(NULL, M_DONTWAIT, WPI_RBUF_SIZE);
+	m1 = MCLGETL(NULL, M_NOWAIT, WPI_RBUF_SIZE);
 	if (m1 == NULL) {
 		ic->ic_stats.is_rx_nombuf++;
 		ifp->if_ierrors++;
@@ -1826,7 +1826,7 @@ wpi_tx(struct wpi_softc *sc, struct mbuf *m, struct ieee80211_node *ni)
 	}
 	if (error != 0) {
 		/* Too many DMA segments, linearize mbuf. */
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			m_freem(m);
 			return ENOBUFS;
 		}
@@ -2034,11 +2034,11 @@ wpi_cmd(struct wpi_softc *sc, int code, const void *buf, int size, int async)
 		/* Command is too large to fit in a descriptor. */
 		if (totlen > MCLBYTES)
 			return EINVAL;
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL)
 			return ENOMEM;
 		if (totlen > MHLEN) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (!(m->m_flags & M_EXT)) {
 				m_freem(m);
 				return ENOMEM;

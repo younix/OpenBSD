@@ -1439,12 +1439,12 @@ ixgb_get_buf(struct ixgb_softc *sc, int i,
 	int             error;
 
 	if (mp == NULL) {
-		MGETHDR(mp, M_DONTWAIT, MT_DATA);
+		MGETHDR(mp, M_NOWAIT, MT_DATA);
 		if (mp == NULL) {
 			sc->mbuf_alloc_failed++;
 			return (ENOBUFS);
 		}
-		MCLGET(mp, M_DONTWAIT);
+		MCLGET(mp, M_NOWAIT);
 		if ((mp->m_flags & M_EXT) == 0) {
 			m_freem(mp);
 			sc->mbuf_cluster_failed++;

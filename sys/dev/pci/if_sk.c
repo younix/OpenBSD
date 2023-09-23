@@ -622,7 +622,7 @@ sk_newbuf(struct sk_if_softc *sc_if)
 	int			error;
 	uint64_t		dva;
 
-	m = MCLGETL(NULL, M_DONTWAIT, SK_JLEN);
+	m = MCLGETL(NULL, M_NOWAIT, SK_JLEN);
 	if (m == NULL)
 		return (ENOBUFS);
 
@@ -1416,7 +1416,7 @@ sk_encap(struct sk_if_softc *sc_if, struct mbuf *m_head, u_int32_t *txidx)
 		break;
 
 	case EFBIG: /* mbuf chain is too fragmented */
-		if (m_defrag(m_head, M_DONTWAIT) == 0 &&
+		if (m_defrag(m_head, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmatag, txmap, m_head,
 		    BUS_DMA_STREAMING | BUS_DMA_NOWAIT) == 0)
 			break;

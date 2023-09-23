@@ -1745,7 +1745,7 @@ aggr_marker_response(struct aggr_port *p, struct mbuf *m)
 	mpdu = mtod(m, struct marker_pdu *);
 	mpdu->marker_info_tlv.lacp_tlv_type = MARKER_T_RESPONSE;
 
-	m = m_prepend(m, sizeof(*eh), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*eh), M_NOWAIT);
 	if (m == NULL)
 		return;
 
@@ -2671,12 +2671,12 @@ aggr_ntt_transmit(struct aggr_port *p)
 	int linkhdr = max_linkhdr + ETHER_ALIGN;
 	int len = linkhdr + sizeof(*eh) + sizeof(*lacpdu);
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return;
 
 	if (len > MHLEN) {
-		MCLGETL(m, M_DONTWAIT, len);
+		MCLGETL(m, M_NOWAIT, len);
 		if (!ISSET(m->m_flags, M_EXT)) {
 			m_freem(m);
 			return;

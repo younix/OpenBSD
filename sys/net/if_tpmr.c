@@ -309,7 +309,7 @@ tpmr_pf(struct ifnet *ifp0, int dir, struct mbuf *m)
 		return (NULL);
 	}
 
-	m = m_prepend(m, sizeof(*eh), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*eh), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 

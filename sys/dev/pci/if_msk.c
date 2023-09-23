@@ -602,7 +602,7 @@ msk_newbuf(struct sk_if_softc *sc_if)
 	uint32_t		hiaddr;
 	unsigned int		pktlen = sc_if->sk_pktlen + ETHER_ALIGN;
 
-	m = MCLGETL(NULL, M_DONTWAIT, pktlen);
+	m = MCLGETL(NULL, M_NOWAIT, pktlen);
 	if (m == NULL)
 		return (0);
 	m->m_len = m->m_pkthdr.len = pktlen;
@@ -1582,7 +1582,7 @@ msk_encap(struct sk_if_softc *sc_if, struct mbuf *m, uint32_t prod)
 	case 0:
 		break;
 	case EFBIG: /* mbuf chain is too fragmented */
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmatag, map, m,
 		    BUS_DMA_STREAMING | BUS_DMA_NOWAIT) == 0)
 			break;

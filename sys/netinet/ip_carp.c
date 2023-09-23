@@ -1088,7 +1088,7 @@ carp_send_ad(struct carp_vhost_entry *vhe)
 	if (sc->sc_naddrs) {
 		struct ip *ip;
 
-		MGETHDR(m, M_DONTWAIT, MT_HEADER);
+		MGETHDR(m, M_NOWAIT, MT_HEADER);
 		if (m == NULL) {
 			sc->sc_if.if_oerrors++;
 			carpstat_inc(carps_onomem);
@@ -1176,7 +1176,7 @@ carp_send_ad(struct carp_vhost_entry *vhe)
 	if (sc->sc_naddrs6) {
 		struct ip6_hdr *ip6;
 
-		MGETHDR(m, M_DONTWAIT, MT_HEADER);
+		MGETHDR(m, M_NOWAIT, MT_HEADER);
 		if (m == NULL) {
 			sc->sc_if.if_oerrors++;
 			carpstat_inc(carps_onomem);
@@ -1429,7 +1429,7 @@ carp_input(struct ifnet *ifp0, struct mbuf *m, uint64_t dst)
 			if (!(sc->sc_if.if_flags & IFF_UP))
 				continue;
 
-			m0 = m_dup_pkt(m, ETHER_ALIGN, M_DONTWAIT);
+			m0 = m_dup_pkt(m, ETHER_ALIGN, M_NOWAIT);
 			if (m0 == NULL)
 				continue;
 

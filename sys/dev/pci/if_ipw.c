@@ -504,14 +504,14 @@ ipw_dma_alloc(struct ipw_softc *sc)
 		sbuf = &sc->rx_sbuf_list[i];
 		sbd->bd = &sc->rbd_list[i];
 
-		MGETHDR(sbuf->m, M_DONTWAIT, MT_DATA);
+		MGETHDR(sbuf->m, M_NOWAIT, MT_DATA);
 		if (sbuf->m == NULL) {
 			printf("%s: could not allocate rx mbuf\n",
 			    sc->sc_dev.dv_xname);
 			error = ENOMEM;
 			goto fail;
 		}
-		MCLGET(sbuf->m, M_DONTWAIT);
+		MCLGET(sbuf->m, M_NOWAIT);
 		if (!(sbuf->m->m_flags & M_EXT)) {
 			m_freem(sbuf->m);
 			printf("%s: could not allocate rx mbuf cluster\n",
@@ -848,12 +848,12 @@ ipw_data_intr(struct ipw_softc *sc, struct ipw_status *status,
 	 * drop the received packet and reuse the old mbuf.  In the unlikely
 	 * case that the old mbuf can't be reloaded either, explicitly panic.
 	 */
-	MGETHDR(mnew, M_DONTWAIT, MT_DATA);
+	MGETHDR(mnew, M_NOWAIT, MT_DATA);
 	if (mnew == NULL) {
 		ifp->if_ierrors++;
 		return;
 	}
-	MCLGET(mnew, M_DONTWAIT);
+	MCLGET(mnew, M_NOWAIT);
 	if (!(mnew->m_flags & M_EXT)) {
 		m_freem(mnew);
 		ifp->if_ierrors++;
@@ -1199,7 +1199,7 @@ ipw_tx_start(struct ifnet *ifp, struct mbuf *m, struct ieee80211_node *ni)
 	}
 	if (error != 0) {
 		/* too many fragments, linearize */
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			m_freem(m);
 			return ENOBUFS;
 		}

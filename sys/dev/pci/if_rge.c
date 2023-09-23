@@ -447,7 +447,7 @@ rge_encap(struct rge_queues *q, struct mbuf *m, int idx)
 	case 0:
 		break;
 	case EFBIG: /* mbuf chain is too fragmented */
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmat, txmap, m,
 		    BUS_DMA_NOWAIT) == 0)
 			break;
@@ -1083,7 +1083,7 @@ rge_newbuf(struct rge_queues *q)
 	bus_dmamap_t rxmap;
 	int idx;
 
-	m = MCLGETL(NULL, M_DONTWAIT, RGE_JUMBO_FRAMELEN);
+	m = MCLGETL(NULL, M_NOWAIT, RGE_JUMBO_FRAMELEN);
 	if (m == NULL)
 		return (ENOBUFS);
 

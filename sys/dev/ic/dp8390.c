@@ -918,7 +918,7 @@ dp8390_get(struct dp8390_softc *sc, int src, u_short total_len)
 	struct mbuf *m, *m0, *newm;
 	u_short len;
 
-	MGETHDR(m0, M_DONTWAIT, MT_DATA);
+	MGETHDR(m0, M_NOWAIT, MT_DATA);
 	if (m0 == NULL)
 		return (0);
 	m0->m_pkthdr.len = total_len;
@@ -927,7 +927,7 @@ dp8390_get(struct dp8390_softc *sc, int src, u_short total_len)
 
 	while (total_len > 0) {
 		if (total_len >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (!(m->m_flags & M_EXT))
 				goto bad;
 			len = MCLBYTES;
@@ -952,7 +952,7 @@ dp8390_get(struct dp8390_softc *sc, int src, u_short total_len)
 
 		total_len -= len;
 		if (total_len > 0) {
-			MGET(newm, M_DONTWAIT, MT_DATA);
+			MGET(newm, M_NOWAIT, MT_DATA);
 			if (newm == NULL)
 				goto bad;
 			len = MLEN;

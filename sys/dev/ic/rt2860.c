@@ -685,7 +685,7 @@ rt2860_alloc_rx_ring(struct rt2860_softc *sc, struct rt2860_rx_ring *ring)
 			goto fail;
 		}
 
-		data->m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+		data->m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 		if (data->m == NULL) {
 			printf("%s: could not allocate Rx mbuf\n",
 			    sc->sc_dev.dv_xname);
@@ -1304,7 +1304,7 @@ rt2860_rx_intr(struct rt2860_softc *sc)
 			goto skip;
 		}
 
-		m1 = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+		m1 = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 		if (__predict_false(m1 == NULL)) {
 			ifp->if_ierrors++;
 			goto skip;
@@ -1658,7 +1658,7 @@ rt2860_tx(struct rt2860_softc *sc, struct mbuf *m, struct ieee80211_node *ni)
 	KASSERT (ring->queued <= RT2860_TX_RING_ONEMORE); /* <1> */
 
 	if (bus_dmamap_load_mbuf(sc->sc_dmat, data->map, m, BUS_DMA_NOWAIT)) {
-		if (m_defrag(m, M_DONTWAIT))
+		if (m_defrag(m, M_NOWAIT))
 			return (ENOBUFS);
 		if (bus_dmamap_load_mbuf(sc->sc_dmat,
 		    data->map, m, BUS_DMA_NOWAIT))

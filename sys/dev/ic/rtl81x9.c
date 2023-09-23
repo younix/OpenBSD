@@ -794,13 +794,13 @@ rl_encap(struct rl_softc *sc, struct mbuf *m_head)
 	 * TX buffers, plus we can only have one fragment buffer
 	 * per packet. We have to copy pretty much all the time.
 	 */
-	MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+	MGETHDR(m_new, M_NOWAIT, MT_DATA);
 	if (m_new == NULL) {
 		m_freem(m_head);
 		return(1);
 	}
 	if (m_head->m_pkthdr.len > MHLEN) {
-		MCLGET(m_new, M_DONTWAIT);
+		MCLGET(m_new, M_NOWAIT);
 		if (!(m_new->m_flags & M_EXT)) {
 			m_freem(m_new);
 			m_freem(m_head);

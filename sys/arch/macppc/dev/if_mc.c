@@ -903,7 +903,7 @@ mace_get(struct mc_softc *sc, caddr_t pkt, int totlen)
 	 struct mbuf *top, **mp;
 	 int len;
 
-	 MGETHDR(m, M_DONTWAIT, MT_DATA);
+	 MGETHDR(m, M_NOWAIT, MT_DATA);
 	 if (m == NULL)
 		  return (NULL);
 
@@ -914,7 +914,7 @@ mace_get(struct mc_softc *sc, caddr_t pkt, int totlen)
 
 	 while (totlen > 0) {
 		  if (top) {
-			   MGET(m, M_DONTWAIT, MT_DATA);
+			   MGET(m, M_NOWAIT, MT_DATA);
 			   if (m == NULL) {
 				    m_freem(top);
 				    return (NULL);
@@ -922,7 +922,7 @@ mace_get(struct mc_softc *sc, caddr_t pkt, int totlen)
 			   len = MLEN;
 		  }
 		  if (totlen >= MINCLSIZE) {
-			   MCLGET(m, M_DONTWAIT);
+			   MCLGET(m, M_NOWAIT);
 			   if ((m->m_flags & M_EXT) == 0) {
 				    m_free(m);
 				    m_freem(top);

@@ -428,7 +428,7 @@ rip6_output(struct mbuf *m, struct socket *so, struct sockaddr *dstaddr,
 		type = icmp6->icmp6_type;
 	}
 
-	M_PREPEND(m, sizeof(*ip6), M_DONTWAIT);
+	M_PREPEND(m, sizeof(*ip6), M_NOWAIT);
 	if (!m) {
 		error = ENOBUFS;
 		goto bad;

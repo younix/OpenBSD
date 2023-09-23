@@ -648,7 +648,7 @@ pfi_address_add(struct sockaddr *sa, sa_family_t af, u_int8_t net)
 			return;
 		}
 		p = mallocarray(new_max, sizeof(*pfi_buffer), PFI_MTYPE,
-		    M_DONTWAIT);
+		    M_NOWAIT);
 		if (p == NULL) {
 			DPFPRINTF(LOG_ERR,
 			    "pfi_address_add: no memory to grow buffer "

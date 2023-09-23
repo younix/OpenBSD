@@ -788,11 +788,11 @@ axen_newbuf(void)
 {
 	struct mbuf *m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if (!(m->m_flags & M_EXT)) {
 		m_freem(m);
 		return NULL;

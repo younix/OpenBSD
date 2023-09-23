@@ -492,11 +492,11 @@ mtd_newbuf(struct mtd_softc *sc, int i, struct mbuf *m)
 	c = &sc->mtd_ldata->mtd_rx_list[i];
 
 	if (m == NULL) {
-		MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+		MGETHDR(m_new, M_NOWAIT, MT_DATA);
 		if (m_new == NULL)
 			return (1);
 
-		MCLGET(m_new, M_DONTWAIT);
+		MCLGET(m_new, M_NOWAIT);
 		if (!(m_new->m_flags & M_EXT)) {
 			m_freem(m_new);
 			return (1);

@@ -1934,13 +1934,13 @@ zyd_rx_data(struct zyd_softc *sc, const uint8_t *buf, uint16_t len,
 	}
 
 	/* allocate a mbuf to store the frame */
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		ifp->if_ierrors++;
 		return;
 	}
 	if (len > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (!(m->m_flags & M_EXT)) {
 			ifp->if_ierrors++;
 			m_freem(m);

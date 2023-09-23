@@ -698,7 +698,7 @@ efget(struct ef_softc *sc, int totlen)
 	struct mbuf *top, **mp, *m;
 	int len, pad, s;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (NULL);
 	m->m_pkthdr.len = totlen;
@@ -712,7 +712,7 @@ efget(struct ef_softc *sc, int totlen)
 
 	while (totlen > 0) {
 		if (top) {
-			MGET(m, M_DONTWAIT, MT_DATA);
+			MGET(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				m_freem(top);
 				splx(s);
@@ -721,7 +721,7 @@ efget(struct ef_softc *sc, int totlen)
 			len = MLEN;
 		}
 		if (top && totlen >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (m->m_flags & M_EXT)
 				len = MCLBYTES;
 		}

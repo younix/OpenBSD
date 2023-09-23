@@ -360,7 +360,7 @@ vxlan_encap(struct vxlan_softc *sc, struct mbuf *m,
 	}
 
 	/* force prepend mbuf because of payload alignment */
-	m0 = m_get(M_DONTWAIT, m->m_type);
+	m0 = m_get(M_NOWAIT, m->m_type);
 	if (m0 == NULL)
 		goto drop;
 
@@ -370,14 +370,14 @@ vxlan_encap(struct vxlan_softc *sc, struct mbuf *m,
 	M_MOVE_PKTHDR(m0, m);
 	m0->m_next = m;
 
-	m = m_prepend(m0, sizeof(*vh), M_DONTWAIT);
+	m = m_prepend(m0, sizeof(*vh), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
 	vh = mtod(m, struct vxlan_header *);
 	*vh = sc->sc_header;
 
-	m = m_prepend(m, sizeof(*uh), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*uh), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -420,7 +420,7 @@ vxlan_encap_ipv4(struct vxlan_softc *sc, struct mbuf *m,
 {
 	struct ip *ip;
 
-	m = m_prepend(m, sizeof(*ip), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*ip), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -446,7 +446,7 @@ vxlan_encap_ipv6(struct vxlan_softc *sc, struct mbuf *m,
 	struct ip6_hdr *ip6;
 	int len = m->m_pkthdr.len;
 
-	m = m_prepend(m, sizeof(*ip6), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*ip6), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 

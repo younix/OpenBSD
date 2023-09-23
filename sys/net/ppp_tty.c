@@ -357,7 +357,7 @@ pppwrite(struct tty *tp, struct uio *uio, int flag)
 	*mp = m;
 	m->m_len = 0;
 	if (uio->uio_resid >= MCLBYTES / 2)
-	    MCLGET(m, M_DONTWAIT);
+	    MCLGET(m, M_NOWAIT);
 	len = m_trailingspace(m);
 	if (len > uio->uio_resid)
 	    len = uio->uio_resid;

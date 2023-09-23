@@ -387,7 +387,7 @@ an_rxeof(struct an_softc *sc)
 		len = 0;
 	}
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		CSR_WRITE_2(sc, AN_EVENT_ACK, AN_EV_RX);
 		ifp->if_ierrors++;
@@ -395,7 +395,7 @@ an_rxeof(struct an_softc *sc)
 		return;
 	}
 	if (off + len + AN_GAPLEN_MAX > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			CSR_WRITE_2(sc, AN_EVENT_ACK, AN_EV_RX);
 			m_freem(m);

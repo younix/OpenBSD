@@ -1354,12 +1354,12 @@ dwge_encap(struct dwge_softc *sc, struct mbuf *m, int *idx, int *used)
 	map = sc->sc_txbuf[cur].tb_map;
 
 	if (sc->sc_defrag) {
-		if (m_defrag(m, M_DONTWAIT))
+		if (m_defrag(m, M_NOWAIT))
 			return (ENOBUFS);
 	}
 
 	if (bus_dmamap_load_mbuf(sc->sc_dmat, map, m, BUS_DMA_NOWAIT)) {
-		if (m_defrag(m, M_DONTWAIT))
+		if (m_defrag(m, M_NOWAIT))
 			return (EFBIG);
 		if (bus_dmamap_load_mbuf(sc->sc_dmat, map, m, BUS_DMA_NOWAIT))
 			return (EFBIG);
@@ -1506,7 +1506,7 @@ dwge_alloc_mbuf(struct dwge_softc *sc, bus_dmamap_t map)
 {
 	struct mbuf *m = NULL;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m)
 		return (NULL);
 	m->m_len = m->m_pkthdr.len = MCLBYTES;

@@ -89,15 +89,15 @@ ieee80211_wep_encrypt(struct ieee80211com *ic, struct mbuf *m0,
 	u_int32_t iv, crc;
 	int left, moff, noff, len, hdrlen;
 
-	MGET(n0, M_DONTWAIT, m0->m_type);
+	MGET(n0, M_NOWAIT, m0->m_type);
 	if (n0 == NULL)
 		goto nospace;
-	if (m_dup_pkthdr(n0, m0, M_DONTWAIT))
+	if (m_dup_pkthdr(n0, m0, M_NOWAIT))
 		goto nospace;
 	n0->m_pkthdr.len += IEEE80211_WEP_HDRLEN;
 	n0->m_len = MHLEN;
 	if (n0->m_pkthdr.len >= MINCLSIZE - IEEE80211_WEP_CRCLEN) {
-		MCLGET(n0, M_DONTWAIT);
+		MCLGET(n0, M_NOWAIT);
 		if (n0->m_flags & M_EXT)
 			n0->m_len = n0->m_ext.ext_size;
 	}
@@ -142,13 +142,13 @@ ieee80211_wep_encrypt(struct ieee80211com *ic, struct mbuf *m0,
 		}
 		if (noff == n->m_len) {
 			/* n is full and there's more data to copy */
-			MGET(n->m_next, M_DONTWAIT, n->m_type);
+			MGET(n->m_next, M_NOWAIT, n->m_type);
 			if (n->m_next == NULL)
 				goto nospace;
 			n = n->m_next;
 			n->m_len = MLEN;
 			if (left >= MINCLSIZE - IEEE80211_WEP_CRCLEN) {
-				MCLGET(n, M_DONTWAIT);
+				MCLGET(n, M_NOWAIT);
 				if (n->m_flags & M_EXT)
 					n->m_len = n->m_ext.ext_size;
 			}
@@ -169,7 +169,7 @@ ieee80211_wep_encrypt(struct ieee80211com *ic, struct mbuf *m0,
 
 	/* reserve trailing space for WEP ICV */
 	if (m_trailingspace(n) < IEEE80211_WEP_CRCLEN) {
-		MGET(n->m_next, M_DONTWAIT, n->m_type);
+		MGET(n->m_next, M_NOWAIT, n->m_type);
 		if (n->m_next == NULL)
 			goto nospace;
 		n = n->m_next;
@@ -223,15 +223,15 @@ ieee80211_wep_decrypt(struct ieee80211com *ic, struct mbuf *m0,
 	rc4_keysetup(&ctx->rc4, wepseed, IEEE80211_WEP_IVLEN + k->k_len);
 	explicit_bzero(wepseed, sizeof(wepseed));
 
-	MGET(n0, M_DONTWAIT, m0->m_type);
+	MGET(n0, M_NOWAIT, m0->m_type);
 	if (n0 == NULL)
 		goto nospace;
-	if (m_dup_pkthdr(n0, m0, M_DONTWAIT))
+	if (m_dup_pkthdr(n0, m0, M_NOWAIT))
 		goto nospace;
 	n0->m_pkthdr.len -= IEEE80211_WEP_TOTLEN;
 	n0->m_len = MHLEN;
 	if (n0->m_pkthdr.len >= MINCLSIZE) {
-		MCLGET(n0, M_DONTWAIT);
+		MCLGET(n0, M_NOWAIT);
 		if (n0->m_flags & M_EXT)
 			n0->m_len = n0->m_ext.ext_size;
 	}
@@ -258,13 +258,13 @@ ieee80211_wep_decrypt(struct ieee80211com *ic, struct mbuf *m0,
 		}
 		if (noff == n->m_len) {
 			/* n is full and there's more data to copy */
-			MGET(n->m_next, M_DONTWAIT, n->m_type);
+			MGET(n->m_next, M_NOWAIT, n->m_type);
 			if (n->m_next == NULL)
 				goto nospace;
 			n = n->m_next;
 			n->m_len = MLEN;
 			if (left >= MINCLSIZE) {
-				MCLGET(n, M_DONTWAIT);
+				MCLGET(n, M_NOWAIT);
 				if (n->m_flags & M_EXT)
 					n->m_len = n->m_ext.ext_size;
 			}

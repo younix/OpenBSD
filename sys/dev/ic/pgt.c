@@ -815,7 +815,7 @@ pgt_ieee80211_encap(struct pgt_softc *sc, struct ether_header *eh,
 		return (m);
 	}
 
-	M_PREPEND(m, sizeof(*frame) + sizeof(*snap), M_DONTWAIT);
+	M_PREPEND(m, sizeof(*frame) + sizeof(*snap), M_NOWAIT);
 	if (m == NULL)
 		return (m);
 	if (m->m_len < sizeof(*frame) + sizeof(*snap)) {
@@ -1317,16 +1317,16 @@ pgt_trap_received(struct pgt_softc *sc, uint32_t oid, void *trapdata,
 
 	total = sizeof(oid) + size + sizeof(struct pgt_async_trap);
 	if (total > MLEN) {
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL)
 			return;
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (!(m->m_flags & M_EXT)) {
 			m_freem(m);
 			m = NULL;
 		}
 	} else
-		m = m_get(M_DONTWAIT, MT_DATA);
+		m = m_get(M_NOWAIT, MT_DATA);
 
 	if (m == NULL)
 		return;
@@ -1499,14 +1499,14 @@ pgt_datarx_completion(struct pgt_softc *sc, enum pgt_queue pq)
 		}
 
 		if (m == NULL)
-			MGETHDR(m, M_DONTWAIT, MT_DATA);
+			MGETHDR(m, M_NOWAIT, MT_DATA);
 		else
-			m = m_get(M_DONTWAIT, MT_DATA);
+			m = m_get(M_NOWAIT, MT_DATA);
 
 		if (m == NULL)
 			goto fail;
 		if (datalen > MHLEN) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (!(m->m_flags & M_EXT)) {
 				m_free(m);
 				goto fail;

@@ -1246,9 +1246,9 @@ ip6_pullexthdr(struct mbuf *m, size_t off, int nxt)
 	if (off + elen > m->m_pkthdr.len)
 		return NULL;
 
-	MGET(n, M_DONTWAIT, MT_DATA);
+	MGET(n, M_NOWAIT, MT_DATA);
 	if (n && elen >= MLEN) {
-		MCLGET(n, M_DONTWAIT);
+		MCLGET(n, M_NOWAIT);
 		if ((n->m_flags & M_EXT) == 0) {
 			m_free(n);
 			n = NULL;

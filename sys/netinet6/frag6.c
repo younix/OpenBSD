@@ -497,7 +497,7 @@ frag6_deletefraghdr(struct mbuf *m, int offset)
 		m->m_len -= sizeof(struct ip6_frag);
 	} else {
 		/* this comes with no copy if the boundary is on cluster */
-		if ((t = m_split(m, offset, M_DONTWAIT)) == NULL)
+		if ((t = m_split(m, offset, M_NOWAIT)) == NULL)
 			return (ENOBUFS);
 		m_adj(t, sizeof(struct ip6_frag));
 		m_cat(m, t);

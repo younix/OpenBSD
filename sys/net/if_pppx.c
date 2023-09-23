@@ -331,12 +331,12 @@ pppxwrite(dev_t dev, struct uio *uio, int ioflag)
 
 	tlen = uio->uio_resid;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
 	mlen = MHLEN;
 	if (uio->uio_resid > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (!(m->m_flags & M_EXT)) {
 			m_free(m);
 			return (ENOBUFS);
@@ -353,14 +353,14 @@ pppxwrite(dev_t dev, struct uio *uio, int ioflag)
 		*mp = m;
 		mp = &m->m_next;
 		if (error == 0 && uio->uio_resid > 0) {
-			MGET(m, M_DONTWAIT, MT_DATA);
+			MGET(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				error = ENOBUFS;
 				break;
 			}
 			mlen = MLEN;
 			if (uio->uio_resid >= MINCLSIZE) {
-				MCLGET(m, M_DONTWAIT);
+				MCLGET(m, M_NOWAIT);
 				if (!(m->m_flags & M_EXT)) {
 					error = ENOBUFS;
 					m_free(m);
@@ -879,7 +879,7 @@ pppx_if_output(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
 	} else
 		proto = htonl(dst->sa_family);
 
-	M_PREPEND(m, sizeof(int), M_DONTWAIT);
+	M_PREPEND(m, sizeof(int), M_NOWAIT);
 	if (m == NULL) {
 		error = ENOBUFS;
 		goto out;
@@ -889,7 +889,7 @@ pppx_if_output(struct ifnet *ifp, struct mbuf *m, struct sockaddr *dst,
 	if (pipex_enable_local)
 		error = if_enqueue(ifp, m);
 	else {
-		M_PREPEND(m, sizeof(struct pppx_hdr), M_DONTWAIT);
+		M_PREPEND(m, sizeof(struct pppx_hdr), M_NOWAIT);
 		if (m == NULL) {
 			error = ENOBUFS;
 			goto out;
@@ -1153,7 +1153,7 @@ pppacwrite(dev_t dev, struct uio *uio, int ioflag)
 	if (uio->uio_resid < ifp->if_hdrlen || uio->uio_resid > MAXMCLBYTES)
 		return (EMSGSIZE);
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOMEM);
 
@@ -1499,7 +1499,7 @@ pppac_qstart(struct ifqueue *ifq)
 		if (m == NULL)	/* handled by pipex */
 			continue;
 
-		m = m_prepend(m, sizeof(uint32_t), M_DONTWAIT);
+		m = m_prepend(m, sizeof(uint32_t), M_NOWAIT);
 		if (m == NULL)
 			goto bad;
 		*mtod(m, uint32_t *) = htonl(m->m_pkthdr.ph_family);

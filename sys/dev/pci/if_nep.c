@@ -1021,7 +1021,7 @@ nep_rx_proc(struct nep_softc *sc)
 			bus_dmamap_unload(sc->sc_dmat, sc->sc_rb[i].nb_map);
 			sc->sc_rb[i].nb_block = NULL;
 
-			MGETHDR(m, M_DONTWAIT, MT_DATA);
+			MGETHDR(m, M_NOWAIT, MT_DATA);
 		}
 
 		if (m == NULL) {
@@ -1793,7 +1793,7 @@ nep_encap(struct nep_softc *sc, struct mbuf **m0, int *idx)
 		int padlen;
 
 		padlen = (ETHER_MIN_LEN - ETHER_CRC_LEN) - m->m_pkthdr.len;
-		MGET(n, M_DONTWAIT, MT_DATA);
+		MGET(n, M_NOWAIT, MT_DATA);
 		if (n == NULL) {
 			m_freem(m);
 			return (ENOBUFS);
@@ -1809,7 +1809,7 @@ nep_encap(struct nep_softc *sc, struct mbuf **m0, int *idx)
 	else
 		pad = mtod(m, u_long) % 16;
 	len = m->m_pkthdr.len + pad;
-	M_PREPEND(m, sizeof(*nh) + pad, M_DONTWAIT);
+	M_PREPEND(m, sizeof(*nh) + pad, M_NOWAIT);
 	if (m == NULL)
 		return (ENOBUFS);
 	nh = mtod(m, struct nep_txbuf_hdr *);

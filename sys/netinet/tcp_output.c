@@ -684,9 +684,9 @@ send:
 		m->m_len += hdrlen;
 		m->m_data -= hdrlen;
 #else
-		MGETHDR(m, M_DONTWAIT, MT_HEADER);
+		MGETHDR(m, M_NOWAIT, MT_HEADER);
 		if (m != NULL && max_linkhdr + hdrlen > MHLEN) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if ((m->m_flags & M_EXT) == 0) {
 				m_freem(m);
 				m = NULL;
@@ -734,9 +734,9 @@ send:
 		else
 			tcpstat_inc(tcps_sndwinup);
 
-		MGETHDR(m, M_DONTWAIT, MT_HEADER);
+		MGETHDR(m, M_NOWAIT, MT_HEADER);
 		if (m != NULL && max_linkhdr + hdrlen > MHLEN) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if ((m->m_flags & M_EXT) == 0) {
 				m_freem(m);
 				m = NULL;
@@ -1266,13 +1266,13 @@ tcp_chopper(struct mbuf *m0, struct mbuf_list *ml, struct ifnet *ifp,
 
 		len = MIN(tlen - off, mss);
 
-		MGETHDR(m, M_DONTWAIT, MT_HEADER);
+		MGETHDR(m, M_NOWAIT, MT_HEADER);
 		if (m == NULL) {
 			error = ENOBUFS;
 			goto bad;
 		}
 		ml_enqueue(ml, m);
-		if ((error = m_dup_pkthdr(m, m0, M_DONTWAIT)) != 0)
+		if ((error = m_dup_pkthdr(m, m0, M_NOWAIT)) != 0)
 			goto bad;
 
 		/* IP and TCP header to the end, space for link layer header */
@@ -1288,7 +1288,7 @@ tcp_chopper(struct mbuf *m0, struct mbuf_list *ml, struct ifnet *ifp,
 
 		/* add mbuf chain with payload */
 		m->m_pkthdr.len = hlen + len;
-		if ((m->m_next = m_copym(m0, off, len, M_DONTWAIT)) == NULL) {
+		if ((m->m_next = m_copym(m0, off, len, M_NOWAIT)) == NULL) {
 			error = ENOBUFS;
 			goto bad;
 		}

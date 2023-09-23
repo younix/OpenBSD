@@ -1132,7 +1132,7 @@ age_encap(struct age_softc *sc, struct mbuf *m)
 	if (error != 0 && error != EFBIG)
 		goto drop;
 	if (error != 0) {
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			error = ENOBUFS;
 			goto drop;
 		}
@@ -2102,10 +2102,10 @@ age_newbuf(struct age_softc *sc, struct age_rxdesc *rxd)
 	bus_dmamap_t map;
 	int error;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if (!(m->m_flags & M_EXT)) {
 		 m_freem(m);
 		 return (ENOBUFS);

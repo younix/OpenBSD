@@ -533,7 +533,7 @@ ip_etherip_output(struct ifnet *ifp, struct mbuf *m)
 	struct etherip_header *eip;
 	struct ip *ip;
 
-	M_PREPEND(m, sizeof(*ip) + sizeof(*eip), M_DONTWAIT);
+	M_PREPEND(m, sizeof(*ip) + sizeof(*eip), M_NOWAIT);
 	if (m == NULL) {
 		etheripstat_inc(etherips_adrops);
 		return ENOBUFS;
@@ -712,7 +712,7 @@ ip6_etherip_output(struct ifnet *ifp, struct mbuf *m)
 
 	len = m->m_pkthdr.len;
 
-	M_PREPEND(m, sizeof(*ip6) + sizeof(*eip), M_DONTWAIT);
+	M_PREPEND(m, sizeof(*ip6) + sizeof(*eip), M_NOWAIT);
 	if (m == NULL) {
 		etheripstat_inc(etherips_adrops);
 		return ENOBUFS;

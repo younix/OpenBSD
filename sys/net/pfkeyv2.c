@@ -417,7 +417,7 @@ pfkeyv2_output(struct mbuf *mbuf, struct socket *so)
 	}
 
 	if (!(message = malloc((unsigned long) mbuf->m_pkthdr.len,
-	    M_PFKEY, M_DONTWAIT))) {
+	    M_PFKEY, M_NOWAIT))) {
 		error = ENOMEM;
 		goto ret;
 	}
@@ -447,7 +447,7 @@ pfkey_sendup(struct pkpcb *kp, struct mbuf *m0, int more)
 	soassertlocked(so);
 
 	if (more) {
-		if (!(m = m_dup_pkt(m0, 0, M_DONTWAIT)))
+		if (!(m = m_dup_pkt(m0, 0, M_NOWAIT)))
 			return (ENOMEM);
 	} else
 		m = m0;

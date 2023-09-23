@@ -680,7 +680,7 @@ egget(struct eg_softc *sc, caddr_t buf, int totlen)
 	struct mbuf *top, **mp, *m;
 	int len;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (0);
 	m->m_pkthdr.len = totlen;
@@ -690,7 +690,7 @@ egget(struct eg_softc *sc, caddr_t buf, int totlen)
 
 	while (totlen > 0) {
 		if (top) {
-			MGET(m, M_DONTWAIT, MT_DATA);
+			MGET(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				m_freem(top);
 				return (0);
@@ -698,7 +698,7 @@ egget(struct eg_softc *sc, caddr_t buf, int totlen)
 			len = MLEN;
 		}
 		if (totlen >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (m->m_flags & M_EXT)
 				len = MCLBYTES;
 		}

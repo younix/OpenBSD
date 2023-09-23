@@ -8239,10 +8239,10 @@ bwi_newbuf(struct bwi_softc *sc, int buf_idx, int init)
 
 	KASSERT(buf_idx < BWI_RX_NDESC);
 
-	MGETHDR(m, init ? M_WAITOK : M_DONTWAIT, MT_DATA);
+	MGETHDR(m, init ? M_WAITOK : M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
-	MCLGET(m, init ? M_WAITOK : M_DONTWAIT);
+	MCLGET(m, init ? M_WAITOK : M_NOWAIT);
 	if (m == NULL) {
 		error = ENOBUFS;
 
@@ -8913,7 +8913,7 @@ bwi_encap(struct bwi_softc *sc, int idx, struct mbuf *m,
 	/*
 	 * Setup the embedded TX header
 	 */
-	M_PREPEND(m, sizeof(*hdr), M_DONTWAIT);
+	M_PREPEND(m, sizeof(*hdr), M_NOWAIT);
 	if (m == NULL) {
 		printf("%s: prepend TX header failed\n", sc->sc_dev.dv_xname);
 		return (ENOBUFS);
@@ -8979,7 +8979,7 @@ bwi_encap(struct bwi_softc *sc, int idx, struct mbuf *m,
 		}
 
 		if (error) {	/* error == EFBIG */
-			if (m_defrag(m, M_DONTWAIT)) {
+			if (m_defrag(m, M_NOWAIT)) {
 				printf("%s: can't defrag TX buffer\n",
 				    sc->sc_dev.dv_xname);
 				goto back;

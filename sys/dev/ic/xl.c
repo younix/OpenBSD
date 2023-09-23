@@ -1080,7 +1080,7 @@ xl_newbuf(struct xl_softc *sc, struct xl_chain_onefrag *c)
 	struct mbuf	*m_new = NULL;
 	bus_dmamap_t	map;
 
-	m_new = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m_new = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m_new)
 		return (ENOBUFS);
 
@@ -1569,13 +1569,13 @@ reload:
 	if (error) {
 		struct mbuf	*m_new = NULL;
 
-		MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+		MGETHDR(m_new, M_NOWAIT, MT_DATA);
 		if (m_new == NULL) {
 			m_freem(m_head);
 			return (1);
 		}
 		if (m_head->m_pkthdr.len > MHLEN) {
-			MCLGET(m_new, M_DONTWAIT);
+			MCLGET(m_new, M_NOWAIT);
 			if (!(m_new->m_flags & M_EXT)) {
 				m_freem(m_new);
 				m_freem(m_head);

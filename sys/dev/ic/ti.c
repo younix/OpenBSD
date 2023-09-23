@@ -576,7 +576,7 @@ ti_newbuf_std(struct ti_softc *sc, int i, struct mbuf *m,
 	sc->ti_cdata.ti_rx_std_map[i] = dmamap;
 
 	if (m == NULL) {
-		m_new = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+		m_new = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 		if (m_new == NULL)
 			return (ENOBUFS);
 
@@ -637,7 +637,7 @@ ti_newbuf_mini(struct ti_softc *sc, int i, struct mbuf *m,
 	sc->ti_cdata.ti_rx_mini_map[i] = dmamap;
 
 	if (m == NULL) {
-		MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+		MGETHDR(m_new, M_NOWAIT, MT_DATA);
 		if (m_new == NULL)
 			return (ENOBUFS);
 
@@ -695,7 +695,7 @@ ti_newbuf_jumbo(struct ti_softc *sc, int i, struct mbuf *m,
 		bus_dmamap_unload(sc->sc_dmatag, dmamap);
 
 	if (m == NULL) {
-		m_new = MCLGETL(NULL, M_DONTWAIT, TI_JUMBO_FRAMELEN);
+		m_new = MCLGETL(NULL, M_NOWAIT, TI_JUMBO_FRAMELEN);
 		if (m_new == NULL)
 			return (ENOBUFS);
 

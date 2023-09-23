@@ -1257,7 +1257,7 @@ bwfm_pci_pktid_new(struct bwfm_pci_softc *sc, struct bwfm_pci_pkts *pkts,
 		if (pkts->pkts[idx].bb_m == NULL) {
 			if (bus_dmamap_load_mbuf(sc->sc_dmat,
 			    pkts->pkts[idx].bb_map, m, BUS_DMA_NOWAIT) != 0) {
-				if (m_defrag(m, M_DONTWAIT))
+				if (m_defrag(m, M_NOWAIT))
 					return EFBIG;
 				if (bus_dmamap_load_mbuf(sc->sc_dmat,
 				    pkts->pkts[idx].bb_map, m, BUS_DMA_NOWAIT) != 0)
@@ -1321,7 +1321,7 @@ bwfm_pci_fill_rx_ioctl_ring(struct bwfm_pci_softc *sc, struct if_rxring *rxring,
 		req = bwfm_pci_ring_write_reserve(sc, &sc->sc_ctrl_submit);
 		if (req == NULL)
 			break;
-		m = MCLGETL(NULL, M_DONTWAIT, MSGBUF_MAX_CTL_PKT_SIZE);
+		m = MCLGETL(NULL, M_NOWAIT, MSGBUF_MAX_CTL_PKT_SIZE);
 		if (m == NULL) {
 			bwfm_pci_ring_write_cancel(sc, &sc->sc_ctrl_submit, 1);
 			break;
@@ -1361,7 +1361,7 @@ bwfm_pci_fill_rx_buf_ring(struct bwfm_pci_softc *sc)
 		req = bwfm_pci_ring_write_reserve(sc, &sc->sc_rxpost_submit);
 		if (req == NULL)
 			break;
-		m = MCLGETL(NULL, M_DONTWAIT, MSGBUF_MAX_PKT_SIZE);
+		m = MCLGETL(NULL, M_NOWAIT, MSGBUF_MAX_PKT_SIZE);
 		if (m == NULL) {
 			bwfm_pci_ring_write_cancel(sc, &sc->sc_rxpost_submit, 1);
 			break;
@@ -2473,7 +2473,7 @@ bwfm_pci_msgbuf_query_dcmd(struct bwfm_softc *bwfm, int ifidx,
 	int s;
 
 	buflen = min(*len, BWFM_DMA_H2D_IOCTL_BUF_LEN);
-	m = MCLGETL(NULL, M_DONTWAIT, buflen);
+	m = MCLGETL(NULL, M_NOWAIT, buflen);
 	if (m == NULL)
 		return 1;
 	m->m_len = m->m_pkthdr.len = buflen;

@@ -314,7 +314,7 @@ qe_get(struct qe_softc *sc, int idx, int totlen)
 
 	bp = sc->sc_rb.rb_rxbuf + (idx % sc->sc_rb.rb_nrbuf) * QE_PKT_BUF_SZ;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (NULL);
 	m->m_pkthdr.len = totlen;
@@ -326,7 +326,7 @@ qe_get(struct qe_softc *sc, int idx, int totlen)
 
 	while (totlen > 0) {
 		if (top) {
-			MGET(m, M_DONTWAIT, MT_DATA);
+			MGET(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				m_freem(top);
 				return (NULL);
@@ -334,7 +334,7 @@ qe_get(struct qe_softc *sc, int idx, int totlen)
 			len = MLEN;
 		}
 		if (top && totlen >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (m->m_flags & M_EXT)
 				len = MCLBYTES;
 		}

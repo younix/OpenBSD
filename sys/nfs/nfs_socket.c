@@ -1180,7 +1180,7 @@ nfs_timer(void *arg)
 		   ((nmp->nm_flag & NFSMNT_DUMBTIMR) ||
 		    (rep->r_flags & R_SENT) ||
 		    nmp->nm_sent < nmp->nm_cwnd) &&
-		   (m = m_copym(rep->r_mreq, 0, M_COPYALL, M_DONTWAIT))){
+		   (m = m_copym(rep->r_mreq, 0, M_COPYALL, M_NOWAIT))){
 			if ((nmp->nm_flag & NFSMNT_NOCONN) == 0)
 				error = pru_send(so, m, NULL, NULL);
 			else
@@ -1570,7 +1570,7 @@ nfsrv_rcv(struct socket *so, caddr_t arg, int waitflag)
 		goto out;
 
 	/* Defer soreceive() to an nfsd. */
-	if (waitflag == M_DONTWAIT) {
+	if (waitflag == M_NOWAIT) {
 		slp->ns_flag |= SLP_NEEDQ;
 		goto dorecs;
 	}
@@ -1646,7 +1646,7 @@ nfsrv_rcv(struct socket *so, caddr_t arg, int waitflag)
 	 * Now try and process the request records, non-blocking.
 	 */
 dorecs:
-	if (waitflag == M_DONTWAIT &&
+	if (waitflag == M_NOWAIT &&
 		(slp->ns_rec || (slp->ns_flag & (SLP_NEEDQ | SLP_DISCONN))))
 		nfsrv_wakenfsd(slp);
 

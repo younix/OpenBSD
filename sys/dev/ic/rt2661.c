@@ -628,14 +628,14 @@ rt2661_alloc_rx_ring(struct rt2661_softc *sc, struct rt2661_rx_ring *ring,
 			goto fail;
 		}
 
-		MGETHDR(data->m, M_DONTWAIT, MT_DATA);
+		MGETHDR(data->m, M_NOWAIT, MT_DATA);
 		if (data->m == NULL) {
 			printf("%s: could not allocate rx mbuf\n",
 			    sc->sc_dev.dv_xname);
 			error = ENOMEM;
 			goto fail;
 		}
-		MCLGET(data->m, M_DONTWAIT);
+		MCLGET(data->m, M_NOWAIT);
 		if (!(data->m->m_flags & M_EXT)) {
 			printf("%s: could not allocate rx mbuf cluster\n",
 			    sc->sc_dev.dv_xname);
@@ -1197,12 +1197,12 @@ rt2661_rx_intr(struct rt2661_softc *sc)
 		 * mbuf. In the unlikely case that the old mbuf can't be
 		 * reloaded either, explicitly panic.
 		 */
-		MGETHDR(mnew, M_DONTWAIT, MT_DATA);
+		MGETHDR(mnew, M_NOWAIT, MT_DATA);
 		if (mnew == NULL) {
 			ifp->if_ierrors++;
 			goto skip;
 		}
-		MCLGET(mnew, M_DONTWAIT);
+		MCLGET(mnew, M_NOWAIT);
 		if (!(mnew->m_flags & M_EXT)) {
 			m_freem(mnew);
 			ifp->if_ierrors++;
@@ -1818,13 +1818,13 @@ rt2661_tx_data(struct rt2661_softc *sc, struct mbuf *m0,
 	}
 	if (error != 0) {
 		/* too many fragments, linearize */
-		MGETHDR(m1, M_DONTWAIT, MT_DATA);
+		MGETHDR(m1, M_NOWAIT, MT_DATA);
 		if (m1 == NULL) {
 			m_freem(m0);
 			return ENOBUFS;
 		}
 		if (m0->m_pkthdr.len > MHLEN) {
-			MCLGET(m1, M_DONTWAIT);
+			MCLGET(m1, M_NOWAIT);
 			if (!(m1->m_flags & M_EXT)) {
 				m_freem(m0);
 				m_freem(m1);

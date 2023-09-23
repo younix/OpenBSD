@@ -708,7 +708,7 @@ vmxnet3_rxfill(struct vmxnet3_rxring *ring)
 	do {
 		KASSERT(ring->m[prod] == NULL);
 
-		m = MCLGETL(NULL, M_DONTWAIT, JUMBO_LEN);
+		m = MCLGETL(NULL, M_NOWAIT, JUMBO_LEN);
 		if (m == NULL)
 			break;
 
@@ -1382,7 +1382,7 @@ vmx_load_mbuf(bus_dma_tag_t dmat, bus_dmamap_t map, struct mbuf *m)
 	if (error != EFBIG)
 		return (error);
 
-	error = m_defrag(m, M_DONTWAIT);
+	error = m_defrag(m, M_NOWAIT);
 	if (error != 0)
 		return (error);
 

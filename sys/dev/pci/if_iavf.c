@@ -1650,7 +1650,7 @@ iavf_load_mbuf(bus_dma_tag_t dmat, bus_dmamap_t map, struct mbuf *m)
 	if (error != EFBIG)
 		return (error);
 
-	error = m_defrag(m, M_DONTWAIT);
+	error = m_defrag(m, M_NOWAIT);
 	if (error != 0)
 		return (error);
 
@@ -2067,7 +2067,7 @@ iavf_rxfill(struct iavf_softc *sc, struct iavf_rx_ring *rxr)
 	do {
 		rxm = &rxr->rxr_maps[prod];
 
-		m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES + ETHER_ALIGN);
+		m = MCLGETL(NULL, M_NOWAIT, MCLBYTES + ETHER_ALIGN);
 		if (m == NULL)
 			break;
 		m->m_data += (m->m_ext.ext_size - (MCLBYTES + ETHER_ALIGN));

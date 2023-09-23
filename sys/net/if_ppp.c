@@ -702,7 +702,7 @@ pppoutput(struct ifnet *ifp, struct mbuf *m0, struct sockaddr *dst,
 	/*
 	 * Add PPP header.  If no space in first mbuf, allocate another.
 	 */
-	M_PREPEND(m0, PPP_HDRLEN, M_DONTWAIT);
+	M_PREPEND(m0, PPP_HDRLEN, M_NOWAIT);
 	if (m0 == NULL) {
 		error = ENOBUFS;
 		goto bad;
@@ -1270,13 +1270,13 @@ ppp_inproc(struct ppp_softc *sc, struct mbuf *m)
 		}
 
 		/* Copy the PPP and IP headers into a new mbuf. */
-		MGETHDR(mp, M_DONTWAIT, MT_DATA);
+		MGETHDR(mp, M_NOWAIT, MT_DATA);
 		if (mp == NULL)
 			goto bad;
 		mp->m_len = 0;
 		mp->m_next = NULL;
 		if (hlen + PPP_HDRLEN > MHLEN) {
-			MCLGET(mp, M_DONTWAIT);
+			MCLGET(mp, M_NOWAIT);
 			if (m_trailingspace(mp) < hlen + PPP_HDRLEN) {
 				m_freem(mp);
 				/* lose if big headers and no clusters */
@@ -1535,7 +1535,7 @@ ppp_pkt_mbuf(struct ppp_pkt *pkt0)
 	size_t len = 0;
 
 	do {
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL)
 			goto fail;
 

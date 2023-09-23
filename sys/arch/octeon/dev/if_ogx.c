@@ -1317,7 +1317,7 @@ ogx_send_mbuf(struct ogx_softc *sc, struct mbuf *m0)
 	}
 
 	if (m != NULL) {
-		if (m_defrag(m0, M_DONTWAIT) != 0)
+		if (m_defrag(m0, M_NOWAIT) != 0)
 			return ENOMEM;
 
 		/* Discard previously set fragments. */

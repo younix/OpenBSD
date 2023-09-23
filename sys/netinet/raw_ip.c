@@ -272,7 +272,7 @@ rip_output(struct mbuf *m, struct socket *so, struct sockaddr *dstaddr,
 			m_freem(m);
 			return (EMSGSIZE);
 		}
-		M_PREPEND(m, sizeof(struct ip), M_DONTWAIT);
+		M_PREPEND(m, sizeof(struct ip), M_NOWAIT);
 		if (!m)
 			return (ENOBUFS);
 		ip = mtod(m, struct ip *);

@@ -1791,7 +1791,7 @@ et_encap(struct et_softc *sc, struct mbuf **m0)
 		goto back;
 	}
 	if (error) {	/* error == EFBIG */
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			printf("%s: can't defrag TX mbuf\n",
 			    sc->sc_dev.dv_xname);
 			error = ENOBUFS;
@@ -1974,17 +1974,17 @@ et_newbuf(struct et_rxbuf_data *rbd, int buf_idx, int init, int len0)
 	rb = &rbd->rbd_buf[buf_idx];
 
 	if (len0 >= MINCLSIZE) {
-		MGETHDR(m, init ? M_WAITOK : M_DONTWAIT, MT_DATA);
+		MGETHDR(m, init ? M_WAITOK : M_NOWAIT, MT_DATA);
 		if (m == NULL)
 			return (ENOBUFS);
-		MCLGET(m, init ? M_WAITOK : M_DONTWAIT);
+		MCLGET(m, init ? M_WAITOK : M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_freem(m);
 			return (ENOBUFS);
 		}
 		len = MCLBYTES;
 	} else {
-		MGETHDR(m, init ? M_WAITOK : M_DONTWAIT, MT_DATA);
+		MGETHDR(m, init ? M_WAITOK : M_NOWAIT, MT_DATA);
 		len = MHLEN;
 	}
 

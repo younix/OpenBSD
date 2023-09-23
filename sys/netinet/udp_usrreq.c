@@ -1028,7 +1028,7 @@ udp_output(struct inpcb *inp, struct mbuf *m, struct mbuf *addr,
 	 * Calculate data length and get a mbuf
 	 * for UDP and IP headers.
 	 */
-	M_PREPEND(m, sizeof(struct udpiphdr), M_DONTWAIT);
+	M_PREPEND(m, sizeof(struct udpiphdr), M_NOWAIT);
 	if (m == NULL) {
 		error = ENOBUFS;
 		goto bail;

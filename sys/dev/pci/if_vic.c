@@ -1130,7 +1130,7 @@ vic_load_txb(struct vic_softc *sc, struct vic_txbuf *txb, struct mbuf *m)
 		break;
 
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmat, dmap, m,
 		    BUS_DMA_NOWAIT) == 0) {
 			txb->txb_m = m;
@@ -1311,7 +1311,7 @@ vic_alloc_mbuf(struct vic_softc *sc, bus_dmamap_t map, u_int pktlen)
 {
 	struct mbuf *m = NULL;
 
-	m = MCLGETL(NULL, M_DONTWAIT, pktlen);
+	m = MCLGETL(NULL, M_NOWAIT, pktlen);
 	if (!m)
 		return (NULL);
 	m->m_data += ETHER_ALIGN;

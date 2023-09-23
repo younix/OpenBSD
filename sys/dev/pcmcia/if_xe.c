@@ -751,7 +751,7 @@ xe_get(struct xe_softc *sc)
 	}
 	recvcount += pktlen;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (recvcount);
 	m->m_pkthdr.len = pktlen;
@@ -761,7 +761,7 @@ xe_get(struct xe_softc *sc)
 	
 	while (pktlen > 0) {
 		if (top) {
-			MGET(m, M_DONTWAIT, MT_DATA);
+			MGET(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				m_freem(top);
 				return (recvcount);
@@ -769,7 +769,7 @@ xe_get(struct xe_softc *sc)
 			len = MLEN;
 		}
 		if (pktlen >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (!(m->m_flags & M_EXT)) {
 				m_freem(m);
 				m_freem(top);

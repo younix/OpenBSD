@@ -1363,9 +1363,9 @@ pipex_pptp_output(struct mbuf *m0, struct pipex_session *session,
 		if (m0 == NULL)
 			goto drop;
 	} else {
-		MGETHDR(m0, M_DONTWAIT, MT_DATA);
+		MGETHDR(m0, M_NOWAIT, MT_DATA);
 		if (m0 && reqlen > MHLEN) {
-			MCLGET(m0, M_DONTWAIT);
+			MCLGET(m0, M_NOWAIT);
 			if ((m0->m_flags & M_EXT) == 0) {
 				m_freem(m0);
 				m0 = NULL;
@@ -1835,7 +1835,7 @@ pipex_l2tp_output(struct mbuf *m0, struct pipex_session *session)
 		if (m0 == NULL)
 			goto drop;
 	} else {
-		MGETHDR(m0, M_DONTWAIT, MT_DATA);
+		MGETHDR(m0, M_NOWAIT, MT_DATA);
 		if (m0 == NULL)
 			goto drop;
 		KASSERT(hlen <= MHLEN);
@@ -2704,7 +2704,7 @@ pipex_ccp_output(struct pipex_session *session, int code, int id)
 	u_char *cp;
 	struct mbuf *m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		counters_inc(session->stat_counters, pxc_oerrors);
 		return (1);

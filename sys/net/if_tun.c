@@ -636,7 +636,7 @@ tun_output(struct ifnet *ifp, struct mbuf *m0, struct sockaddr *dst,
 		return (EHOSTDOWN);
 	}
 
-	M_PREPEND(m0, sizeof(*af), M_DONTWAIT);
+	M_PREPEND(m0, sizeof(*af), M_NOWAIT);
 	if (m0 == NULL)
 		return (ENOBUFS);
 	af = mtod(m0, u_int32_t *);
@@ -888,13 +888,13 @@ tun_dev_write(dev_t dev, struct uio *uio, int ioflag, int align)
 	align += max_linkhdr;
 	mlen = align + uio->uio_resid;
 
-	m0 = m_gethdr(M_DONTWAIT, MT_DATA);
+	m0 = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m0 == NULL) {
 		error = ENOMEM;
 		goto put;
 	}
 	if (mlen > MHLEN) {
-		m_clget(m0, M_DONTWAIT, mlen);
+		m_clget(m0, M_NOWAIT, mlen);
 		if (!ISSET(m0->m_flags, M_EXT)) {
 			error = ENOMEM;
 			goto drop;

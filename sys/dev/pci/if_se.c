@@ -847,7 +847,7 @@ se_newbuf(struct se_softc *sc, uint i)
 	struct mbuf *m;
 	int rc;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (m == NULL) {
 #ifdef SE_DEBUG
 		if (ifp->if_flags & IFF_DEBUG)
@@ -1124,7 +1124,7 @@ se_encap(struct se_softc *sc, struct mbuf *m_head, uint32_t *txidx)
 		return ENOBUFS;
 	}
 
-	if (m_defrag(m_head, M_DONTWAIT) != 0) {
+	if (m_defrag(m_head, M_NOWAIT) != 0) {
 #ifdef SE_DEBUG
 		if (ifp->if_flags & IFF_DEBUG)
 			printf("%s: m_defrag failed\n", ifp->if_xname);

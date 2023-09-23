@@ -660,7 +660,7 @@ veb_pf(struct ifnet *ifp0, int dir, struct mbuf *m)
 		return (NULL);
 	}
 
-	m = m_prepend(m, sizeof(*eh), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*eh), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -812,7 +812,7 @@ veb_ipsec_in(struct ifnet *ifp0, struct mbuf *m)
 	if (m == NULL)
 		return (NULL);
 
-	m = m_prepend(m, sizeof(*eh), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*eh), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -914,7 +914,7 @@ veb_ipsec_out(struct ifnet *ifp0, struct mbuf *m)
 	if (m == NULL)
 		return (NULL);
 
-	m = m_prepend(m, sizeof(*eh), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*eh), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 

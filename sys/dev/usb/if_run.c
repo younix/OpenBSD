@@ -2239,13 +2239,13 @@ run_rx_frame(struct run_softc *sc, uint8_t *buf, int dmalen,
 	}
 
 	/* could use m_devget but net80211 wants contig mgmt frames */
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (__predict_false(m == NULL)) {
 		ifp->if_ierrors++;
 		return;
 	}
 	if (len > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (__predict_false(!(m->m_flags & M_EXT))) {
 			ifp->if_ierrors++;
 			m_freem(m);

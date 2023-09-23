@@ -580,14 +580,14 @@ uath_alloc_rx_data_list(struct uath_softc *sc)
 			goto fail;
 		}
 
-		MGETHDR(data->m, M_DONTWAIT, MT_DATA);
+		MGETHDR(data->m, M_NOWAIT, MT_DATA);
 		if (data->m == NULL) {
 			printf("%s: could not allocate rx mbuf\n",
 			    sc->sc_dev.dv_xname);
 			error = ENOMEM;
 			goto fail;
 		}
-		MCLGETL(data->m, M_DONTWAIT, sc->rxbufsz);
+		MCLGETL(data->m, M_NOWAIT, sc->rxbufsz);
 		if (!(data->m->m_flags & M_EXT)) {
 			printf("%s: could not allocate rx mbuf cluster\n",
 			    sc->sc_dev.dv_xname);
@@ -1194,14 +1194,14 @@ uath_data_rxeof(struct usbd_xfer *xfer, void *priv,
 
 	/* there's probably a "bad CRC" flag somewhere in the descriptor.. */
 
-	MGETHDR(mnew, M_DONTWAIT, MT_DATA);
+	MGETHDR(mnew, M_NOWAIT, MT_DATA);
 	if (mnew == NULL) {
 		printf("%s: could not allocate rx mbuf\n",
 		    sc->sc_dev.dv_xname);
 		ifp->if_ierrors++;
 		goto skip;
 	}
-	MCLGETL(mnew, M_DONTWAIT, sc->rxbufsz);
+	MCLGETL(mnew, M_NOWAIT, sc->rxbufsz);
 	if (!(mnew->m_flags & M_EXT)) {
 		printf("%s: could not allocate rx mbuf cluster\n",
 		    sc->sc_dev.dv_xname);

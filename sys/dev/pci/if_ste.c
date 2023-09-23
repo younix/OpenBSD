@@ -884,7 +884,7 @@ ste_attach(struct device *parent, struct device *self, void *aux)
 	printf(", address %s\n", ether_sprintf(sc->arpcom.ac_enaddr));
 
 	sc->ste_ldata_ptr = malloc(sizeof(struct ste_list_data) + 8,
-	    M_DEVBUF, M_DONTWAIT);
+	    M_DEVBUF, M_NOWAIT);
 	if (sc->ste_ldata_ptr == NULL) {
 		printf(": no memory for list buffers!\n");
 		goto fail_2;
@@ -938,10 +938,10 @@ ste_newbuf(struct ste_softc *sc, struct ste_chain_onefrag *c, struct mbuf *m)
 	struct mbuf		*m_new = NULL;
 
 	if (m == NULL) {
-		MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+		MGETHDR(m_new, M_NOWAIT, MT_DATA);
 		if (m_new == NULL)
 			return(ENOBUFS);
-		MCLGET(m_new, M_DONTWAIT);
+		MCLGET(m_new, M_NOWAIT);
 		if (!(m_new->m_flags & M_EXT)) {
 			m_freem(m_new);
 			return(ENOBUFS);
@@ -1267,13 +1267,13 @@ encap_retry:
 		 * mbuf chain first. Bail out if we can't get the
 		 * new buffers.
 		 */
-		MGETHDR(mn, M_DONTWAIT, MT_DATA);
+		MGETHDR(mn, M_NOWAIT, MT_DATA);
 		if (mn == NULL) {
 			m_freem(m_head);
 			return ENOMEM;
 		}
 		if (m_head->m_pkthdr.len > MHLEN) {
-			MCLGET(mn, M_DONTWAIT);
+			MCLGET(mn, M_NOWAIT);
 			if ((mn->m_flags & M_EXT) == 0) {
 				m_freem(mn);
 				m_freem(m_head);

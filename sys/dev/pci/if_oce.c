@@ -1224,7 +1224,7 @@ oce_encap(struct oce_softc *sc, struct mbuf **mpp, int wqidx)
 
 	err = bus_dmamap_load_mbuf(sc->sc_dmat, pkt->map, m, BUS_DMA_NOWAIT);
 	if (err == EFBIG) {
-		if (m_defrag(m, M_DONTWAIT) ||
+		if (m_defrag(m, M_NOWAIT) ||
 		    bus_dmamap_load_mbuf(sc->sc_dmat, pkt->map, m,
 			BUS_DMA_NOWAIT))
 			goto error;
@@ -1338,7 +1338,7 @@ oce_tso(struct oce_softc *sc, struct mbuf **mpp)
 	m = *mpp;
 
 	if (M_WRITABLE(m) == 0) {
-		m = m_dup(*mpp, M_DONTWAIT);
+		m = m_dup(*mpp, M_NOWAIT);
 		if (!m)
 			return (NULL);
 		m_freem(*mpp);
@@ -1760,7 +1760,7 @@ oce_get_buf(struct oce_rq *rq)
 	if ((pkt = oce_pkt_get(&rq->pkt_free)) == NULL)
 		return (0);
 
-	pkt->mbuf = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	pkt->mbuf = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (pkt->mbuf == NULL) {
 		oce_pkt_put(&rq->pkt_free, pkt);
 		return (0);

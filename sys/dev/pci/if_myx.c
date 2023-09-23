@@ -1627,7 +1627,7 @@ myx_load_mbuf(struct myx_softc *sc, struct myx_slot *ms, struct mbuf *m)
 		break;
 
 	case EFBIG: /* mbuf chain is too fragmented */
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(dmat, dmap, m,
 		    BUS_DMA_STREAMING | BUS_DMA_NOWAIT) == 0)
 			break;
@@ -1970,7 +1970,7 @@ myx_mcl_small(void)
 {
 	struct mbuf *m;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MYX_RXSMALL_SIZE);
+	m = MCLGETL(NULL, M_NOWAIT, MYX_RXSMALL_SIZE);
 	if (m == NULL)
 		return (NULL);
 
@@ -1985,7 +1985,7 @@ myx_mcl_big(void)
 	struct mbuf *m;
 	void *mcl;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (NULL);
 

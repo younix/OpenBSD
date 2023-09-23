@@ -2575,11 +2575,11 @@ atw_add_rxbuf(struct atw_softc *sc, int idx)
 	struct mbuf *m;
 	int error;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
 
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if ((m->m_flags & M_EXT) == 0) {
 		m_freem(m);
 		return (ENOBUFS);
@@ -3677,7 +3677,7 @@ atw_start(struct ifnet *ifp)
 		}
 #endif /* NBPFILTER > 0 */
 
-		M_PREPEND(m0, offsetof(struct atw_frame, atw_ihdr), M_DONTWAIT);
+		M_PREPEND(m0, offsetof(struct atw_frame, atw_ihdr), M_NOWAIT);
 
 		if (ni != NULL)
 			ieee80211_release_node(ic, ni);
@@ -3790,14 +3790,14 @@ atw_start(struct ifnet *ifp)
 		     (error = bus_dmamap_load_mbuf(sc->sc_dmat, dmamap, m0,
 		                  BUS_DMA_WRITE|BUS_DMA_NOWAIT)) != 0 && first;
 		     first = 0) {
-			MGETHDR(m, M_DONTWAIT, MT_DATA);
+			MGETHDR(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				printf("%s: unable to allocate Tx mbuf\n",
 				    sc->sc_dev.dv_xname);
 				break;
 			}
 			if (m0->m_pkthdr.len > MHLEN) {
-				MCLGET(m, M_DONTWAIT);
+				MCLGET(m, M_NOWAIT);
 				if ((m->m_flags & M_EXT) == 0) {
 					printf("%s: unable to allocate Tx "
 					    "cluster\n", sc->sc_dev.dv_xname);

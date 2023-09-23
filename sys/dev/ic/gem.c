@@ -1059,7 +1059,7 @@ gem_add_rxbuf(struct gem_softc *sc, int idx)
 	struct mbuf *m;
 	int error;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m)
 		return (ENOBUFS);
 	m->m_len = m->m_pkthdr.len = MCLBYTES;
@@ -1694,7 +1694,7 @@ gem_load_mbuf(struct gem_softc *sc, struct gem_sxd *sd, struct mbuf *m)
 		break;
 
 	case EFBIG: /* mbuf chain is too fragmented */
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmatag, sd->sd_map, m,
 		    BUS_DMA_NOWAIT) == 0)
 		    	break;

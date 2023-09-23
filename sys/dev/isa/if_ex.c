@@ -654,7 +654,7 @@ ex_rx_intr(struct ex_softc *sc)
 		sc->rx_head = CSR_READ_2(sc, IO_PORT_REG);
 		QQQ = pkt_len = CSR_READ_2(sc, IO_PORT_REG);
 		if (rx_status & RCV_OK_bit) {
-			MGETHDR(m, M_DONTWAIT, MT_DATA);
+			MGETHDR(m, M_NOWAIT, MT_DATA);
 			ipkt = m;
 			if (ipkt == NULL)
 				ifp->if_iqdrops++;
@@ -663,7 +663,7 @@ ex_rx_intr(struct ex_softc *sc)
 				ipkt->m_len = MHLEN;
 				while (pkt_len > 0) {
 					if (pkt_len >= MINCLSIZE) {
-						MCLGET(m, M_DONTWAIT);
+						MCLGET(m, M_NOWAIT);
 						if (m->m_flags & M_EXT)
 							m->m_len = MCLBYTES;
 						else {
@@ -687,7 +687,7 @@ ex_rx_intr(struct ex_softc *sc)
 						    CSR_READ_1(sc, IO_PORT_REG);
 					pkt_len -= m->m_len;
 					if (pkt_len > 0) {
-						MGET(m->m_next, M_DONTWAIT, 
+						MGET(m->m_next, M_NOWAIT, 
 						    MT_DATA);
 					if (m->m_next == NULL) {
 						m_freem(ipkt);

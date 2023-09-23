@@ -914,14 +914,14 @@ lii_rxintr(struct lii_softc *sc)
 			continue;
 		}
 
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL) {
 			++ifp->if_ierrors;
 			continue;
 		}
 		size = rxp->rxp_size - ETHER_CRC_LEN;
 		if (size > MHLEN) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if ((m->m_flags & M_EXT) == 0) {
 				m_freem(m);
 				++ifp->if_ierrors;

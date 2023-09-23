@@ -545,12 +545,12 @@ wi_rxeof(struct wi_softc *sc)
 		struct wi_frame	*rx_frame;
 		int		datlen, hdrlen;
 
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL) {
 			ifp->if_ierrors++;
 			return;
 		}
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (!(m->m_flags & M_EXT)) {
 			m_freem(m);
 			ifp->if_ierrors++;
@@ -643,12 +643,12 @@ wi_rxeof(struct wi_softc *sc)
 		/* Stash frame type in host byte order for later use */
 		ftype = letoh16(rx_frame.wi_frame_ctl) & WI_FCTL_FTYPE;
 
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL) {
 			ifp->if_ierrors++;
 			return;
 		}
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (!(m->m_flags & M_EXT)) {
 			m_freem(m);
 			ifp->if_ierrors++;

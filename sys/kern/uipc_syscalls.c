@@ -1214,7 +1214,7 @@ sys_setsockopt(struct proc *p, void *v, register_t *retval)
 	if (SCARG(uap, val)) {
 		m = m_get(M_WAIT, MT_SOOPTS);
 		if (SCARG(uap, valsize) > MLEN) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if ((m->m_flags & M_EXT) == 0) {
 				error = ENOBUFS;
 				goto bad;

@@ -443,7 +443,7 @@ the whole mbuf is copied.
 The
 .Fa wait
 parameter can be M_WAIT or
-M_DONTWAIT.
+M_NOWAIT.
 It does not copy clusters, it just increases their reference count.
 .It Fn m_free "struct mbuf *m"
 Free the mbuf pointed to by
@@ -469,7 +469,7 @@ to await resources.
 If
 .Fa how
 is
-.Fa M_DONTWAIT
+.Fa M_NOWAIT
 and resources are not available,
 .Fn m_get
 returns NULL.

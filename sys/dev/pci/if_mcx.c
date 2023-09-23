@@ -6707,7 +6707,7 @@ mcx_rx_fill_slots(struct mcx_softc *sc, struct mcx_rx *rx, uint nslots)
 		ms = &rx->rx_slots[slot];
 		rqe = &ring[slot];
 
-		m = MCLGETL(NULL, M_DONTWAIT, sc->sc_rxbufsz);
+		m = MCLGETL(NULL, M_NOWAIT, sc->sc_rxbufsz);
 		if (m == NULL)
 			break;
 
@@ -7750,7 +7750,7 @@ mcx_load_mbuf(struct mcx_softc *sc, struct mcx_slot *ms, struct mbuf *m)
 		break;
 
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmat, ms->ms_map, m,
 		    BUS_DMA_STREAMING | BUS_DMA_NOWAIT) == 0)
 			break;

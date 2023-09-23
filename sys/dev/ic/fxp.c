@@ -696,7 +696,7 @@ fxp_start(struct ifnet *ifp)
 		case 0:
 			break;
 		case EFBIG:
-			if (m_defrag(m0, M_DONTWAIT) == 0 &&
+			if (m_defrag(m0, M_NOWAIT) == 0 &&
 			    bus_dmamap_load_mbuf(sc->sc_dmat, txs->tx_map,
 			    m0, BUS_DMA_NOWAIT) == 0)
 				break;
@@ -1478,9 +1478,9 @@ fxp_add_rfabuf(struct fxp_softc *sc, struct mbuf *oldm)
 	u_int8_t *rfap;
 	bus_dmamap_t rxmap = NULL;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m != NULL) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_freem(m);
 			if (oldm == NULL)

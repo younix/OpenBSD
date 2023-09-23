@@ -116,7 +116,7 @@ is
 .Dv M_WAIT ,
 splitting mbufs will always succeed.
 For
-.Dv M_DONTWAIT
+.Dv M_NOWAIT
 the out-of-band property might get lost or a short splice might
 happen.
 In the latter case, less than the given maximum number of bytes are

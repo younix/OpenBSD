@@ -627,7 +627,7 @@ ar5008_rx_alloc(struct athn_softc *sc)
 		/*
 		 * Assumes MCLGETL returns cache-line-size aligned buffers.
 		 */
-		bf->bf_m = MCLGETL(NULL, M_DONTWAIT, ATHN_RXBUFSZ);
+		bf->bf_m = MCLGETL(NULL, M_NOWAIT, ATHN_RXBUFSZ);
 		if (bf->bf_m == NULL) {
 			printf("%s: could not allocate Rx mbuf\n",
 			    sc->sc_dev.dv_xname);
@@ -937,7 +937,7 @@ ar5008_rx_process(struct athn_softc *sc, struct mbuf_list *ml)
 	}
 
 	/* Allocate a new Rx buffer. */
-	m1 = MCLGETL(NULL, M_DONTWAIT, ATHN_RXBUFSZ);
+	m1 = MCLGETL(NULL, M_NOWAIT, ATHN_RXBUFSZ);
 	if (__predict_false(m1 == NULL)) {
 		ic->ic_stats.is_rx_nombuf++;
 		ifp->if_ierrors++;
@@ -1605,7 +1605,7 @@ ar5008_tx(struct athn_softc *sc, struct mbuf *m, struct ieee80211_node *ni,
 		 * DMA mapping requires too many DMA segments; linearize
 		 * mbuf in kernel virtual address space and retry.
 		 */
-		if (m_defrag(m, M_DONTWAIT) != 0) {
+		if (m_defrag(m, M_NOWAIT) != 0) {
 			m_freem(m);
 			return (ENOBUFS);
 		}

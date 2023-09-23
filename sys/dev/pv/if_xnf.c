@@ -578,7 +578,7 @@ xnf_encap(struct xnf_softc *sc, struct mbuf *m_head, uint32_t *prod)
 	int i, flags, n, used = 0;
 
 	if ((xnf_fragcount(m_head) > sc->sc_tx_frags) &&
-	    m_defrag(m_head, M_DONTWAIT))
+	    m_defrag(m_head, M_NOWAIT))
 		return (ENOBUFS);
 
 	flags = (sc->sc_domid << 16) | BUS_DMA_WRITE | BUS_DMA_NOWAIT;
@@ -868,7 +868,7 @@ xnf_rx_ring_fill(struct xnf_softc *sc)
 		KASSERT(id < XNF_RX_DESC);
 		if (sc->sc_rx_buf[id])
 			break;
-		m = MCLGETL(NULL, M_DONTWAIT, XNF_MCLEN);
+		m = MCLGETL(NULL, M_NOWAIT, XNF_MCLEN);
 		if (m == NULL)
 			break;
 		m->m_len = m->m_pkthdr.len = XNF_MCLEN;

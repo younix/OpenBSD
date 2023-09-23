@@ -1075,7 +1075,7 @@ ieee80211_enqueue_data(struct ieee80211com *ic, struct mbuf *m,
 		struct ieee80211_node *ni1;
 
 		if (ETHER_IS_MULTICAST(eh->ether_dhost)) {
-			m1 = m_dup_pkt(m, ETHER_ALIGN, M_DONTWAIT);
+			m1 = m_dup_pkt(m, ETHER_ALIGN, M_NOWAIT);
 			if (m1 == NULL)
 				ifp->if_oerrors++;
 			else

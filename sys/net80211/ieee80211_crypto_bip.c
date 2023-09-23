@@ -116,7 +116,7 @@ ieee80211_bip_encap(struct ieee80211com *ic, struct mbuf *m0,
 	m = m0;
 	/* reserve trailing space for MMIE */
 	if (m_trailingspace(m) < IEEE80211_MMIE_LEN) {
-		MGET(m->m_next, M_DONTWAIT, m->m_type);
+		MGET(m->m_next, M_NOWAIT, m->m_type);
 		if (m->m_next == NULL)
 			goto nospace;
 		m = m->m_next;

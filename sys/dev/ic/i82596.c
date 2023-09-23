@@ -974,7 +974,7 @@ i82596_get(struct ie_softc *sc, int head, int totlen)
 
 	resid = totlen;
 
-	MGETHDR(m0, M_DONTWAIT, MT_DATA);
+	MGETHDR(m0, M_NOWAIT, MT_DATA);
 	if (m0 == NULL)
 		return (0);
 	m0->m_pkthdr.len = totlen;
@@ -987,7 +987,7 @@ i82596_get(struct ie_softc *sc, int head, int totlen)
 	 */
 	while (totlen > 0) {
 		if (totlen >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if ((m->m_flags & M_EXT) == 0)
 				goto bad;
 			len = MCLBYTES;
@@ -1005,7 +1005,7 @@ i82596_get(struct ie_softc *sc, int head, int totlen)
 
 		totlen -= len;
 		if (totlen > 0) {
-			MGET(newm, M_DONTWAIT, MT_DATA);
+			MGET(newm, M_NOWAIT, MT_DATA);
 			if (newm == NULL)
 				goto bad;
 			len = MLEN;

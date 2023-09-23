@@ -382,7 +382,7 @@ sf_start(struct ifnet *ifp)
 		 */
 		if (bus_dmamap_load_mbuf(sc->sc_dmat, dmamap, m0,
 		    BUS_DMA_WRITE|BUS_DMA_NOWAIT) != 0) {
-			MGETHDR(m, M_DONTWAIT, MT_DATA);
+			MGETHDR(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				ifq_deq_rollback(&ifp->if_snd, m0);
 				printf("%s: unable to allocate Tx mbuf\n",
@@ -390,7 +390,7 @@ sf_start(struct ifnet *ifp)
 				break;
 			}
 			if (m0->m_pkthdr.len > MHLEN) {
-				MCLGET(m, M_DONTWAIT);
+				MCLGET(m, M_NOWAIT);
 				if ((m->m_flags & M_EXT) == 0) {
 					ifq_deq_rollback(&ifp->if_snd, m0);
 					printf("%s: unable to allocate Tx "
@@ -781,7 +781,7 @@ sf_rxintr(struct sf_softc *sc)
 		 * is misaligned.  We must allocate a new buffer and
 		 * copy the data, shifted forward 2 bytes.
 		 */
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL) {
  dropit:
 			ifp->if_ierrors++;
@@ -791,7 +791,7 @@ sf_rxintr(struct sf_softc *sc)
 			continue;
 		}
 		if (len > (MHLEN - 2)) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if ((m->m_flags & M_EXT) == 0) {
 				m_freem(m);
 				goto dropit;
@@ -1211,11 +1211,11 @@ sf_add_rxbuf(struct sf_softc *sc, int idx)
 	struct mbuf *m;
 	int error;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
 
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if ((m->m_flags & M_EXT) == 0) {
 		m_freem(m);
 		return (ENOBUFS);

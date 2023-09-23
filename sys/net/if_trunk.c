@@ -1621,7 +1621,7 @@ trunk_bcast_start(struct trunk_softc *tr, struct mbuf *m0)
 		active_ports++;
 
 		if (last != NULL) {
-			m = m_copym(m0, 0, M_COPYALL, M_DONTWAIT);
+			m = m_copym(m0, 0, M_COPYALL, M_NOWAIT);
 			if (m == NULL) {
 				errors++;
 				break;

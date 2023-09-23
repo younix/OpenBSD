@@ -745,7 +745,7 @@ ar9003_rx_alloc(struct athn_softc *sc, int qid, int count)
 		/*
 		 * Assumes MCLGETL returns cache-line-size aligned buffers.
 		 */
-		bf->bf_m = MCLGETL(NULL, M_DONTWAIT, ATHN_RXBUFSZ);
+		bf->bf_m = MCLGETL(NULL, M_NOWAIT, ATHN_RXBUFSZ);
 		if (bf->bf_m == NULL) {
 			printf("%s: could not allocate Rx mbuf\n",
 			    sc->sc_dev.dv_xname);
@@ -970,7 +970,7 @@ ar9003_rx_process(struct athn_softc *sc, int qid, struct mbuf_list *ml)
 	}
 
 	/* Allocate a new Rx buffer. */
-	m1 = MCLGETL(NULL, M_DONTWAIT, ATHN_RXBUFSZ);
+	m1 = MCLGETL(NULL, M_NOWAIT, ATHN_RXBUFSZ);
 	if (__predict_false(m1 == NULL)) {
 		ic->ic_stats.is_rx_nombuf++;
 		ifp->if_ierrors++;
@@ -1506,13 +1506,13 @@ ar9003_tx(struct athn_softc *sc, struct mbuf *m, struct ieee80211_node *ni,
 		 * DMA mapping requires too many DMA segments; linearize
 		 * mbuf in kernel virtual address space and retry.
 		 */
-		MGETHDR(m1, M_DONTWAIT, MT_DATA);
+		MGETHDR(m1, M_NOWAIT, MT_DATA);
 		if (m1 == NULL) {
 			m_freem(m);
 			return (ENOBUFS);
 		}
 		if (m->m_pkthdr.len > MHLEN) {
-			MCLGET(m1, M_DONTWAIT);
+			MCLGET(m1, M_NOWAIT);
 			if (!(m1->m_flags & M_EXT)) {
 				m_freem(m);
 				m_freem(m1);
@@ -2629,7 +2629,7 @@ ar9003_paprd_tx_tone(struct athn_softc *sc)
 	int error;
 
 	/* Build a Null (no data) frame of TONE_LEN bytes. */
-	m = MCLGETL(NULL, M_DONTWAIT, TONE_LEN);
+	m = MCLGETL(NULL, M_NOWAIT, TONE_LEN);
 	if (m == NULL)
 		return (ENOBUFS);
 	memset(mtod(m, caddr_t), 0, TONE_LEN);

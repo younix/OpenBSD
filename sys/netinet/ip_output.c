@@ -716,13 +716,13 @@ ip_fragment(struct mbuf *m0, struct mbuf_list *ml, struct ifnet *ifp,
 		struct ip *mhip;
 		int mhlen;
 
-		MGETHDR(m, M_DONTWAIT, MT_HEADER);
+		MGETHDR(m, M_NOWAIT, MT_HEADER);
 		if (m == NULL) {
 			error = ENOBUFS;
 			goto bad;
 		}
 		ml_enqueue(ml, m);
-		if ((error = m_dup_pkthdr(m, m0, M_DONTWAIT)) != 0)
+		if ((error = m_dup_pkthdr(m, m0, M_NOWAIT)) != 0)
 			goto bad;
 		m->m_data += max_linkhdr;
 		mhip = mtod(m, struct ip *);
@@ -802,7 +802,7 @@ ip_insertoptions(struct mbuf *m, struct mbuf *opt, int *phlen)
 	if (p->ipopt_dst.s_addr)
 		ip->ip_dst = p->ipopt_dst;
 	if (m->m_flags & M_EXT || m->m_data - optlen < m->m_pktdat) {
-		MGETHDR(n, M_DONTWAIT, MT_HEADER);
+		MGETHDR(n, M_NOWAIT, MT_HEADER);
 		if (n == NULL)
 			return (m);
 		M_MOVE_HDR(n, m);
@@ -1776,7 +1776,7 @@ ip_mloopback(struct ifnet *ifp, struct mbuf *m, struct sockaddr_in *dst)
 {
 	struct mbuf *copym;
 
-	copym = m_dup_pkt(m, max_linkhdr, M_DONTWAIT);
+	copym = m_dup_pkt(m, max_linkhdr, M_NOWAIT);
 	if (copym != NULL) {
 		/*
 		 * We don't bother to fragment if the IP length is greater

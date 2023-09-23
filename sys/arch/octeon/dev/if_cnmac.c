@@ -755,7 +755,7 @@ cnmac_send_makecmd_gbuf(struct cnmac_softc *sc, struct mbuf *m0,
 	return 0;
 
 defrag:
-	if (m_defrag(m0, M_DONTWAIT) != 0)
+	if (m_defrag(m0, M_NOWAIT) != 0)
 		return 1;
 	gbuf[0] = cnmac_send_makecmd_w1(m0->m_len, KVTOPHYS(m0->m_data));
 	*rsegs = 1;

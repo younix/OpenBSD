@@ -2728,7 +2728,7 @@ ngbe_get_buf(struct rx_ring *rxr, int i)
 		return ENOBUFS;
 	}
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES + ETHER_ALIGN);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES + ETHER_ALIGN);
 	if (!m)
 		return ENOBUFS;
 

@@ -660,7 +660,7 @@ sppp_output(struct ifnet *ifp, struct mbuf *m,
 		return (EAFNOSUPPORT);
 	}
 
-	M_PREPEND(m, 2, M_DONTWAIT);
+	M_PREPEND(m, 2, M_NOWAIT);
 	if (m == NULL) {
 		if (ifp->if_flags & IFF_DEBUG)
 			log(LOG_DEBUG, SPP_FMT
@@ -916,7 +916,7 @@ sppp_cp_send(struct sppp *sp, u_short proto, u_char type,
 
 	if (len > MHLEN - PKTHDRLEN - LCP_HEADER_LEN)
 		len = MHLEN - PKTHDRLEN - LCP_HEADER_LEN;
-	MGETHDR (m, M_DONTWAIT, MT_DATA);
+	MGETHDR (m, M_NOWAIT, MT_DATA);
 	if (! m)
 		return;
 	m->m_pkthdr.len = m->m_len = PKTHDRLEN + LCP_HEADER_LEN + len;
@@ -4033,7 +4033,7 @@ sppp_auth_send(const struct cp *cp, struct sppp *sp,
 	const char *msg;
 	va_list ap;
 
-	MGETHDR (m, M_DONTWAIT, MT_DATA);
+	MGETHDR (m, M_NOWAIT, MT_DATA);
 	if (! m)
 		return;
 	m->m_pkthdr.ph_ifidx = 0;

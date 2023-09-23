@@ -837,7 +837,7 @@ vnet_rx_vio_dring_data(struct vnet_softc *sc, struct vio_msg_tag *tag)
 				goto skip;
 			}
 
-			m = MCLGETL(NULL, M_DONTWAIT, desc.nbytes);
+			m = MCLGETL(NULL, M_NOWAIT, desc.nbytes);
 			if (!m)
 				break;
 			m->m_len = m->m_pkthdr.len = desc.nbytes;

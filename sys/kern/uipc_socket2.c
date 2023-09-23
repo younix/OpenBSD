@@ -888,7 +888,7 @@ sbappendaddr(struct socket *so, struct sockbuf *sb, const struct sockaddr *asa,
 		return (0);
 	if (asa->sa_len > MLEN)
 		return (0);
-	MGET(m, M_DONTWAIT, MT_SONAME);
+	MGET(m, M_NOWAIT, MT_SONAME);
 	if (m == NULL)
 		return (0);
 	m->m_len = asa->sa_len;
@@ -1122,10 +1122,10 @@ sbcreatecontrol(const void *p, size_t size, int type, int level)
 		return (NULL);
 	}
 
-	if ((m = m_get(M_DONTWAIT, MT_CONTROL)) == NULL)
+	if ((m = m_get(M_NOWAIT, MT_CONTROL)) == NULL)
 		return (NULL);
 	if (CMSG_SPACE(size) > MLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_free(m);
 			return NULL;

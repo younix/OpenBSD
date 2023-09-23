@@ -1798,7 +1798,7 @@ egre_start(struct ifnet *ifp)
 #endif
 
 		/* force prepend mbuf because of alignment problems */
-		m = m_get(M_DONTWAIT, m0->m_type);
+		m = m_get(M_NOWAIT, m0->m_type);
 		if (m == NULL) {
 			m_freem(m0);
 			continue;
@@ -1908,7 +1908,7 @@ gre_encap_dst(const struct gre_tunnel *tunnel, const union gre_addr *dst,
 	if (tunnel->t_key_mask != GRE_KEY_NONE)
 		hlen += sizeof(*gkh);
 
-	m = m_prepend(m, hlen, M_DONTWAIT);
+	m = m_prepend(m, hlen, M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -1943,7 +1943,7 @@ gre_encap_dst_ip(const struct gre_tunnel *tunnel, const union gre_addr *dst,
 	case AF_INET: {
 		struct ip *ip;
 
-		m = m_prepend(m, sizeof(*ip), M_DONTWAIT);
+		m = m_prepend(m, sizeof(*ip), M_NOWAIT);
 		if (m == NULL)
 			return (NULL);
 
@@ -1964,7 +1964,7 @@ gre_encap_dst_ip(const struct gre_tunnel *tunnel, const union gre_addr *dst,
 		struct ip6_hdr *ip6;
 		int len = m->m_pkthdr.len;
 
-		m = m_prepend(m, sizeof(*ip6), M_DONTWAIT);
+		m = m_prepend(m, sizeof(*ip6), M_NOWAIT);
 		if (m == NULL)
 			return (NULL);
 
@@ -2979,12 +2979,12 @@ gre_keepalive_send(void *arg)
 #endif
 	len = linkhdr + sizeof(*gk);
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return;
 
 	if (len > MHLEN) {
-		MCLGETL(m, M_DONTWAIT, len);
+		MCLGETL(m, M_NOWAIT, len);
 		if (!ISSET(m->m_flags, M_EXT)) {
 			m_freem(m);
 			return;
@@ -3670,7 +3670,7 @@ nvgre_start(struct ifnet *ifp)
 		}
 
 		/* force prepend mbuf because of alignment problems */
-		m = m_get(M_DONTWAIT, m0->m_type);
+		m = m_get(M_NOWAIT, m0->m_type);
 		if (m == NULL) {
 			m_freem(m0);
 			continue;
@@ -3844,7 +3844,7 @@ eoip_start(struct ifnet *ifp)
 #endif
 
 		/* force prepend mbuf because of alignment problems */
-		m = m_get(M_DONTWAIT, m0->m_type);
+		m = m_get(M_NOWAIT, m0->m_type);
 		if (m == NULL) {
 			m_freem(m0);
 			continue;
@@ -3871,7 +3871,7 @@ eoip_encap(struct eoip_softc *sc, struct mbuf *m, uint8_t tos)
 	struct gre_h_key_eoip *eoiph;
 	int len = m->m_pkthdr.len;
 
-	m = m_prepend(m, sizeof(*gh) + sizeof(*eoiph), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*gh) + sizeof(*eoiph), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -3905,12 +3905,12 @@ eoip_keepalive_send(void *arg)
 	linkhdr = max_linkhdr + sizeof(struct ip) +
 	    sizeof(struct gre_header) + sizeof(struct gre_h_key_eoip);
 #endif
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return;
 
 	if (linkhdr > MHLEN) {
-		MCLGETL(m, M_DONTWAIT, linkhdr);
+		MCLGETL(m, M_NOWAIT, linkhdr);
 		if (!ISSET(m->m_flags, M_EXT)) {
 			m_freem(m);
 			return;

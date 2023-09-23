@@ -1428,7 +1428,7 @@ bridge_span(struct ifnet *brifp, struct mbuf *m)
 		if ((ifp->if_flags & IFF_RUNNING) == 0)
 			continue;
 
-		mc = m_copym(m, 0, M_COPYALL, M_DONTWAIT);
+		mc = m_copym(m, 0, M_COPYALL, M_NOWAIT);
 		if (mc == NULL) {
 			brifp->if_oerrors++;
 			continue;
@@ -1795,14 +1795,14 @@ bridge_ip(struct ifnet *brifp, int dir, struct ifnet *ifp,
 
 	/* Reattach SNAP header */
 	if (hassnap) {
-		M_PREPEND(m, LLC_SNAPFRAMELEN, M_DONTWAIT);
+		M_PREPEND(m, LLC_SNAPFRAMELEN, M_NOWAIT);
 		if (m == NULL)
 			goto dropit;
 		bcopy(&llc, mtod(m, caddr_t), LLC_SNAPFRAMELEN);
 	}
 
 	/* Reattach ethernet header */
-	M_PREPEND(m, sizeof(*eh), M_DONTWAIT);
+	M_PREPEND(m, sizeof(*eh), M_NOWAIT);
 	if (m == NULL)
 		goto dropit;
 	bcopy(eh, mtod(m, caddr_t), sizeof(*eh));
@@ -1883,14 +1883,14 @@ bridge_fragment(struct ifnet *brifp, struct ifnet *ifp, struct ether_header *eh,
 
 	while ((m = ml_dequeue(&ml)) != NULL) {
 		if (hassnap) {
-			M_PREPEND(m, LLC_SNAPFRAMELEN, M_DONTWAIT);
+			M_PREPEND(m, LLC_SNAPFRAMELEN, M_NOWAIT);
 			if (m == NULL) {
 				error = ENOBUFS;
 				break;
 			}
 			bcopy(&llc, mtod(m, caddr_t), LLC_SNAPFRAMELEN);
 		}
-		M_PREPEND(m, sizeof(*eh), M_DONTWAIT);
+		M_PREPEND(m, sizeof(*eh), M_NOWAIT);
 		if (m == NULL) {
 			error = ENOBUFS;
 			break;
@@ -1955,7 +1955,7 @@ bridge_send_icmp_err(struct ifnet *ifp,
 	int hlen;
 	u_int8_t ether_tmp[ETHER_ADDR_LEN];
 
-	n2 = m_copym(n, 0, M_COPYALL, M_DONTWAIT);
+	n2 = m_copym(n, 0, M_COPYALL, M_NOWAIT);
 	if (!n2) {
 		m_freem(n);
 		return;
@@ -1995,14 +1995,14 @@ bridge_send_icmp_err(struct ifnet *ifp,
 
 	/* Reattach SNAP header */
 	if (hassnap) {
-		M_PREPEND(m, LLC_SNAPFRAMELEN, M_DONTWAIT);
+		M_PREPEND(m, LLC_SNAPFRAMELEN, M_NOWAIT);
 		if (m == NULL)
 			goto dropit;
 		bcopy(llc, mtod(m, caddr_t), LLC_SNAPFRAMELEN);
 	}
 
 	/* Reattach ethernet header */
-	M_PREPEND(m, sizeof(*eh), M_DONTWAIT);
+	M_PREPEND(m, sizeof(*eh), M_NOWAIT);
 	if (m == NULL)
 		goto dropit;
 	bcopy(eh, mtod(m, caddr_t), sizeof(*eh));

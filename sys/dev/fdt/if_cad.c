@@ -1167,7 +1167,7 @@ cad_encap(struct cad_softc *sc, struct mbuf *m)
 	case 0:
 		break;
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) != 0)
+		if (m_defrag(m, M_NOWAIT) != 0)
 			return 0;
 		if (bus_dmamap_load_mbuf(sc->sc_dmat, map, m,
 		    BUS_DMA_NOWAIT) != 0)
@@ -1708,7 +1708,7 @@ cad_alloc_mbuf(struct cad_softc *sc, bus_dmamap_t map)
 {
 	struct mbuf *m;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (m == NULL)
 		return NULL;
 	m->m_len = m->m_pkthdr.len = MCLBYTES;

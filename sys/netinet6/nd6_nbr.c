@@ -386,9 +386,9 @@ nd6_ns_output(struct ifnet *ifp, const struct in6_addr *daddr6,
 	}
 #endif
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m && max_linkhdr + maxlen >= MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_free(m);
 			m = NULL;
@@ -909,9 +909,9 @@ nd6_na_output(struct ifnet *ifp, const struct in6_addr *daddr6,
 	}
 #endif
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m && max_linkhdr + maxlen >= MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_free(m);
 			m = NULL;

@@ -1861,11 +1861,11 @@ dc_newbuf(struct dc_softc *sc, int i, struct mbuf *m)
 	c = &sc->dc_ldata->dc_rx_list[i];
 
 	if (m == NULL) {
-		MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+		MGETHDR(m_new, M_NOWAIT, MT_DATA);
 		if (m_new == NULL)
 			return (ENOBUFS);
 
-		MCLGET(m_new, M_DONTWAIT);
+		MCLGET(m_new, M_NOWAIT);
 		if (!(m_new->m_flags & M_EXT)) {
 			m_freem(m_new);
 			return (ENOBUFS);
@@ -2597,7 +2597,7 @@ dc_start(struct ifnet *ifp)
 		case 0:
 			break;
 		case EFBIG:
-			if (m_defrag(m, M_DONTWAIT) == 0 &&
+			if (m_defrag(m, M_NOWAIT) == 0 &&
 			    bus_dmamap_load_mbuf(sc->sc_dmat, map, m,
 			     BUS_DMA_NOWAIT | BUS_DMA_OVERRUN) == 0)
 				break;

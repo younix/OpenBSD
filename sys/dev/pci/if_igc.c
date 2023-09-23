@@ -934,7 +934,7 @@ igc_load_mbuf(bus_dma_tag_t dmat, bus_dmamap_t map, struct mbuf *m)
 	if (error != EFBIG)
 		return (error);
 
-	error = m_defrag(m, M_DONTWAIT);
+	error = m_defrag(m, M_NOWAIT);
 	if (error != 0)
 		return (error);
 
@@ -1635,7 +1635,7 @@ igc_get_buf(struct rx_ring *rxr, int i)
 		return ENOBUFS;
 	}
 
-	m = MCLGETL(NULL, M_DONTWAIT, sc->rx_mbuf_sz);
+	m = MCLGETL(NULL, M_NOWAIT, sc->rx_mbuf_sz);
 	if (!m)
 		return ENOBUFS;
 

@@ -1446,12 +1446,12 @@ nxe_coalesce_m(struct mbuf *m)
 {
 	struct mbuf			*m0;
 
-	MGETHDR(m0, M_DONTWAIT, MT_DATA);
+	MGETHDR(m0, M_NOWAIT, MT_DATA);
 	if (m0 == NULL)
 		goto err;
 
 	if (m->m_pkthdr.len > MHLEN) {
-		MCLGET(m0, M_DONTWAIT);
+		MCLGET(m0, M_NOWAIT);
 		if (!(m0->m_flags & M_EXT)) {
 			m_freem(m0);
 			m0 = NULL;
@@ -1513,11 +1513,11 @@ nxe_rx_start(struct nxe_softc *sc)
 		if (pkt == NULL)
 			goto done;
 
-		MGETHDR(m, M_DONTWAIT, MT_DATA);
+		MGETHDR(m, M_NOWAIT, MT_DATA);
 		if (m == NULL)
 			goto put_pkt;
 
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (!ISSET(m->m_flags, M_EXT))
 			goto free_m;
 

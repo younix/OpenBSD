@@ -661,7 +661,7 @@ hme_start(struct ifnet *ifp)
 			goto drop;
 		if (error != 0) {
 			/* Too many fragments, linearize. */
-			if (m_defrag(m, M_DONTWAIT))
+			if (m_defrag(m, M_NOWAIT))
 				goto drop;
 			error = bus_dmamap_load_mbuf(sc->sc_dmatag, map, m,
 			    BUS_DMA_NOWAIT);
@@ -1284,7 +1284,7 @@ hme_newbuf(struct hme_softc *sc, struct hme_sxd *d)
 	 * until we're sure everything is a success.
 	 */
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m)
 		return (ENOBUFS);
 

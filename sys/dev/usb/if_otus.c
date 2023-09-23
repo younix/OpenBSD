@@ -1127,13 +1127,13 @@ otus_sub_rxeof(struct otus_softc *sc, uint8_t *buf, int len,
 	/* Provide a 32-bit aligned protocol header to the stack. */
 	align = (ieee80211_has_qos(wh) ^ ieee80211_has_addr4(wh)) ? 2 : 0;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (__predict_false(m == NULL)) {
 		ifp->if_ierrors++;
 		return;
 	}
 	if (align + mlen > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (__predict_false(!(m->m_flags & M_EXT))) {
 			ifp->if_ierrors++;
 			m_freem(m);

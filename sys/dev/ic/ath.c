@@ -1704,7 +1704,7 @@ ath_rxbuf_init(struct ath_softc *sc, struct ath_buf *bf)
 		 * multiple of the cache line size.  Not doing this
 		 * causes weird stuff to happen (for the 5210 at least).
 		 */
-		m = ath_getmbuf(M_DONTWAIT, MT_DATA, MCLBYTES);
+		m = ath_getmbuf(M_NOWAIT, MT_DATA, MCLBYTES);
 		if (m == NULL) {
 			DPRINTF(ATH_DEBUG_ANY,
 			    ("%s: no mbuf/cluster\n", __func__));
@@ -2021,7 +2021,7 @@ ath_tx_start(struct ath_softc *sc, struct ieee80211_node *ni,
 	} else if (!ath_softcrypto && iswep) {
 		bcopy(mtod(m0, caddr_t), hdrbuf, hdrlen);
 		m_adj(m0, hdrlen);
-		M_PREPEND(m0, sizeof(hdrbuf), M_DONTWAIT);
+		M_PREPEND(m0, sizeof(hdrbuf), M_NOWAIT);
 		if (m0 == NULL) {
 			sc->sc_stats.ast_tx_nombuf++;
 			return ENOMEM;
@@ -2094,7 +2094,7 @@ ath_tx_start(struct ath_softc *sc, struct ieee80211_node *ni,
 	 */
 	if (error == EFBIG) {		/* too many desc's, linearize */
 		sc->sc_stats.ast_tx_linear++;
-		if (m_defrag(m0, M_DONTWAIT)) {
+		if (m_defrag(m0, M_NOWAIT)) {
 			sc->sc_stats.ast_tx_nomcl++;
 			m_freem(m0);
 			return ENOMEM;

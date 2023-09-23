@@ -243,7 +243,7 @@ bpe_start(struct ifnet *ifp)
 		ceh = mtod(m0, struct ether_header *);
 
 		/* force prepend of a whole mbuf because of alignment */
-		m = m_get(M_DONTWAIT, m0->m_type);
+		m = m_get(M_NOWAIT, m0->m_type);
 		if (m == NULL) {
 			m_freem(m0);
 			continue;
@@ -255,7 +255,7 @@ bpe_start(struct ifnet *ifp)
 		m_align(m, 0);
 		m->m_len = 0;
 
-		m = m_prepend(m, hlen, M_DONTWAIT);
+		m = m_prepend(m, hlen, M_NOWAIT);
 		if (m == NULL)
 			continue;
 

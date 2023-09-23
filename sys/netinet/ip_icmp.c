@@ -214,10 +214,10 @@ icmp_do_error(struct mbuf *n, int type, int code, u_int32_t dest, int destmtu)
 	if (sizeof (struct ip) + icmplen + ICMP_MINLEN > MCLBYTES)
 		icmplen = MCLBYTES - ICMP_MINLEN - sizeof (struct ip);
 
-	m = m_gethdr(M_DONTWAIT, MT_HEADER);
+	m = m_gethdr(M_NOWAIT, MT_HEADER);
 	if (m && ((sizeof (struct ip) + icmplen + ICMP_MINLEN +
 	    sizeof(long) - 1) &~ (sizeof(long) - 1)) > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_freem(m);
 			m = NULL;
@@ -261,7 +261,7 @@ icmp_do_error(struct mbuf *n, int type, int code, u_int32_t dest, int destmtu)
 	 * Now, copy old ip header (without options)
 	 * in front of icmp message.
 	 */
-	m = m_prepend(m, sizeof(struct ip), M_DONTWAIT);
+	m = m_prepend(m, sizeof(struct ip), M_NOWAIT);
 	if (m == NULL)
 		goto freeit;
 	nip = mtod(m, struct ip *);
@@ -764,7 +764,7 @@ icmp_reflect(struct mbuf *m, struct mbuf **op, struct in_ifaddr *ia)
 		 */
 		cp = (u_char *) (ip + 1);
 		if (op && (opts = ip_srcroute(m)) == NULL &&
-		    (opts = m_gethdr(M_DONTWAIT, MT_HEADER))) {
+		    (opts = m_gethdr(M_NOWAIT, MT_HEADER))) {
 			opts->m_len = sizeof(struct in_addr);
 			mtod(opts, struct in_addr *)->s_addr = 0;
 		}

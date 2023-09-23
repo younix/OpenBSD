@@ -1170,11 +1170,11 @@ tht_load_pkt(struct tht_softc *sc, struct tht_pkt *pkt, struct mbuf *m)
 		break;
 
 	case EFBIG: /* mbuf chain is too fragmented */
-		MGETHDR(m0, M_DONTWAIT, MT_DATA);
+		MGETHDR(m0, M_NOWAIT, MT_DATA);
 		if (m0 == NULL)
 			return (ENOBUFS);
 		if (m->m_pkthdr.len > MHLEN) {
-			MCLGET(m0, M_DONTWAIT);
+			MCLGET(m0, M_NOWAIT);
 			if (!(m0->m_flags & M_EXT)) {
 				m_freem(m0);
 				return (ENOBUFS);
@@ -1254,11 +1254,11 @@ tht_rxf_fill(struct tht_softc *sc, int wait)
 		if ((pkt = tht_pkt_get(&sc->sc_rx_list)) == NULL)
 			goto done;
 
-		MGETHDR(m, wait ? M_WAIT : M_DONTWAIT, MT_DATA);
+		MGETHDR(m, wait ? M_WAIT : M_NOWAIT, MT_DATA);
 		if (m == NULL)
 			goto put_pkt;
 
-		MCLGET(m, wait ? M_WAIT : M_DONTWAIT);
+		MCLGET(m, wait ? M_WAIT : M_NOWAIT);
 		if (!ISSET(m->m_flags, M_EXT))
 			goto free_m;
 

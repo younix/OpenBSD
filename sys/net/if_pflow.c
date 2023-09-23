@@ -638,13 +638,13 @@ pflow_get_mbuf(struct pflow_softc *sc, u_int16_t set_id)
 	struct pflow_header	 h;
 	struct mbuf		*m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		pflowstats.pflow_onomem++;
 		return (NULL);
 	}
 
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if ((m->m_flags & M_EXT) == 0) {
 		m_free(m);
 		pflowstats.pflow_onomem++;
@@ -1150,7 +1150,7 @@ pflow_sendout_ipfix(struct pflow_softc *sc, sa_family_t af)
 	set_hdr->set_length = htons(set_length);
 
 	/* populate pflow_header */
-	M_PREPEND(m, sizeof(struct pflow_v10_header), M_DONTWAIT);
+	M_PREPEND(m, sizeof(struct pflow_v10_header), M_NOWAIT);
 	if (m == NULL) {
 		pflowstats.pflow_onomem++;
 		return (ENOBUFS);
@@ -1190,7 +1190,7 @@ pflow_sendout_ipfix_tmpl(struct pflow_softc *sc)
 	pflowstats.pflow_packets++;
 
 	/* populate pflow_header */
-	M_PREPEND(m, sizeof(struct pflow_v10_header), M_DONTWAIT);
+	M_PREPEND(m, sizeof(struct pflow_v10_header), M_NOWAIT);
 	if (m == NULL) {
 		pflowstats.pflow_onomem++;
 		return (ENOBUFS);

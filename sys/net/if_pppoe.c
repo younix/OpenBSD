@@ -563,7 +563,7 @@ breakbreak:
 				free(sc->sc_ac_cookie, M_DEVBUF,
 				    sc->sc_ac_cookie_len);
 			sc->sc_ac_cookie = malloc(ac_cookie_len, M_DEVBUF,
-			    M_DONTWAIT);
+			    M_NOWAIT);
 			if (sc->sc_ac_cookie == NULL) {
 				sc->sc_ac_cookie_len = 0;
 				goto done;
@@ -580,7 +580,7 @@ breakbreak:
 				free(sc->sc_relay_sid, M_DEVBUF,
 				    sc->sc_relay_sid_len);
 			sc->sc_relay_sid = malloc(relay_sid_len, M_DEVBUF,
-			    M_DONTWAIT);
+			    M_NOWAIT);
 			if (sc->sc_relay_sid == NULL) {
 				sc->sc_relay_sid_len = 0;
 				goto done;
@@ -996,11 +996,11 @@ pppoe_get_mbuf(size_t len)
 	if (len + sizeof(struct ether_header) > MCLBYTES)
 		return NULL;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (NULL);
 	if (len + sizeof(struct ether_header) > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_free(m);
 			return (NULL);
@@ -1407,7 +1407,7 @@ pppoe_start(struct ifnet *ifp)
 
 	while ((m = sppp_dequeue(ifp)) != NULL) {
 		len = m->m_pkthdr.len;
-		M_PREPEND(m, PPPOE_HEADERLEN, M_DONTWAIT);
+		M_PREPEND(m, PPPOE_HEADERLEN, M_NOWAIT);
 		if (m == NULL) {
 			ifp->if_oerrors++;
 			continue;

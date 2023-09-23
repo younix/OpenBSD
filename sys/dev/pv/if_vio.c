@@ -905,7 +905,7 @@ vio_add_rx_mbuf(struct vio_softc *sc, int i)
 	struct mbuf *m;
 	int r;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (m == NULL)
 		return ENOBUFS;
 	sc->sc_rx_mbufs[i] = m;
@@ -1176,7 +1176,7 @@ vio_encap(struct vio_softc *sc, int slot, struct mbuf *m)
 	case 0:
 		break;
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(vsc->sc_dmat, dmap, m,
 		    BUS_DMA_WRITE|BUS_DMA_NOWAIT) == 0)
 			break;

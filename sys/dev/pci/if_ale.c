@@ -882,7 +882,7 @@ ale_encap(struct ale_softc *sc, struct mbuf *m)
 	if (error != 0 && error != EFBIG)
 		goto drop;
 	if (error != 0) {
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			error = ENOBUFS;
 			goto drop;
 		}

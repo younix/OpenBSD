@@ -3500,7 +3500,7 @@ syn_cache_get(struct sockaddr *src, struct sockaddr *dst, struct tcphdr *th,
 	 * the connection, abort it.
 	 */
 	oso = so;
-	so = sonewconn(so, SS_ISCONNECTED, M_DONTWAIT);
+	so = sonewconn(so, SS_ISCONNECTED, M_NOWAIT);
 	if (so == NULL)
 		goto resetandabort;
 
@@ -3572,7 +3572,7 @@ syn_cache_get(struct sockaddr *src, struct sockaddr *dst, struct tcphdr *th,
 #endif
 	sc->sc_route4.ro_rt = NULL;
 
-	am = m_get(M_DONTWAIT, MT_SONAME);	/* XXX */
+	am = m_get(M_NOWAIT, MT_SONAME);	/* XXX */
 	if (am == NULL)
 		goto resetandabort;
 	am->m_len = src->sa_len;
@@ -3953,9 +3953,9 @@ syn_cache_respond(struct syn_cache *sc, struct mbuf *m, uint64_t now)
 	if (max_linkhdr + tlen > MCLBYTES)
 		return (ENOBUFS);
 #endif
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m && max_linkhdr + tlen > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_freem(m);
 			m = NULL;

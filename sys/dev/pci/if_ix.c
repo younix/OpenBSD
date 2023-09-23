@@ -2707,7 +2707,7 @@ ixgbe_get_buf(struct rx_ring *rxr, int i)
 	}
 
 	/* needed in any case so prealocate since this one will fail for sure */
-	mp = MCLGETL(NULL, M_DONTWAIT, sc->rx_mbuf_sz);
+	mp = MCLGETL(NULL, M_NOWAIT, sc->rx_mbuf_sz);
 	if (!mp)
 		return (ENOBUFS);
 

@@ -4444,14 +4444,14 @@ iwx_rx_addbuf(struct iwx_softc *sc, int size, int idx)
 	int err;
 	int fatal = 0;
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return ENOBUFS;
 
 	if (size <= MCLBYTES) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 	} else {
-		MCLGETL(m, M_DONTWAIT, IWX_RBUF_SIZE);
+		MCLGETL(m, M_NOWAIT, IWX_RBUF_SIZE);
 	}
 	if ((m->m_flags & M_EXT) == 0) {
 		m_freem(m);
@@ -5805,7 +5805,7 @@ iwx_send_cmd(struct iwx_softc *sc, struct iwx_host_cmd *hcmd)
 			err = EINVAL;
 			goto out;
 		}
-		m = MCLGETL(NULL, M_DONTWAIT, totlen);
+		m = MCLGETL(NULL, M_NOWAIT, totlen);
 		if (m == NULL) {
 			printf("%s: could not get fw cmd mbuf (%zd bytes)\n",
 			    DEVNAME(sc), totlen);
@@ -6288,7 +6288,7 @@ iwx_tx(struct iwx_softc *sc, struct mbuf *m, struct ieee80211_node *ni)
 	}
 	if (err) {
 		/* Too many DMA segments, linearize mbuf. */
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			m_freem(m);
 			return ENOBUFS;
 		}
@@ -9820,7 +9820,7 @@ iwx_rx_pkt(struct iwx_softc *sc, struct iwx_rx_data *data, struct mbuf_list *ml)
 				 * packet. Always copy from offset zero to
 				 * preserve m_pkthdr.
 				 */
-				m = m_copym(m0, 0, M_COPYALL, M_DONTWAIT);
+				m = m_copym(m0, 0, M_COPYALL, M_NOWAIT);
 				if (m == NULL) {
 					ifp->if_ierrors++;
 					m_freem(m0);

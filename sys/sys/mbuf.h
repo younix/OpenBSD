@@ -250,7 +250,6 @@ struct mbuf {
 
 /* flags to m_get/MGET */
 #include <sys/malloc.h>
-#define	M_DONTWAIT	M_NOWAIT
 #define	M_WAIT		M_WAITOK
 
 /*
@@ -354,7 +353,7 @@ u_int mextfree_register(void (*)(caddr_t, u_int, void *));
 /*
  * Arrange to prepend space of size plen to mbuf m.
  * If a new mbuf must be allocated, how specifies whether to wait.
- * If how is M_DONTWAIT and allocation fails, the original mbuf chain
+ * If how is M_NOWAIT and allocation fails, the original mbuf chain
  * is freed and m is set to NULL.
  */
 #define	M_PREPEND(m, plen, how) \

@@ -1308,7 +1308,7 @@ bnxt_load_mbuf(struct bnxt_softc *sc, struct bnxt_slot *bs, struct mbuf *m)
 		break;
 
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmat, bs->bs_map, m,
 		    BUS_DMA_STREAMING | BUS_DMA_NOWAIT) == 0)
 			break;
@@ -2141,7 +2141,7 @@ bnxt_rx_fill_slots(struct bnxt_softc *sc, struct bnxt_ring *ring, void *ring_mem
 	p = *prod;
 	for (fills = 0; fills < nslots; fills++) {
 		bs = &slots[p];
-		m = MCLGETL(NULL, M_DONTWAIT, bufsize);
+		m = MCLGETL(NULL, M_NOWAIT, bufsize);
 		if (m == NULL)
 			break;
 

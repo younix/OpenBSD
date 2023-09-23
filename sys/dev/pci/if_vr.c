@@ -1208,7 +1208,7 @@ vr_encap(struct vr_softc *sc, struct vr_chain **cp, struct mbuf *m)
 	case 0:
 		break;
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
                     bus_dmamap_load_mbuf(sc->sc_dmat, c->vr_map, m,
                      BUS_DMA_NOWAIT) == 0)
                         break;
@@ -1699,7 +1699,7 @@ vr_alloc_mbuf(struct vr_softc *sc, struct vr_chain_onefrag *r)
 	if (r == NULL)
 		return (EINVAL);
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m)
 		return (ENOBUFS);
 

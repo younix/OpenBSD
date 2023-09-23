@@ -88,7 +88,7 @@ mpls_shim_push(struct mbuf *m, struct rt_mpls *rt_mpls)
 {
 	struct shim_hdr *shim;
 
-	M_PREPEND(m, sizeof(struct shim_hdr), M_DONTWAIT);
+	M_PREPEND(m, sizeof(struct shim_hdr), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 

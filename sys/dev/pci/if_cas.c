@@ -1783,7 +1783,7 @@ cas_encap(struct cas_softc *sc, struct mbuf *m, int *used)
 	case 0:
 		break;
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmatag, map, m,
 		    BUS_DMA_NOWAIT) == 0)
 			break;

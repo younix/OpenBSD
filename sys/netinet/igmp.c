@@ -601,7 +601,7 @@ igmp_sendpkt(struct ifnet *ifp, struct in_multi *inm, int type,
 	struct ip *ip;
 	struct ip_moptions imo;
 
-	MGETHDR(m, M_DONTWAIT, MT_HEADER);
+	MGETHDR(m, M_NOWAIT, MT_HEADER);
 	if (m == NULL)
 		return;
 

@@ -874,7 +874,7 @@ mvneta_load_mbuf(struct mvneta_softc *sc, bus_dmamap_t map, struct mbuf *m)
 	    BUS_DMA_STREAMING | BUS_DMA_NOWAIT);
 	switch (error) {
 	case EFBIG:
-		error = m_defrag(m, M_DONTWAIT);
+		error = m_defrag(m, M_NOWAIT);
 		if (error != 0)
 			break;
 
@@ -1734,7 +1734,7 @@ mvneta_alloc_mbuf(struct mvneta_softc *sc, bus_dmamap_t map)
 {
 	struct mbuf *m = NULL;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (m == NULL)
 		return (NULL);
 	m->m_len = m->m_pkthdr.len = MCLBYTES;

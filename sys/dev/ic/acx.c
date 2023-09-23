@@ -2130,11 +2130,11 @@ acx_newbuf(struct acx_softc *sc, struct acx_rxbuf *rb, int wait)
 
 	bd = &sc->sc_buf_data;
 
-	MGETHDR(m, wait ? M_WAITOK : M_DONTWAIT, MT_DATA);
+	MGETHDR(m, wait ? M_WAITOK : M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
 
-	MCLGET(m, wait ? M_WAITOK : M_DONTWAIT);
+	MCLGET(m, wait ? M_WAITOK : M_NOWAIT);
 	if (!(m->m_flags & M_EXT)) {
 		m_freem(m);
 		return (ENOBUFS);
@@ -2206,7 +2206,7 @@ acx_encap(struct acx_softc *sc, struct acx_txbuf *txbuf, struct mbuf *m,
 
 	if (error) {	/* error == EFBIG */
 		/* too many fragments, linearize */
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			printf("%s: can't defrag tx mbuf\n", ifp->if_xname);
 			goto back;
 		}
@@ -2360,7 +2360,7 @@ acx_set_probe_resp_tmplt(struct acx_softc *sc, struct ieee80211_node *ni)
 	m = ieee80211_get_probe_resp(ic, ni);
 	if (m == NULL)
 		return (1);
-	M_PREPEND(m, sizeof(struct ieee80211_frame), M_DONTWAIT);
+	M_PREPEND(m, sizeof(struct ieee80211_frame), M_NOWAIT);
 	if (m == NULL)
 		return (1);
 	wh = mtod(m, struct ieee80211_frame *);

@@ -852,7 +852,7 @@ pfsync_encap(struct pfsync_softc *sc, struct mbuf *m)
 	} __packed __aligned(4) *h;
 	unsigned int mlen = m->m_pkthdr.len;
 
-	m = m_prepend(m, sizeof(*h), M_DONTWAIT);
+	m = m_prepend(m, sizeof(*h), M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 
@@ -883,12 +883,12 @@ pfsync_bulk_req_send(struct pfsync_softc *sc)
 	    sizeof(struct ip) + sizeof(struct pfsync_header) + sizeof(*h);
 	struct mbuf *m;
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		goto fail;
 
 	if (mlen > MHLEN) {
-		MCLGETL(m, M_DONTWAIT, mlen);
+		MCLGETL(m, M_NOWAIT, mlen);
 		if (!ISSET(m->m_flags, M_EXT))
 			goto drop;
 	}
@@ -1424,12 +1424,12 @@ pfsync_slice_write(struct pfsync_slice *s)
 
 	task_del(s->s_softnet, &s->s_task);
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		goto drop;
 
 	if (mlen > MHLEN) {
-		MCLGETL(m, M_DONTWAIT, mlen);
+		MCLGETL(m, M_NOWAIT, mlen);
 		if (!ISSET(m->m_flags, M_EXT))
 			goto drop;
 	}
@@ -1860,14 +1860,14 @@ pfsync_clear_states(u_int32_t creatorid, const char *ifname)
 
 	mlen = max_linkhdr + hlen;
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		/* count error */
 		goto leave;
 	}
 
 	if (mlen > MHLEN) {
-		MCLGETL(m, M_DONTWAIT, mlen);
+		MCLGETL(m, M_NOWAIT, mlen);
 		if (!ISSET(m->m_flags, M_EXT)) {
 			m_freem(m);
 			goto leave;
@@ -2243,11 +2243,11 @@ pfsync_bulk_snd_start(struct pfsync_softc *sc)
 	    pf_state_queue);
 	mtx_leave(&pf_state_list.pfs_mtx);
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		goto leave;
 
-	MCLGETL(m, M_DONTWAIT, max_linkhdr + sc->sc_if.if_mtu);
+	MCLGETL(m, M_NOWAIT, max_linkhdr + sc->sc_if.if_mtu);
 	if (!ISSET(m->m_flags, M_EXT)) {
 		/* some error++ */
 		m_freem(m); /* drop */
@@ -2297,7 +2297,7 @@ pfsync_bulk_snd_tmo(void *arg)
 	    (sizeof(struct ip) + sizeof(struct pfsync_header));
 	struct mbuf *m;
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		/* some error++ */
 		/* retry later */
@@ -2306,7 +2306,7 @@ pfsync_bulk_snd_tmo(void *arg)
 		return;
 	}
 
-	MCLGETL(m, M_DONTWAIT, max_linkhdr + sc->sc_if.if_mtu);
+	MCLGETL(m, M_NOWAIT, max_linkhdr + sc->sc_if.if_mtu);
 	if (!ISSET(m->m_flags, M_EXT)) {
 		/* some error++ */
 		m_freem(m);
@@ -3029,7 +3029,7 @@ pfsync_upd_req_init(struct pfsync_softc *sc, unsigned int count)
 	struct mbuf *m;
 	unsigned int mlen;
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		pfsyncstat_inc(pfsyncs_onomem);
 		return (NULL);
@@ -3041,7 +3041,7 @@ pfsync_upd_req_init(struct pfsync_softc *sc, unsigned int count)
 	    sizeof(struct pfsync_upd_req) * count;
 
 	if (mlen > MHLEN) {
-		MCLGETL(m, M_DONTWAIT, mlen);
+		MCLGETL(m, M_NOWAIT, mlen);
 		if (!ISSET(m->m_flags, M_EXT)) {
 			m_freem(m);
 			return (NULL);
@@ -3095,7 +3095,7 @@ pfsync_in_upd_c(struct pfsync_softc *sc,
 				}
 			}
 
-			m = m_prepend(m, sizeof(*ur), M_DONTWAIT);
+			m = m_prepend(m, sizeof(*ur), M_NOWAIT);
 			if (m == NULL) {
 				pfsyncstat_inc(pfsyncs_onomem);
 				continue;
@@ -3117,7 +3117,7 @@ pfsync_in_upd_c(struct pfsync_softc *sc,
 	if (m != NULL) {
 		struct pfsync_subheader *subh;
 
-		m = m_prepend(m, sizeof(*subh), M_DONTWAIT);
+		m = m_prepend(m, sizeof(*subh), M_NOWAIT);
 		if (m == NULL) {
 			pfsyncstat_inc(pfsyncs_onomem);
 			return;

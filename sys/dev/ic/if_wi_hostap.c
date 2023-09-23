@@ -1152,7 +1152,7 @@ wihap_data_input(struct wi_softc *sc, struct wi_frame *rxfrm, struct mbuf *m)
 		/* If it's multicast, make a copy.
 		 */
 		if (mcast) {
-			m = m_copym(m, 0, M_COPYALL, M_DONTWAIT);
+			m = m_copym(m, 0, M_COPYALL, M_NOWAIT);
 			if (m == NULL)
 				return (0);
 			m->m_flags |= M_MCAST; /* XXX */

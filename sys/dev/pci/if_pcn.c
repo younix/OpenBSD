@@ -850,7 +850,7 @@ pcn_start(struct ifnet *ifp)
 		case 0:
 			break;
 		case EFBIG:
-			if (m_defrag(m0, M_DONTWAIT) == 0 &&
+			if (m_defrag(m0, M_NOWAIT) == 0 &&
 			    bus_dmamap_load_mbuf(sc->sc_dmat, dmamap, m0,
 			    BUS_DMA_NOWAIT) == 0)
 				break;
@@ -1340,7 +1340,7 @@ pcn_rxintr(struct pcn_softc *sc)
 		 * recycle the old buffer.
 		 */
 		if (pcn_copy_small != 0 && len <= (MHLEN - 2)) {
-			MGETHDR(m, M_DONTWAIT, MT_DATA);
+			MGETHDR(m, M_NOWAIT, MT_DATA);
 			if (m == NULL)
 				goto dropit;
 			m->m_data += 2;
@@ -1717,11 +1717,11 @@ pcn_add_rxbuf(struct pcn_softc *sc, int idx)
 	struct mbuf *m;
 	int error;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
 
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if ((m->m_flags & M_EXT) == 0) {
 		m_freem(m);
 		return (ENOBUFS);

@@ -936,10 +936,10 @@ vte_newbuf(struct vte_softc *sc, struct vte_rxdesc *rxd, int init)
 	bus_dmamap_t map;
 	int error;
 
-	MGETHDR(m, init ? M_WAITOK : M_DONTWAIT, MT_DATA);
+	MGETHDR(m, init ? M_WAITOK : M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
-	MCLGET(m, init ? M_WAITOK : M_DONTWAIT);
+	MCLGET(m, init ? M_WAITOK : M_NOWAIT);
 	if (!(m->m_flags & M_EXT)) {
 		m_freem(m);
 		return (ENOBUFS);
@@ -1355,10 +1355,10 @@ vte_init_tx_ring(struct vte_softc *sc)
 	/* Pre-allocate TX mbufs for deep copy. */
 	for (i = 0; i < VTE_TX_RING_CNT; i++) {
 		MGETHDR(sc->vte_cdata.vte_txmbufs[i], 
-		    M_DONTWAIT, MT_DATA);
+		    M_NOWAIT, MT_DATA);
 		if (sc->vte_cdata.vte_txmbufs[i] == NULL)
 			return (ENOBUFS);
-		MCLGET(sc->vte_cdata.vte_txmbufs[i], M_DONTWAIT);
+		MCLGET(sc->vte_cdata.vte_txmbufs[i], M_NOWAIT);
 		if (!(sc->vte_cdata.vte_txmbufs[i]->m_flags & M_EXT)) {
 			m_freem(sc->vte_cdata.vte_txmbufs[i]);
 			sc->vte_cdata.vte_txmbufs[i] = NULL;

@@ -1211,13 +1211,13 @@ urtwn_rx_frame(struct urtwn_softc *sc, uint8_t *buf, int pktlen,
 	DPRINTFN(5, ("Rx frame len=%d rate=%d infosz=%d rssi=%d\n",
 	    pktlen, rate, infosz, rssi));
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (__predict_false(m == NULL)) {
 		ifp->if_ierrors++;
 		return;
 	}
 	if (pktlen > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if (__predict_false(!(m->m_flags & M_EXT))) {
 			ifp->if_ierrors++;
 			m_freem(m);

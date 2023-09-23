@@ -541,7 +541,7 @@ cpsw_start(struct ifnet *ifp)
 			break;
 
 		case EFBIG: /* mbuf chain is too fragmented */
-			if (m_defrag(m, M_DONTWAIT) == 0 &&
+			if (m_defrag(m, M_NOWAIT) == 0 &&
 			    bus_dmamap_load_mbuf(sc->sc_bdt, dm, m,
 			    BUS_DMA_NOWAIT) == 0)
 				break;
@@ -754,12 +754,12 @@ cpsw_new_rxbuf(struct cpsw_softc * const sc, const u_int i)
 	struct mbuf *m;
 	int error = ENOBUFS;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		goto reuse;
 	}
 
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if ((m->m_flags & M_EXT) == 0) {
 		m_freem(m);
 		goto reuse;

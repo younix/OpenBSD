@@ -366,7 +366,7 @@ ipip_output(struct mbuf **mp, struct tdb *tdb)
 			goto drop;
 		}
 
-		M_PREPEND(*mp, sizeof(struct ip), M_DONTWAIT);
+		M_PREPEND(*mp, sizeof(struct ip), M_NOWAIT);
 		if (*mp == NULL) {
 			DPRINTF("M_PREPEND failed");
 			ipipstat_inc(ipips_hdrops);
@@ -465,7 +465,7 @@ ipip_output(struct mbuf **mp, struct tdb *tdb)
 				ip6->ip6_dst.s6_addr16[1] = 0;
 		}
 
-		M_PREPEND(*mp, sizeof(struct ip6_hdr), M_DONTWAIT);
+		M_PREPEND(*mp, sizeof(struct ip6_hdr), M_NOWAIT);
 		if (*mp == NULL) {
 			DPRINTF("M_PREPEND failed");
 			ipipstat_inc(ipips_hdrops);

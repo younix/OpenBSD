@@ -685,7 +685,7 @@ mpw_start(struct ifnet *ifp)
 			bpf_mtap(sc->sc_if.if_bpf, m, BPF_DIRECTION_OUT);
 #endif /* NBPFILTER */
 
-		m0 = m_get(M_DONTWAIT, m->m_type);
+		m0 = m_get(M_NOWAIT, m->m_type);
 		if (m0 == NULL) {
 			m_freem(m);
 			continue;

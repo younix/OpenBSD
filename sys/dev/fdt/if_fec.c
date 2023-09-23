@@ -919,7 +919,7 @@ fec_encap(struct fec_softc *sc, struct mbuf *m0, int *idx)
 	map = sc->sc_txbuf[cur].fb_map;
 
 	if (sc->sc_tx_bounce) {
-		m = m_dup_pkt(m0, 0, M_DONTWAIT);
+		m = m_dup_pkt(m0, 0, M_NOWAIT);
 		if (m == NULL) {
 			ret = ENOBUFS;
 			goto fail;
@@ -927,7 +927,7 @@ fec_encap(struct fec_softc *sc, struct mbuf *m0, int *idx)
 	}
 
 	if (bus_dmamap_load_mbuf(sc->sc_dmat, map, m, BUS_DMA_NOWAIT)) {
-		if (m_defrag(m, M_DONTWAIT)) {
+		if (m_defrag(m, M_NOWAIT)) {
 			ret = EFBIG;
 			goto fail;
 		}
@@ -1308,7 +1308,7 @@ fec_alloc_mbuf(struct fec_softc *sc, bus_dmamap_t map)
 {
 	struct mbuf *m = NULL;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m)
 		return (NULL);
 	m->m_len = m->m_pkthdr.len = MCLBYTES;

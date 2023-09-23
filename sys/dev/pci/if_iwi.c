@@ -580,14 +580,14 @@ iwi_alloc_rx_ring(struct iwi_softc *sc, struct iwi_rx_ring *ring)
 			goto fail;
 		}
 
-		MGETHDR(data->m, M_DONTWAIT, MT_DATA);
+		MGETHDR(data->m, M_NOWAIT, MT_DATA);
 		if (data->m == NULL) {
 			printf("%s: could not allocate rx mbuf\n",
 			    sc->sc_dev.dv_xname);
 			error = ENOMEM;
 			goto fail;
 		}
-		MCLGET(data->m, M_DONTWAIT);
+		MCLGET(data->m, M_NOWAIT);
 		if (!(data->m->m_flags & M_EXT)) {
 			m_freem(data->m);
 			data->m = NULL;
@@ -895,12 +895,12 @@ iwi_frame_intr(struct iwi_softc *sc, struct iwi_rx_data *data,
 	 * drop the received packet and reuse the old mbuf.  In the unlikely
 	 * case that the old mbuf can't be reloaded either, explicitly panic.
 	 */
-	MGETHDR(mnew, M_DONTWAIT, MT_DATA);
+	MGETHDR(mnew, M_NOWAIT, MT_DATA);
 	if (mnew == NULL) {
 		ifp->if_ierrors++;
 		return;
 	}
-	MCLGET(mnew, M_DONTWAIT);
+	MCLGET(mnew, M_NOWAIT);
 	if (!(mnew->m_flags & M_EXT)) {
 		m_freem(mnew);
 		ifp->if_ierrors++;
@@ -1315,7 +1315,7 @@ iwi_tx_start(struct ifnet *ifp, struct mbuf *m0, struct ieee80211_node *ni)
 	}
 	if (error != 0) {
 		/* too many fragments, linearize */
-		if (m_defrag(m0, M_DONTWAIT)) {
+		if (m_defrag(m0, M_NOWAIT)) {
 			m_freem(m0);
 			return ENOBUFS;
 		}

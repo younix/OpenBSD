@@ -1137,7 +1137,7 @@ xge_start(struct ifnet *ifp)
 		case 0:
 			break;
 		case EFBIG:
-			if (m_defrag(m, M_DONTWAIT) == 0 &&
+			if (m_defrag(m, M_NOWAIT) == 0 &&
 			    bus_dmamap_load_mbuf(sc->sc_dmat, dmp, m,
 			    BUS_DMA_WRITE|BUS_DMA_NOWAIT) == 0)
 				break;
@@ -1337,10 +1337,10 @@ xge_add_rxbuf(struct xge_softc *sc, int id)
 	 * their own buffer and the clusters are only used for data.
 	 */
 #if RX_MODE == RX_MODE_1
-	MGETHDR(m[0], M_DONTWAIT, MT_DATA);
+	MGETHDR(m[0], M_NOWAIT, MT_DATA);
 	if (m[0] == NULL)
 		return (ENOBUFS);
-	MCLGETL(m[0], M_DONTWAIT, XGE_MAX_FRAMELEN + ETHER_ALIGN);
+	MCLGETL(m[0], M_NOWAIT, XGE_MAX_FRAMELEN + ETHER_ALIGN);
 	if ((m[0]->m_flags & M_EXT) == 0) {
 		m_freem(m[0]);
 		return (ENOBUFS);
@@ -1349,14 +1349,14 @@ xge_add_rxbuf(struct xge_softc *sc, int id)
 #elif RX_MODE == RX_MODE_3
 #error missing rxmode 3.
 #elif RX_MODE == RX_MODE_5
-	MGETHDR(m[0], M_DONTWAIT, MT_DATA);
+	MGETHDR(m[0], M_NOWAIT, MT_DATA);
 	for (i = 1; i < 5; i++) {
-		MGET(m[i], M_DONTWAIT, MT_DATA);
+		MGET(m[i], M_NOWAIT, MT_DATA);
 	}
 	if (m[3])
-		MCLGET(m[3], M_DONTWAIT);
+		MCLGET(m[3], M_NOWAIT);
 	if (m[4])
-		MCLGET(m[4], M_DONTWAIT);
+		MCLGET(m[4], M_NOWAIT);
 	if (!m[0] || !m[1] || !m[2] || !m[3] || !m[4] ||
 	    ((m[3]->m_flags & M_EXT) == 0) || ((m[4]->m_flags & M_EXT) == 0)) {
 		/* Out of something */

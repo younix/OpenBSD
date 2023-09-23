@@ -361,7 +361,7 @@ vlan_inject(struct mbuf *m, uint16_t type, uint16_t tag)
 	evh.evl_encap_proto = htons(type);
 	evh.evl_tag = htons(tag);
 	m_adj(m, ETHER_HDR_LEN);
-	M_PREPEND(m, sizeof(evh) + ETHER_ALIGN, M_DONTWAIT);
+	M_PREPEND(m, sizeof(evh) + ETHER_ALIGN, M_NOWAIT);
 	if (m == NULL)
 		return (NULL);
 

@@ -1162,7 +1162,7 @@ rt_ifa_del(struct ifaddr *ifa, int flags, struct sockaddr *dst,
 	KASSERT(rdomain == rtable_l2(rdomain));
 
 	if ((flags & RTF_HOST) == 0 && ifa->ifa_netmask) {
-		m = m_get(M_DONTWAIT, MT_SONAME);
+		m = m_get(M_NOWAIT, MT_SONAME);
 		if (m == NULL)
 			return (ENOBUFS);
 		deldst = mtod(m, struct sockaddr *);

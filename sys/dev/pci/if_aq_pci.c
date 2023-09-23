@@ -2974,7 +2974,7 @@ aq_rx_fill_slots(struct aq_softc *sc, struct aq_rxring *rx, uint nslots)
 		as = &rx->rx_slots[p];
 		rd = &ring[p];
 
-		m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES + ETHER_ALIGN);
+		m = MCLGETL(NULL, M_NOWAIT, MCLBYTES + ETHER_ALIGN);
 		if (m == NULL)
 			break;
 
@@ -3232,7 +3232,7 @@ aq_start(struct ifqueue *ifq)
 		error = bus_dmamap_load_mbuf(sc->sc_dmat, as->as_map, m,
 		    BUS_DMA_STREAMING | BUS_DMA_NOWAIT);
 		if (error == EFBIG) {
-			if (m_defrag(m, M_DONTWAIT)) {
+			if (m_defrag(m, M_NOWAIT)) {
 				m_freem(m);
 				break;
 			}

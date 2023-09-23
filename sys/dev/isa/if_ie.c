@@ -1154,7 +1154,7 @@ ieget(struct ie_softc *sc, struct ether_header *ehp)
 		/* not an error */
 		return 0;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL) {
 		sc->sc_arpcom.ac_if.if_ierrors++;
 		return 0;
@@ -1170,7 +1170,7 @@ ieget(struct ie_softc *sc, struct ether_header *ehp)
 	 */
 	while (totlen > 0) {
 		if (top) {
-			MGET(m, M_DONTWAIT, MT_DATA);
+			MGET(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				m_freem(top);
 				sc->sc_arpcom.ac_if.if_ierrors++;
@@ -1179,7 +1179,7 @@ ieget(struct ie_softc *sc, struct ether_header *ehp)
 			len = MLEN;
 		}
 		if (totlen >= MINCLSIZE) {
-			MCLGET(m, M_DONTWAIT);
+			MCLGET(m, M_NOWAIT);
 			if (m->m_flags & M_EXT)
 				len = MCLBYTES;
 		}

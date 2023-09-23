@@ -931,7 +931,7 @@ smc91cxx_read(struct smc91cxx_softc *sc)
 	/*
 	 * Allocate a header mbuf.
 	 */
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		goto out;
 	m->m_pkthdr.len = packetlen;
@@ -940,7 +940,7 @@ smc91cxx_read(struct smc91cxx_softc *sc)
 	 * Always put the packet in a cluster.
 	 * XXX should chain small mbufs if less than threshold.
 	 */
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if ((m->m_flags & M_EXT) == 0) {
 		m_freem(m);
 		ifp->if_ierrors++;

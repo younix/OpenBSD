@@ -256,7 +256,7 @@ tulip_txprobe(tulip_softc_t * const sc)
      * either is connected so the transmit is the only way
      * to verify the connectivity.
      */
-    MGETHDR(m, M_DONTWAIT, MT_DATA);
+    MGETHDR(m, M_NOWAIT, MT_DATA);
     if (m == NULL)
 	return (0);
     /*
@@ -3330,12 +3330,12 @@ tulip_rx_intr(tulip_softc_t * const sc)
 	 */
 	if (accept || ms == NULL) {
 	    struct mbuf *m0;
-	    MGETHDR(m0, M_DONTWAIT, MT_DATA);
+	    MGETHDR(m0, M_NOWAIT, MT_DATA);
 	    if (m0 != NULL) {
 #if defined(TULIP_COPY_RXDATA)
 		if (!accept || total_len >= (MHLEN - 2)) {
 #endif
-		    MCLGET(m0, M_DONTWAIT);
+		    MCLGET(m0, M_NOWAIT);
 		    if ((m0->m_flags & M_EXT) == 0) {
 			m_freem(m0);
 			m0 = NULL;
@@ -3791,7 +3791,7 @@ tulip_txput(tulip_softc_t * const sc, struct mbuf *m, int notonqueue)
 	 * entries that we can use for one packet, so we have
 	 * to recopy it into one mbuf and then try again.
 	 */
-	if (m_defrag(m, M_DONTWAIT) == 0 &&
+	if (m_defrag(m, M_NOWAIT) == 0 &&
 	  bus_dmamap_load_mbuf(sc->tulip_dmatag, map, m, BUS_DMA_NOWAIT) == 0)
 	    break;
 	/* FALLTHROUGH */

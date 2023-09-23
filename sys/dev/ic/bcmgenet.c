@@ -215,14 +215,14 @@ genet_setup_txbuf(struct genet_softc *sc, int index, struct mbuf *m)
 	 * than the minimum Ethernet packet size.
 	 */
 	if (m->m_len < ETHER_MIN_LEN - ETHER_CRC_LEN) {
-		if (m_defrag(m, M_DONTWAIT))
+		if (m_defrag(m, M_NOWAIT))
 			return 0;
 	}
 
 	error = bus_dmamap_load_mbuf(sc->sc_tx.buf_tag,
 	    sc->sc_tx.buf_map[index].map, m, BUS_DMA_WRITE | BUS_DMA_NOWAIT);
 	if (error == EFBIG) {
-		if (m_defrag(m, M_DONTWAIT))
+		if (m_defrag(m, M_NOWAIT))
 			return 0;
 		error = bus_dmamap_load_mbuf(sc->sc_tx.buf_tag,
 		    sc->sc_tx.buf_map[index].map, m,
@@ -300,7 +300,7 @@ genet_alloc_mbufcl(struct genet_softc *sc)
 {
 	struct mbuf *m;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (m != NULL)
 		m->m_pkthdr.len = m->m_len = m->m_ext.ext_size;
 

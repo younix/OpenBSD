@@ -378,13 +378,13 @@ epic_start(struct ifnet *ifp)
 			if (error == 0)
 				bus_dmamap_unload(sc->sc_dmat, dmamap);
 
-			MGETHDR(m, M_DONTWAIT, MT_DATA);
+			MGETHDR(m, M_NOWAIT, MT_DATA);
 			if (m == NULL) {
 				ifq_deq_rollback(&ifp->if_snd, m0);
 				break;
 			}
 			if (m0->m_pkthdr.len > MHLEN) {
-				MCLGET(m, M_DONTWAIT);
+				MCLGET(m, M_NOWAIT);
 				if ((m->m_flags & M_EXT) == 0) {
 					m_freem(m);
 					ifq_deq_rollback(&ifp->if_snd, m0);
@@ -674,7 +674,7 @@ epic_intr(void *arg)
 			 * recycle the old buffer.
 			 */
 			if (epic_copy_small != 0 && len <= MHLEN) {
-				MGETHDR(m, M_DONTWAIT, MT_DATA);
+				MGETHDR(m, M_NOWAIT, MT_DATA);
 				if (m == NULL)
 					goto dropit;
 				memcpy(mtod(m, caddr_t),
@@ -1195,11 +1195,11 @@ epic_add_rxbuf(struct epic_softc *sc, int idx)
 	struct mbuf *m;
 	int error;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOBUFS);
 
-	MCLGET(m, M_DONTWAIT);
+	MCLGET(m, M_NOWAIT);
 	if ((m->m_flags & M_EXT) == 0) {
 		m_freem(m);
 		return (ENOBUFS);

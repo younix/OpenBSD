@@ -1139,7 +1139,7 @@ re_newbuf(struct rl_softc *sc)
 	u_int32_t	cmdstat;
 	int		error, idx;
 
-	m = MCLGETL(NULL, M_DONTWAIT, RL_FRAMELEN(sc->rl_max_mtu));
+	m = MCLGETL(NULL, M_NOWAIT, RL_FRAMELEN(sc->rl_max_mtu));
 	if (!m)
 		return (ENOBUFS);
 
@@ -1660,7 +1660,7 @@ re_encap(struct rl_softc *sc, unsigned int idx, struct mbuf *m)
 		break;
 
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->sc_dmat, map, m,
 		    BUS_DMA_WRITE|BUS_DMA_NOWAIT) == 0)
 			break;

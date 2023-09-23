@@ -535,14 +535,14 @@ rum_alloc_rx_list(struct rum_softc *sc)
 			goto fail;
 		}
 
-		MGETHDR(data->m, M_DONTWAIT, MT_DATA);
+		MGETHDR(data->m, M_NOWAIT, MT_DATA);
 		if (data->m == NULL) {
 			printf("%s: could not allocate rx mbuf\n",
 			    sc->sc_dev.dv_xname);
 			error = ENOMEM;
 			goto fail;
 		}
-		MCLGET(data->m, M_DONTWAIT);
+		MCLGET(data->m, M_NOWAIT);
 		if (!(data->m->m_flags & M_EXT)) {
 			printf("%s: could not allocate rx mbuf cluster\n",
 			    sc->sc_dev.dv_xname);
@@ -792,14 +792,14 @@ rum_rxeof(struct usbd_xfer *xfer, void *priv, usbd_status status)
 		goto skip;
 	}
 
-	MGETHDR(mnew, M_DONTWAIT, MT_DATA);
+	MGETHDR(mnew, M_NOWAIT, MT_DATA);
 	if (mnew == NULL) {
 		printf("%s: could not allocate rx mbuf\n",
 		    sc->sc_dev.dv_xname);
 		ifp->if_ierrors++;
 		goto skip;
 	}
-	MCLGET(mnew, M_DONTWAIT);
+	MCLGET(mnew, M_NOWAIT);
 	if (!(mnew->m_flags & M_EXT)) {
 		printf("%s: could not allocate rx mbuf cluster\n",
 		    sc->sc_dev.dv_xname);

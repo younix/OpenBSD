@@ -327,7 +327,7 @@ gif_send(struct gif_softc *sc, struct mbuf *m,
 		if (in_nullhost(sc->sc_tunnel.t_dst4))
 			goto drop;
 
-		m = m_prepend(m, sizeof(*ip), M_DONTWAIT);
+		m = m_prepend(m, sizeof(*ip), M_NOWAIT);
 		if (m == NULL)
 			return (-1);
 
@@ -352,7 +352,7 @@ gif_send(struct gif_softc *sc, struct mbuf *m,
 		if (IN6_IS_ADDR_UNSPECIFIED(&sc->sc_tunnel.t_dst6))
 			goto drop;
 
-		m = m_prepend(m, sizeof(*ip6), M_DONTWAIT);
+		m = m_prepend(m, sizeof(*ip6), M_NOWAIT);
 		if (m == NULL)
 			return (-1);
 

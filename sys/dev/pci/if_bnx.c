@@ -3671,7 +3671,7 @@ bnx_get_buf(struct bnx_softc *sc, u_int16_t *prod,
 	    *prod_bseq);
 
 	/* This is a new mbuf allocation. */
-	m = MCLGETL(NULL, M_DONTWAIT, BNX_MAX_JUMBO_MRU);
+	m = MCLGETL(NULL, M_NOWAIT, BNX_MAX_JUMBO_MRU);
 	if (!m)
 		return (0);
 	m->m_len = m->m_pkthdr.len = BNX_MAX_JUMBO_MRU;
@@ -4783,7 +4783,7 @@ bnx_tx_encap(struct bnx_softc *sc, struct mbuf *m, int *used)
 		break;
 
 	case EFBIG:
-		if ((error = m_defrag(m, M_DONTWAIT)) == 0 &&
+		if ((error = m_defrag(m, M_NOWAIT)) == 0 &&
 		    (error = bus_dmamap_load_mbuf(sc->bnx_dmatag, map, m,
 		     BUS_DMA_NOWAIT)) == 0)
 			break;

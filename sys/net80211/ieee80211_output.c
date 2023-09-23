@@ -191,7 +191,7 @@ ieee80211_mgmt_output(struct ifnet *ifp, struct ieee80211_node *ni,
 	 * for every frame so instead we stuff it in a special pkthdr
 	 * field.
 	 */
-	M_PREPEND(m, sizeof(struct ieee80211_frame), M_DONTWAIT);
+	M_PREPEND(m, sizeof(struct ieee80211_frame), M_NOWAIT);
 	if (m == NULL)
 		return ENOMEM;
 	m->m_pkthdr.ph_cookie = ni;
@@ -638,7 +638,7 @@ ieee80211_encap(struct ifnet *ifp, struct mbuf *m, struct ieee80211_node **pni)
 	llc->llc_snap.org_code[1] = 0;
 	llc->llc_snap.org_code[2] = 0;
 	llc->llc_snap.ether_type = eh.ether_type;
-	M_PREPEND(m, hdrlen, M_DONTWAIT);
+	M_PREPEND(m, hdrlen, M_NOWAIT);
 	if (m == NULL) {
 		ic->ic_stats.is_tx_nombuf++;
 		goto bad;
@@ -1257,7 +1257,7 @@ ieee80211_get_probe_req(struct ieee80211com *ic, struct ieee80211_node *ni)
 	struct mbuf *m;
 	u_int8_t *frm;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA,
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA,
 	    2 + ic->ic_des_esslen +
 	    2 + min(rs->rs_nrates, IEEE80211_RATE_SIZE) +
 	    ((rs->rs_nrates > IEEE80211_RATE_SIZE) ?
@@ -1307,7 +1307,7 @@ ieee80211_get_probe_resp(struct ieee80211com *ic)
 	struct mbuf *m;
 	u_int8_t *frm;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA,
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA,
 	    8 + 2 + 2 +
 	    2 + ic->ic_bss->ni_esslen +
 	    2 + min(rs->rs_nrates, IEEE80211_RATE_SIZE) +
@@ -1374,7 +1374,7 @@ ieee80211_get_auth(struct ieee80211com *ic, struct ieee80211_node *ni,
 	struct mbuf *m;
 	u_int8_t *frm;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 	m_align(m, 2 * 3);
@@ -1398,7 +1398,7 @@ ieee80211_get_deauth(struct ieee80211com *ic, struct ieee80211_node *ni,
 {
 	struct mbuf *m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 	m_align(m, 2);
@@ -1430,7 +1430,7 @@ ieee80211_get_assoc_req(struct ieee80211com *ic, struct ieee80211_node *ni,
 	u_int8_t *frm;
 	u_int16_t capinfo;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA,
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA,
 	    2 + 2 +
 	    ((type == IEEE80211_FC0_SUBTYPE_REASSOC_REQ) ?
 		IEEE80211_ADDR_LEN : 0) +
@@ -1510,7 +1510,7 @@ ieee80211_get_assoc_resp(struct ieee80211com *ic, struct ieee80211_node *ni,
 	struct mbuf *m;
 	u_int8_t *frm;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA,
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA,
 	    2 + 2 + 2 +
 	    2 + min(rs->rs_nrates, IEEE80211_RATE_SIZE) +
 	    ((rs->rs_nrates > IEEE80211_RATE_SIZE) ?
@@ -1561,7 +1561,7 @@ ieee80211_get_disassoc(struct ieee80211com *ic, struct ieee80211_node *ni,
 {
 	struct mbuf *m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 	m_align(m, 2);
@@ -1589,7 +1589,7 @@ ieee80211_get_addba_req(struct ieee80211com *ic, struct ieee80211_node *ni,
 	struct mbuf *m;
 	u_int8_t *frm;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA, 9);
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA, 9);
 	if (m == NULL)
 		return m;
 
@@ -1688,7 +1688,7 @@ ieee80211_get_addba_resp(struct ieee80211com *ic, struct ieee80211_node *ni,
 	u_int8_t *frm;
 	u_int16_t params;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA, 9);
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA, 9);
 	if (m == NULL)
 		return m;
 
@@ -1728,7 +1728,7 @@ ieee80211_get_delba(struct ieee80211com *ic, struct ieee80211_node *ni,
 	u_int8_t *frm;
 	u_int16_t params;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA, 6);
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA, 6);
 	if (m == NULL)
 		return m;
 
@@ -1759,7 +1759,7 @@ ieee80211_get_sa_query(struct ieee80211com *ic, struct ieee80211_node *ni,
 	struct mbuf *m;
 	u_int8_t *frm;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA, 4);
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA, 4);
 	if (m == NULL)
 		return NULL;
 
@@ -1930,7 +1930,7 @@ ieee80211_get_rts(struct ieee80211com *ic, const struct ieee80211_frame *wh,
 	struct ieee80211_frame_rts *rts;
 	struct mbuf *m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 
@@ -1956,7 +1956,7 @@ ieee80211_get_cts_to_self(struct ieee80211com *ic, u_int16_t dur)
 	struct ieee80211_frame_cts *cts;
 	struct mbuf *m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 
@@ -1984,7 +1984,7 @@ ieee80211_get_compressed_bar(struct ieee80211com *ic,
 	uint16_t ctl;
 	struct mbuf *m;
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 
@@ -2039,7 +2039,7 @@ ieee80211_beacon_alloc(struct ieee80211com *ic, struct ieee80211_node *ni)
 	struct mbuf *m;
 	u_int8_t *frm;
 
-	m = ieee80211_getmgmt(M_DONTWAIT, MT_DATA,
+	m = ieee80211_getmgmt(M_NOWAIT, MT_DATA,
 	    8 + 2 + 2 +
 	    2 + ((ic->ic_userflags & IEEE80211_F_HIDENWID) ?
 	    0 : ni->ni_esslen) +
@@ -2060,7 +2060,7 @@ ieee80211_beacon_alloc(struct ieee80211com *ic, struct ieee80211_node *ni)
 	if (m == NULL)
 		return NULL;
 
-	M_PREPEND(m, sizeof(struct ieee80211_frame), M_DONTWAIT);
+	M_PREPEND(m, sizeof(struct ieee80211_frame), M_NOWAIT);
 	if (m == NULL)
 		return NULL;
 	wh = mtod(m, struct ieee80211_frame *);

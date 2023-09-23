@@ -2809,7 +2809,7 @@ pf_translate_af(struct pf_pdesc *pd)
 	pd->src = NULL;
 	pd->dst = NULL;
 
-	if ((M_PREPEND(pd->m, hlen, M_DONTWAIT)) == NULL) {
+	if ((M_PREPEND(pd->m, hlen, M_NOWAIT)) == NULL) {
 		pd->m = NULL;
 		return (-1);
 	}
@@ -2896,7 +2896,7 @@ pf_change_icmp_af(struct mbuf *m, int ipoff2, struct pf_pdesc *pd,
 		return (-1);
 
 	/* split the mbuf chain on the quoted ip/ip6 header boundary */
-	if ((n = m_split(m, ipoff2, M_DONTWAIT)) == NULL)
+	if ((n = m_split(m, ipoff2, M_NOWAIT)) == NULL)
 		return (-1);
 
 	/* new quoted header */
@@ -2909,7 +2909,7 @@ pf_change_icmp_af(struct mbuf *m, int ipoff2, struct pf_pdesc *pd,
 	m_adj(n, ohlen);
 
 	/* prepend a new, translated, quoted header */
-	if ((M_PREPEND(n, hlen, M_DONTWAIT)) == NULL)
+	if ((M_PREPEND(n, hlen, M_NOWAIT)) == NULL)
 		return (-1);
 
 	switch (naf) {
@@ -3267,7 +3267,7 @@ pf_build_tcp(const struct pf_rule *r, sa_family_t af,
 	}
 
 	/* create outgoing mbuf */
-	m = m_gethdr(M_DONTWAIT, MT_HEADER);
+	m = m_gethdr(M_NOWAIT, MT_HEADER);
 	if (m == NULL)
 		return (NULL);
 	if (tag)

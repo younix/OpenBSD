@@ -117,7 +117,7 @@ m_pulldown(struct mbuf *m, int off, int len, int *offp)
 	if (len <= n->m_len - off) {
 		struct mbuf *mlast;
 
-		o = m_dup1(n, off, n->m_len - off, M_DONTWAIT);
+		o = m_dup1(n, off, n->m_len - off, M_NOWAIT);
 		if (o == NULL) {
 			m_freem(m);
 			return (NULL);	/* ENOBUFS */
@@ -182,9 +182,9 @@ m_pulldown(struct mbuf *m, int off, int len, int *offp)
 		m_freem(m);
 		return (NULL);
 	}
-	MGET(o, M_DONTWAIT, m->m_type);
+	MGET(o, M_NOWAIT, m->m_type);
 	if (o && len > MLEN) {
-		MCLGETL(o, M_DONTWAIT, len);
+		MCLGETL(o, M_NOWAIT, len);
 		if ((o->m_flags & M_EXT) == 0) {
 			m_free(o);
 			o = NULL;

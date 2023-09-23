@@ -207,7 +207,7 @@ tcp_template(struct tcpcb *tp)
 	CTASSERT(sizeof(struct ip6_hdr) + sizeof(struct tcphdr) <= MHLEN);
 
 	if ((m = tp->t_template) == 0) {
-		m = m_get(M_DONTWAIT, MT_HEADER);
+		m = m_get(M_NOWAIT, MT_HEADER);
 		if (m == NULL)
 			return (0);
 
@@ -316,7 +316,7 @@ tcp_respond(struct tcpcb *tp, caddr_t template, struct tcphdr *th0,
 	} else
 		af = (((struct ip *)template)->ip_v == 6) ? AF_INET6 : AF_INET;
 
-	m = m_gethdr(M_DONTWAIT, MT_HEADER);
+	m = m_gethdr(M_NOWAIT, MT_HEADER);
 	if (m == NULL)
 		return;
 	m->m_data += max_linkhdr;

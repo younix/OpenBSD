@@ -1169,7 +1169,7 @@ bge_newbuf(struct bge_softc *sc, int i)
 	struct mbuf		*m;
 	int			error;
 
-	m = MCLGETL(NULL, M_DONTWAIT, sc->bge_rx_std_len);
+	m = MCLGETL(NULL, M_NOWAIT, sc->bge_rx_std_len);
 	if (!m)
 		return (ENOBUFS);
 	m->m_len = m->m_pkthdr.len = sc->bge_rx_std_len;
@@ -1218,7 +1218,7 @@ bge_newbuf_jumbo(struct bge_softc *sc, int i)
 	struct mbuf		*m;
 	int			error;
 
-	m = MCLGETL(NULL, M_DONTWAIT, BGE_JLEN);
+	m = MCLGETL(NULL, M_NOWAIT, BGE_JLEN);
 	if (!m)
 		return (ENOBUFS);
 	m->m_len = m->m_pkthdr.len = BGE_JUMBO_FRAMELEN;
@@ -4084,7 +4084,7 @@ bge_cksum_pad(struct mbuf *m)
 			/* Allocate new empty mbuf, pad it. Compact later. */
 			struct mbuf *n;
 
-			MGET(n, M_DONTWAIT, MT_DATA);
+			MGET(n, M_NOWAIT, MT_DATA);
 			if (n == NULL)
 				return (ENOBUFS);
 			n->m_len = 0;
@@ -4156,7 +4156,7 @@ doit:
 	case 0:
 		break;
 	case EFBIG:
-		if (m_defrag(m, M_DONTWAIT) == 0 &&
+		if (m_defrag(m, M_NOWAIT) == 0 &&
 		    bus_dmamap_load_mbuf(sc->bge_dmatag, dmamap, m,
 		     BUS_DMA_NOWAIT) == 0)
 			break;

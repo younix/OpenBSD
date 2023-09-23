@@ -1699,7 +1699,7 @@ mvpp2_load_mbuf(bus_dma_tag_t dmat, bus_dmamap_t map, struct mbuf *m)
 	if (error != EFBIG)
 		return (error);
 
-	error = m_defrag(m, M_DONTWAIT);
+	error = m_defrag(m, M_NOWAIT);
 	if (error != 0)
 		return (error);
 
@@ -3147,7 +3147,7 @@ mvpp2_alloc_mbuf(struct mvpp2_softc *sc, bus_dmamap_t map)
 {
 	struct mbuf *m = NULL;
 
-	m = MCLGETL(NULL, M_DONTWAIT, MCLBYTES);
+	m = MCLGETL(NULL, M_NOWAIT, MCLBYTES);
 	if (!m)
 		return (NULL);
 	m->m_len = m->m_pkthdr.len = MCLBYTES;

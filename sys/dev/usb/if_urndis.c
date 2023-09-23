@@ -930,13 +930,13 @@ urndis_newbuf(struct urndis_softc *sc, struct urndis_chain *c)
 {
 	struct mbuf *m_new = NULL;
 
-	MGETHDR(m_new, M_DONTWAIT, MT_DATA);
+	MGETHDR(m_new, M_NOWAIT, MT_DATA);
 	if (m_new == NULL) {
 		printf("%s: no memory for rx list -- packet dropped!\n",
 		    DEVNAME(sc));
 		return (ENOBUFS);
 	}
-	MCLGET(m_new, M_DONTWAIT);
+	MCLGET(m_new, M_NOWAIT);
 	if (!(m_new->m_flags & M_EXT)) {
 		printf("%s: no memory for rx list -- packet dropped!\n",
 		    DEVNAME(sc));

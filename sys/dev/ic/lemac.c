@@ -265,11 +265,11 @@ lemac_input(struct lemac_softc *sc, bus_size_t offset, size_t length)
 		LEMAC_GETBUF16(sc, offset, sizeof(eh) / 2, (void *)&eh);
 	}
 
-	MGETHDR(m, M_DONTWAIT, MT_DATA);
+	MGETHDR(m, M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return NULL;
 	if (length + 2 > MHLEN) {
-		MCLGET(m, M_DONTWAIT);
+		MCLGET(m, M_NOWAIT);
 		if ((m->m_flags & M_EXT) == 0) {
 			m_free(m);
 			return NULL;

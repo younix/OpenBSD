@@ -358,7 +358,7 @@ lacp_xmit_lacpdu(struct lacp_port *lp)
 	struct lacpdu *du;
 	int error;
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOMEM);
 	m->m_len = m->m_pkthdr.len = sizeof(*du);
@@ -410,7 +410,7 @@ lacp_xmit_marker(struct lacp_port *lp)
 	struct markerdu *mdu;
 	int error;
 
-	m = m_gethdr(M_DONTWAIT, MT_DATA);
+	m = m_gethdr(M_NOWAIT, MT_DATA);
 	if (m == NULL)
 		return (ENOMEM);
 	m->m_len = m->m_pkthdr.len = sizeof(*mdu);

@@ -416,7 +416,7 @@ ipcomp_output(struct mbuf *m, struct tdb *tdb, int skip, int protoff)
 		mi = mi->m_next;
 
 	if (mi != NULL) {
-		struct mbuf *n = m_dup_pkt(m, 0, M_DONTWAIT);
+		struct mbuf *n = m_dup_pkt(m, 0, M_NOWAIT);
 
 		if (n == NULL) {
 			DPRINTF("bad mbuf chain, IPCA %s/%08x",
