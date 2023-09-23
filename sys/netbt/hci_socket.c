@@ -922,7 +922,7 @@ hci_mtap(struct mbuf *m, struct hci_unit *unit)
 		 * copy to socket
 		 */
 		m0 = m_copym(m, 0, M_COPYALL, M_DONTWAIT);
-		if (m0 && sbappendaddr(&pcb->hp_socket->so_rcv,
+		if (m0 && sbappendaddr(pcb->hp_socket, &pcb->hp_socket->so_rcv,
 				(struct sockaddr *)&sa, m0, ctlmsg)) {
 			sorwakeup(pcb->hp_socket);
 		} else {
