@@ -378,7 +378,7 @@ hci_attach(struct socket *so, int proto)
 	}
 
 	pcb = malloc(sizeof(struct hci_pcb), M_BLUETOOTH, M_WAITOK|M_ZERO);
-	pcb->hp_cred = kauth_cred_dup(curlwp->l_cred);
+//	pcb->hp_cred = kauth_cred_dup(curlwp->l_cred);
 	pcb->hp_socket = so;
 
 	/*
@@ -406,8 +406,8 @@ hci_detach(struct socket *so)
 	if (so->so_snd.sb_mb != NULL)
 		hci_cmdwait_flush(so);
 
-	if (pcb->hp_cred != NULL)
-		kauth_cred_free(pcb->hp_cred);
+//	if (pcb->hp_cred != NULL)
+//		kauth_cred_free(pcb->hp_cred);
 
 	so->so_pcb = NULL;
 	LIST_REMOVE(pcb, hp_next);
@@ -656,6 +656,8 @@ hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
 		goto bad;
 	}
 
+// XXX: check before flight
+#if 0
 	/* security checks for unprivileged users */
 	if (pcb->hp_cred != NULL
 	    && kauth_authorize_device(pcb->hp_cred,
@@ -664,6 +666,7 @@ hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
 		err = EPERM;
 		goto bad;
 	}
+#endif
 
 	/* makess a copy for precious to keep */
 	m0 = m_copypacket(m, M_DONTWAIT);
