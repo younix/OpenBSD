@@ -531,9 +531,9 @@ static int
 hci_ioctl(struct socket *so, u_long cmd, void *nam, struct ifnet *ifp)
 {
 	int err;
-	mutex_enter(bt_lock);
+	mtx_enter(&bt_lock);
 	err = hci_ioctl_pcb(cmd, nam);
-	mutex_exit(bt_lock);
+	mtx_leave(&bt_lock);
 	return err;
 }
 
