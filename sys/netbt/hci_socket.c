@@ -355,7 +355,7 @@ hci_cmdwait_flush(struct socket *so)
 }
 
 static int
-hci_attach(struct socket *so, int proto)
+hci_attach(struct socket *so, int proto, int wait)
 {
 	struct hci_pcb *pcb;
 	int error;
@@ -395,7 +395,7 @@ hci_attach(struct socket *so, int proto)
 	return 0;
 }
 
-static void
+static int
 hci_detach(struct socket *so)
 {
 	struct hci_pcb *pcb;
@@ -412,10 +412,12 @@ hci_detach(struct socket *so)
 	so->so_pcb = NULL;
 	LIST_REMOVE(pcb, hp_next);
 	free(pcb, M_BLUETOOTH, sizeof(*pcb));
+
+	return 0;
 }
 
 static int
-hci_accept(struct socket *so, struct sockaddr *nam)
+hci_accept(struct socket *so, struct mbuf *nam)
 {
 //	KASSERT(solocked(so));
 
@@ -423,10 +425,10 @@ hci_accept(struct socket *so, struct sockaddr *nam)
 }
 
 static int
-hci_bind(struct socket *so, struct sockaddr *nam)
+hci_bind(struct socket *so, struct mbuf *nam, struct proc *p)
 {
 	struct hci_pcb *pcb = so->so_pcb;
-	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
+	struct sockaddr_bt *sa = mtod(nam, struct sockaddr_bt *);
 
 //	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
@@ -457,10 +459,10 @@ hci_listen(struct socket *so)
 }
 
 static int
-hci_connect(struct socket *so, struct sockaddr *nam)
+hci_connect(struct socket *so, struct mbuf *nam)
 {
 	struct hci_pcb *pcb = so->so_pcb;
-	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
+	struct sockaddr_bt *sa = mtod(nam, struct sockaddr_bt *);
 
 //	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
@@ -517,14 +519,13 @@ hci_shutdown(struct socket *so)
 	return 0;
 }
 
-static int
+static void
 hci_abort(struct socket *so)
 {
 //	KASSERT(solocked(so));
 
 	soisdisconnected(so);
 	hci_detach(so);
-	return 0;
 }
 
 static int
@@ -546,10 +547,10 @@ hci_stat(struct socket *so, struct stat *ub)
 }
 
 static int
-hci_peeraddr(struct socket *so, struct sockaddr *nam)
+hci_peeraddr(struct socket *so, struct mbuf *nam)
 {
 	struct hci_pcb *pcb = (struct hci_pcb *)so->so_pcb;
-	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
+	struct sockaddr_bt *sa = mtod(nam,struct sockaddr_bt *);
 
 //	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
@@ -563,10 +564,10 @@ hci_peeraddr(struct socket *so, struct sockaddr *nam)
 }
 
 static int
-hci_sockaddr(struct socket *so, struct sockaddr *nam)
+hci_sockaddr(struct socket *so, struct mbuf *nam)
 {
 	struct hci_pcb *pcb = (struct hci_pcb *)so->so_pcb;
-	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
+	struct sockaddr_bt *sa = mtod(nam,struct sockaddr_bt *);
 
 //	KASSERT(solocked(so));
 	KASSERT(pcb != NULL);
@@ -579,12 +580,10 @@ hci_sockaddr(struct socket *so, struct sockaddr *nam)
 	return 0;
 }
 
-static int
-hci_rcvd(struct socket *so, int flags)
+static void
+hci_rcvd(struct socket *so)
 {
 //	KASSERT(solocked(so));
-
-	return EOPNOTSUPP;
 }
 
 static int
@@ -596,11 +595,11 @@ hci_recvoob(struct socket *so, struct mbuf *m, int flags)
 }
 
 static int
-hci_send(struct socket *so, struct mbuf *m, struct sockaddr *nam,
+hci_send(struct socket *so, struct mbuf *m, struct mbuf *nam,
     struct mbuf *control)
 {
 	struct hci_pcb *pcb = so->so_pcb;
-	struct sockaddr_bt *sa = (struct sockaddr_bt *)nam;
+	struct sockaddr_bt *sa = mtod(nam,struct sockaddr_bt *);
 	struct hci_unit *unit;
 	struct mbuf *m0;
 	hci_cmd_hdr_t hdr;
@@ -698,7 +697,8 @@ bad:
 }
 
 static int
-hci_sendoob(struct socket *so, struct mbuf *m, struct mbuf *control)
+hci_sendoob(struct socket *so, struct mbuf *m, struct mbuf *nam,
+    struct mbuf *control)
 {
 //	KASSERT(solocked(so));
 
@@ -932,6 +932,7 @@ hci_mtap(struct mbuf *m, struct hci_unit *unit)
 	}
 }
 
+#if 0
 PR_WRAP_USRREQS(hci)
 
 #define	hci_attach		hci_attach_wrapper
@@ -953,25 +954,26 @@ PR_WRAP_USRREQS(hci)
 #define	hci_send		hci_send_wrapper
 #define	hci_sendoob		hci_sendoob_wrapper
 #define	hci_purgeif		hci_purgeif_wrapper
+#endif
 
 const struct pr_usrreqs hci_usrreqs = {
-	.pr_attach	= hci_attach,
-	.pr_detach	= hci_detach,
-	.pr_accept	= hci_accept,
-	.pr_bind	= hci_bind,
-	.pr_listen	= hci_listen,
-	.pr_connect	= hci_connect,
-	.pr_connect2	= hci_connect2,
-	.pr_disconnect	= hci_disconnect,
-	.pr_shutdown	= hci_shutdown,
-	.pr_abort	= hci_abort,
-	.pr_ioctl	= hci_ioctl,
-	.pr_stat	= hci_stat,
-	.pr_peeraddr	= hci_peeraddr,
-	.pr_sockaddr	= hci_sockaddr,
-	.pr_rcvd	= hci_rcvd,
-	.pr_recvoob	= hci_recvoob,
-	.pr_send	= hci_send,
-	.pr_sendoob	= hci_sendoob,
-	.pr_purgeif	= hci_purgeif,
+	.pru_attach	= hci_attach,
+	.pru_detach	= hci_detach,
+	.pru_accept	= hci_accept,
+	.pru_bind	= hci_bind,
+	.pru_listen	= hci_listen,
+	.pru_connect	= hci_connect,
+	.pru_connect2	= hci_connect2,
+	.pru_disconnect	= hci_disconnect,
+	.pru_shutdown	= hci_shutdown,
+	.pru_abort	= hci_abort,
+//	.pru_ioctl	= hci_ioctl,
+//	.pru_stat	= hci_stat,
+	.pru_peeraddr	= hci_peeraddr,
+	.pru_sockaddr	= hci_sockaddr,
+	.pru_rcvd	= hci_rcvd,
+	.pru_rcvoob	= hci_recvoob,
+	.pru_send	= hci_send,
+	.pru_sendoob	= hci_sendoob,
+//	.pru_purgeif	= hci_purgeif,
 };
