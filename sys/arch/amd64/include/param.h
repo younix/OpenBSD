@@ -78,6 +78,7 @@
  * logical pages.
  */
 #define	NKMEMPAGES_MAX_DEFAULT	((128 * 1024 * 1024) >> PAGE_SHIFT)
+#define	NKMEMPAGES_MAX_BIG	((1024 * 1024 * 1024) >> PAGE_SHIFT)
 
 #define __HAVE_ACPI
 

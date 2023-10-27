@@ -528,6 +528,15 @@ kmeminit_nkmempages(void)
 	if (nkmempages_max == 0)
 		nkmempages_max = NKMEMPAGES_MAX;
 
+#ifdef NKMEMPAGES_MAX_BIG
+	/*
+	 * If machine has more than 6GB of memory,
+	 * bump max to NKMEMPAGES_MAX_BIG
+	 */
+	if ((uint64_t)physmem >= (6000000000ULL / PAGE_SIZE))
+		nkmempages_max = NKMEMPAGES_MAX_BIG;
+#endif
+
 	/*
 	 * We use the following (simple) formula:
 	 *
