@@ -3544,6 +3544,8 @@ nvgre_set_parent(struct nvgre_softc *sc, const char *parent)
 		return (EPROTONOSUPPORT);
 	}
 
+	ifsetlro(ifp0, 0);
+
 	/* commit */
 	sc->sc_ifp0 = ifp0->if_index;
 	if_put(ifp0);

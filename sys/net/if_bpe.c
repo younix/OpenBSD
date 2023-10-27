@@ -631,6 +631,8 @@ bpe_set_parent(struct bpe_softc *sc, const struct if_parent *p)
 		goto put;
 	}
 
+	ifsetlro(ifp0, 0);
+
 	/* commit */
 	sc->sc_key.k_if = ifp0->if_index;
 	etherbridge_flush(&sc->sc_eb, IFBF_FLUSHALL);

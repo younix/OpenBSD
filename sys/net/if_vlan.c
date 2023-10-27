@@ -937,6 +937,9 @@ vlan_set_parent(struct vlan_softc *sc, const char *parent)
 	if (error != 0)
 		goto put;
 
+	if (ether_brport_isset(ifp))
+		ifsetlro(ifp0, 0);
+
 	/* commit */
 	sc->sc_ifidx0 = ifp0->if_index;
 	if (!ISSET(sc->sc_flags, IFVF_LLADDR))

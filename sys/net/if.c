@@ -3243,6 +3243,17 @@ ifsetlro(struct ifnet *ifp, int on)
 	struct ifreq ifrq;
 	int error = 0;
 	int s = splnet();
+	struct if_parent parent;
+
+	memset(&parent, 0, sizeof(parent));
+	if ((*ifp->if_ioctl)(ifp, SIOCGIFPARENT, (caddr_t)&parent) != -1) {
+		struct ifnet *ifp0 = if_unit(parent.ifp_parent);
+
+		if (ifp0 != NULL) {
+			ifsetlro(ifp0, on);
+			if_put(ifp0);
+		}
+	}
 
 	if (!ISSET(ifp->if_capabilities, IFCAP_LRO)) {
 		error = ENOTSUP;

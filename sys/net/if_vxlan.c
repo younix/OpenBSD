@@ -1582,6 +1582,8 @@ vxlan_set_parent(struct vxlan_softc *sc, const struct if_parent *p)
 		goto put;
 	}
 
+	ifsetlro(ifp0, 0);
+
 	/* commit */
 	sc->sc_if_index0 = ifp0->if_index;
 	etherbridge_flush(&sc->sc_eb, IFBF_FLUSHALL);
