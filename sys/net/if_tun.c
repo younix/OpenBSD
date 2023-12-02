@@ -92,6 +92,7 @@ struct tun_softc {
 	dev_t			sc_dev;
 	struct refcnt		sc_refs;
 	unsigned int		sc_reading;
+	int			sc_vhdrlen;
 };
 
 #ifdef	TUN_DEBUG
@@ -779,6 +780,20 @@ tun_dev_ioctl(dev_t dev, u_long cmd, void *data)
 		bcopy(data, sc->sc_ac.ac_enaddr,
 		    sizeof(sc->sc_ac.ac_enaddr));
 		break;
+	case TAPSVNETHDR:
+		if (*(int *)data != 0 &&
+		    *(int *)data != sizeof(struct virtio_net_hdr) &&
+		    *(int *)data != sizeof(struct virtio_net_hdr_mrg_rxbuf)) {
+			return (EINVAL);
+		}
+
+		sc->sc_vhdrlen = *(int *)data;
+
+		return (0);
+	case TAPGVNETHDR:
+		*(int *)data = sc->sc_vhdrlen;
+
+		return (0);
 	default:
 		error = ENOTTY;
 		break;
