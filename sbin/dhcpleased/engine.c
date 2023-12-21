@@ -729,7 +729,7 @@ parse_dhcp(struct dhcpleased_iface *iface, struct imsg_dhcp *dhcp)
 	struct in_addr		 nameservers[MAX_RDNS_COUNT];
 	struct dhcp_route	 routes[MAX_DHCP_ROUTES];
 	size_t			 rem, i;
-	uint32_t		 sum, usum, lease_time = 0, renewal_time = 0;
+	uint32_t		 sum, usum, psum, lease_time = 0, renewal_time = 0;
 	uint32_t		 rebinding_time = 0;
 	uint32_t		 ipv6_only_time = 0;
 	uint8_t			*p, dho = DHO_PAD, dho_len, slen;
@@ -841,7 +841,10 @@ parse_dhcp(struct dhcpleased_iface *iface, struct imsg_dhcp *dhcp)
 	    checksum((uint8_t *)&ip->ip_src, 2 * sizeof(ip->ip_src),
 	    IPPROTO_UDP + ntohs(udp->uh_ulen)))));
 
-	if (usum != 0 && usum != sum) {
+	psum = checksum_phdr(ip->ip_src.s_addr, ip->ip_dst.s_addr,
+	    htonl(ntohs(ip->ip_len) - (ip->ip_hl << 2) + ip->ip_p));
+
+	if (usum != 0 && usum != sum && usum != psum) {
 		log_warnx("%s: bad UDP checksum", __func__);
 		return;
 	}

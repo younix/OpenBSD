@@ -78,3 +78,26 @@ wrapsum(uint32_t sum)
 	sum = ~sum & 0xFFFF;
 	return htons(sum);
 }
+
+/*
+ *	Compute significant parts of the IPv4 checksum pseudo-header
+ *	for use in a delayed TCP/UDP checksum calculation.
+ */
+uint16_t
+checksum_phdr(uint32_t src, uint32_t dst, uint32_t lenproto)
+{
+	uint32_t sum;
+
+	sum = lenproto +
+	    (uint16_t)(src >> 16) +
+	    (uint16_t)(src /*& 0xffff*/) +
+	    (uint16_t)(dst >> 16) +
+	    (uint16_t)(dst /*& 0xffff*/);
+
+	sum = (uint16_t)(sum >> 16) + (uint16_t)(sum /*& 0xffff*/);
+
+	if (sum > 0xffff)
+		sum -= 0xffff;
+
+	return (sum);
+}

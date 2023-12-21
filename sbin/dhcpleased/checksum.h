@@ -42,3 +42,4 @@
 
 uint32_t	 checksum(uint8_t *, uint32_t, uint32_t);
 uint32_t	 wrapsum(uint32_t);
+uint16_t	 checksum_phdr(uint32_t, uint32_t, uint32_t);
