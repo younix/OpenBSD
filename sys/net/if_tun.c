@@ -63,7 +63,14 @@
 #include <net/rtable.h>
 
 #include <netinet/in.h>
+#include <netinet/ip.h>
+#include <netinet/ip6.h>
+#include <netinet/tcp.h>
+#include <netinet/udp.h>
 #include <netinet/if_ether.h>
+
+#include <dev/pv/virtiovar.h>
+#include <dev/pv/if_vioreg.h>
 
 #include "bpfilter.h"
 #if NBPFILTER > 0
@@ -92,6 +99,7 @@ struct tun_softc {
 	dev_t			sc_dev;
 	struct refcnt		sc_refs;
 	unsigned int		sc_reading;
+	int			sc_vhdrlen;
 };
 
 #ifdef	TUN_DEBUG
@@ -779,6 +787,19 @@ tun_dev_ioctl(dev_t dev, u_long cmd, void *data)
 		bcopy(data, sc->sc_ac.ac_enaddr,
 		    sizeof(sc->sc_ac.ac_enaddr));
 		break;
+	case TAPSVNETHDR:
+		if (*(int *)data != 0 &&
+		    *(int *)data != sizeof(struct virtio_net_hdr) &&
+		    *(int *)data != sizeof(struct virtio_net_hdr_legacy))
+			return (EINVAL);
+
+		sc->sc_vhdrlen = *(int *)data;
+
+		return (0);
+	case TAPGVNETHDR:
+		*(int *)data = sc->sc_vhdrlen;
+
+		return (0);
 	default:
 		error = ENOTTY;
 		break;
@@ -828,6 +849,44 @@ tun_dev_read(dev_t dev, struct uio *uio, int ioflag)
 		bpf_mtap(ifp->if_bpf, m0, BPF_DIRECTION_OUT);
 #endif
 
+	size_t len = ulmin(uio->uio_resid, sc->sc_vhdrlen);
+	if (len > 0) {
+		struct virtio_net_hdr vhdr;
+
+		bzero(&vhdr, sizeof(vhdr));
+#if 0
+		if (ISSET(m0->m_pkthdr.csum_flags, M_TCP_CSUM_OUT) ||
+		    ISSET(m0->m_pkthdr.csum_flags, M_UDP_CSUM_OUT)) {
+			struct ether_extracted ext;
+
+			ether_extract_headers(m0, &ext);
+			vhdr.flags = VIRTIO_NET_HDR_F_NEEDS_CSUM;
+
+			vhdr.csum_start = sizeof(*ext.eh);
+#if NVLAN > 0
+			if (ext.evh)
+				vhdr.csum_start = sizeof(*ext.evh);
+#endif
+			if (ext.ip4)
+				vhdr.csum_start += ext.ip4->ip_hl << 2;
+#ifdef INET6
+			else if (ext.ip6)
+				vhdr.csum_start += sizeof(*ext.eh);
+#endif
+			if (ext.tcp)
+				vhdr.csum_offset =
+				    offsetof(struct tcphdr, th_sum);
+			else if (ext.udp)
+				vhdr.csum_offset =
+				    offsetof(struct udphdr, uh_sum);
+		}
+#endif
+
+		error = uiomove(&vhdr, len, uio);
+		if (error != 0)
+			goto free;
+	}
+
 	m = m0;
 	while (uio->uio_resid > 0) {
 		size_t len = ulmin(uio->uio_resid, m->m_len);
@@ -841,7 +900,7 @@ tun_dev_read(dev_t dev, struct uio *uio, int ioflag)
 		if (m == NULL)
 			break;
 	}
-
+free:
 	m_freem(m0);
 
 put:
@@ -870,6 +929,7 @@ tun_dev_write(dev_t dev, struct uio *uio, int ioflag, int align)
 	struct tun_softc	*sc;
 	struct ifnet		*ifp;
 	struct mbuf		*m0;
+	struct virtio_net_hdr	vhdr;
 	int			error = 0;
 	size_t			mlen;
 
@@ -905,9 +965,33 @@ tun_dev_write(dev_t dev, struct uio *uio, int ioflag, int align)
 	m0->m_pkthdr.len = m0->m_len = mlen;
 	m_adj(m0, align);
 
+	if (sc->sc_vhdrlen > 0) {
+		error = uiomove(&vhdr, sc->sc_vhdrlen, uio);
+		if (error != 0)
+			goto drop;
+	}
+
 	error = uiomove(mtod(m0, void *), m0->m_len, uio);
 	if (error != 0)
 		goto drop;
+
+#if 0
+	if (sc->sc_vhdrlen > 0) {
+		if (ISSET(vhdr.flags, VIRTIO_NET_HDR_F_NEEDS_CSUM)) {
+			struct ether_extracted ext;
+
+			ether_extract_headers(m0, &ext);
+
+			if (ext.tcp) {
+				SET(m0->m_pkthdr.csum_flags, M_TCP_CSUM_IN_OK);
+				SET(m0->m_pkthdr.csum_flags, M_TCP_CSUM_OUT);
+			} else if (ext.udp) {
+				SET(m0->m_pkthdr.csum_flags, M_UDP_CSUM_IN_OK);
+				SET(m0->m_pkthdr.csum_flags, M_UDP_CSUM_OUT);
+			}
+		}
+	}
+#endif
 
 	NET_LOCK();
 	if_vinput(ifp, m0);
