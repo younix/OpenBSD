@@ -68,4 +68,7 @@ struct tuninfo {
 #define	TUNSDEBUG	_IOW('t', 94, int)
 #define	TUNGDEBUG	_IOR('t', 95, int)
 
+/* ioctl to set the virtio-net header size */
+#define TAPSVNETHDR	_IOW('t', 96, int)
+
 #endif /* _NET_IF_TUN_H_ */
