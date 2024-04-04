@@ -795,6 +795,14 @@ tun_dev_ioctl(dev_t dev, u_long cmd, void *data)
 
 		sc->sc_vhdrlen = *(int *)data;
 
+		if (sc->sc_vhdrlen > 0) {
+			SET(sc->sc_if.if_capabilities, IFCAP_CSUM_TCPv4);
+			SET(sc->sc_if.if_capabilities, IFCAP_CSUM_UDPv4);
+			SET(sc->sc_if.if_capabilities, IFCAP_CSUM_TCPv6);
+			SET(sc->sc_if.if_capabilities, IFCAP_CSUM_TCPv6);
+			SET(sc->sc_if.if_capabilities, IFCAP_CSUM_UDPv6);
+		}
+
 		return (0);
 	default:
 		error = ENOTTY;
@@ -850,6 +858,29 @@ tun_dev_read(dev_t dev, struct uio *uio, int ioflag)
 		struct virtio_net_hdr vhdr;
 
 		bzero(&vhdr, sizeof(vhdr));
+
+		if (ISSET(m0->m_pkthdr.csum_flags, M_TCP_CSUM_OUT) ||
+		    ISSET(m0->m_pkthdr.csum_flags, M_UDP_CSUM_OUT)) {
+			struct ether_extracted ext;
+
+			ether_extract_headers(m0, &ext);
+			SET(vhdr.flags, VIRTIO_NET_HDR_F_NEEDS_CSUM);
+
+			vhdr.csum_start = sizeof(*ext.eh);
+#if NVLAN > 0
+			if (ext.evh)
+				vhdr.csum_start = sizeof(*ext.evh);
+#endif
+			if (ext.ip4 || ext.ip6)
+				vhdr.csum_start += ext.iphlen;
+
+			if (ext.tcp)
+				vhdr.csum_offset =
+				    offsetof(struct tcphdr, th_sum);
+			else if (ext.udp)
+				vhdr.csum_offset =
+				    offsetof(struct udphdr, uh_sum);
+		}
 
 		error = uiomove(&vhdr, len, uio);
 		if (error != 0)
