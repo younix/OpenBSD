@@ -258,6 +258,7 @@ struct vionet_dev {
 	struct virtio_vq_info vq[VIRTIO_MAX_QUEUES];
 
 	int data_fd;		/* fd for our tap device */
+	int vhdrlen;		/* use virtio_net_hdr prefix for r/w */
 
 	uint8_t mac[6];
 	uint8_t hostmac[6];
