@@ -944,6 +944,22 @@ tun_dev_write(dev_t dev, struct uio *uio, int ioflag, int align)
 	if (error != 0)
 		goto drop;
 
+	if (sc->sc_vhdrlen > 0) {
+		if (ISSET(vhdr.flags, VIRTIO_NET_HDR_F_NEEDS_CSUM)) {
+			struct ether_extracted ext;
+
+			ether_extract_headers(m0, &ext);
+
+			if (ext.tcp) {
+				SET(m0->m_pkthdr.csum_flags, M_TCP_CSUM_IN_OK);
+				SET(m0->m_pkthdr.csum_flags, M_TCP_CSUM_OUT);
+			} else if (ext.udp) {
+				SET(m0->m_pkthdr.csum_flags, M_UDP_CSUM_IN_OK);
+				SET(m0->m_pkthdr.csum_flags, M_UDP_CSUM_OUT);
+			}
+		}
+	}
+
 	NET_LOCK();
 	if_vinput(ifp, m0);
 	NET_UNLOCK();

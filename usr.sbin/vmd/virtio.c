@@ -61,6 +61,7 @@ SLIST_HEAD(virtio_dev_head, virtio_dev) virtio_devs;
 
 #define MAXPHYS	(64 * 1024)	/* max raw I/O transfer size */
 
+#define VIRTIO_NET_F_CSUM	(1<<0)
 #define VIRTIO_NET_F_MAC	(1<<5)
 
 #define VMMCI_F_TIMESYNC	(1<<0)
@@ -585,6 +586,9 @@ virtio_init(struct vmd_vm *vm, int child_cdrom,
 			/* MAC address has been assigned by the parent */
 			memcpy(&dev->vionet.mac, &vmc->vmc_macs[i], 6);
 			dev->vionet.cfg.device_feature = VIRTIO_NET_F_MAC;
+
+			/* enable checksum offlaoding */
+			dev->vionet.cfg.device_feature |= VIRTIO_NET_F_CSUM;
 
 			dev->vionet.lockedmac =
 			    vmc->vmc_ifflags[i] & VMIFF_LOCKED ? 1 : 0;
