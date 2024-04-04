@@ -18,6 +18,7 @@
  */
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 
 #include <dev/pci/virtio_pcireg.h>
 #include <dev/pv/virtioreg.h>
@@ -102,13 +103,7 @@ vionet_main(int fd, int fd_vmm)
 	struct vm_create_params	*vcp;
 	ssize_t			 sz;
 	int			 ret;
-
-	/*
-	 * stdio - needed for read/write to disk fds and channels to the vm.
-	 * vmm + proc - needed to create shared vm mappings.
-	 */
-	if (pledge("stdio vmm proc", NULL) == -1)
-		fatal("pledge");
+	int			 vhdrlen = sizeof(struct virtio_net_hdr);
 
 	/* Initialize iovec arrays. */
 	memset(iov_rx, 0, sizeof(iov_rx));
@@ -132,6 +127,17 @@ vionet_main(int fd, int fd_vmm)
 	log_debug("%s: got vionet dev. tap fd = %d, syncfd = %d, asyncfd = %d"
 	    ", vmm fd = %d", __func__, vionet->data_fd, dev.sync_fd,
 	    dev.async_fd, fd_vmm);
+
+	/* Activate virtio_net_hdr for tap(4) device. */
+	if (ioctl(vionet->data_fd, TAPSVNETHDR, &vhdrlen) == -1)
+		fatal("%s: TAPSVNETHDR option on tap(4) failed", __func__);
+
+	/*
+	 * stdio - needed for read/write to disk fds and channels to the vm.
+	 * vmm + proc - needed to create shared vm mappings.
+	 */
+	if (pledge("stdio vmm proc", NULL) == -1)
+		fatal("pledge");
 
 	/* Receive our vm information from the vm process. */
 	memset(&vm, 0, sizeof(vm));
@@ -413,6 +419,7 @@ vionet_rx(struct vionet_dev *dev, int fd)
 
 		iov = &iov_rx[0];
 		iov_cnt = 1;
+		chain_len = 0;
 
 		/*
 		 * First descriptor should be at least as large as the
@@ -425,22 +432,9 @@ vionet_rx(struct vionet_dev *dev, int fd)
 			goto reset;
 		}
 
-		/*
-		 * Insert the virtio_net_hdr and adjust len/base. We do the
-		 * pointer math here before it's a void*.
-		 */
 		iov->iov_base = hvaddr_mem(desc->addr, iov->iov_len);
 		if (iov->iov_base == NULL)
 			goto reset;
-		memset(iov->iov_base, 0, sizeof(struct virtio_net_hdr));
-
-		/* Tweak the iovec to account for the virtio_net_hdr. */
-		iov->iov_len -= sizeof(struct virtio_net_hdr);
-		iov->iov_base = hvaddr_mem(desc->addr +
-		    sizeof(struct virtio_net_hdr), iov->iov_len);
-		if (iov->iov_base == NULL)
-			goto reset;
-		chain_len = iov->iov_len;
 
 		/*
 		 * Walk the remaining chain and collect remaining addresses
@@ -490,12 +484,6 @@ vionet_rx(struct vionet_dev *dev, int fd)
 			goto reset;
 		if (sz == 0)	/* No packets, so bail out for now. */
 			break;
-
-		/*
-		 * Account for the prefixed header since it wasn't included
-		 * in the copy or zerocopy operations.
-		 */
-		sz += sizeof(struct virtio_net_hdr);
 
 		/* Mark our buffers as used. */
 		used->ring[used->idx & VIONET_QUEUE_MASK].id = hdr_idx;
@@ -766,16 +754,14 @@ vionet_tx(struct virtio_dev *dev)
 		if (iov->iov_len < sizeof(struct virtio_net_hdr)) {
 			log_warnx("%s: invalid descriptor length", __func__);
 			goto reset;
-		} else if (iov->iov_len > sizeof(struct virtio_net_hdr)) {
-			/* Chop off the virtio header, leaving packet data. */
-			iov->iov_len -= sizeof(struct virtio_net_hdr);
-			chain_len += iov->iov_len;
-			iov->iov_base = hvaddr_mem(desc->addr +
-			    sizeof(struct virtio_net_hdr), iov->iov_len);
-			if (iov->iov_base == NULL)
-				goto reset;
-			iov_cnt++;
 		}
+
+		/* Handel the first descriptor. */
+		chain_len += iov->iov_len;
+		iov->iov_base = hvaddr_mem(desc->addr, iov->iov_len);
+		if (iov->iov_base == NULL)
+			goto reset;
+		iov_cnt++;
 
 		/*
 		 * Walk the chain and collect remaining addresses and lengths.
@@ -850,7 +836,6 @@ vionet_tx(struct virtio_dev *dev)
 			log_warn("%s", __func__);
 			goto reset;
 		}
-		sz += sizeof(struct virtio_net_hdr);
 drop:
 		used->ring[used->idx & VIONET_QUEUE_MASK].id = hdr_idx;
 		used->ring[used->idx & VIONET_QUEUE_MASK].len = sz;
